@@ -1,0 +1,12 @@
+### Android ###
+/local.properties
+/captures
+.externalNativeBuild
+
+### Gradle ###
+.gradle
+/build
+
+### JetBrains IDEs ###
+.idea
+*.iml
