@@ -21,6 +21,7 @@
 <resources>
     <string name="app_name">Metronom</string>
 
+    <string name="action_night_mode">Nachtmodus wechseln</string>
     <string name="about">Über die App</string>
 
     <string name="ok">OK</string>

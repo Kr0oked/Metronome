@@ -21,6 +21,7 @@
 <resources>
     <string name="app_name">Metronome</string>
 
+    <string name="action_night_mode">Change night mode</string>
     <string name="about">About</string>
 
     <string name="ok">OK</string>

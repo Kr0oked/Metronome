@@ -1,4 +1,4 @@
-# Compass
+# Metronome
 
 This project is intended to offer a simple and good looking metronome for Android.
 

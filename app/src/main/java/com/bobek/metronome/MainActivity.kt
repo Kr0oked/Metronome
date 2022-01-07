@@ -20,17 +20,24 @@ package com.bobek.metronome
 
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
+private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private var optionsMenu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,17 +55,37 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        optionsMenu = menu
+        updateNightModeIcon()
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_about-> {
+            R.id.action_night_mode -> {
+                toggleNightMode()
+                true
+            }
+            R.id.action_about -> {
                 showAboutPopup()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun toggleNightMode() {
+        when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_NO -> changeNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            AppCompatDelegate.MODE_NIGHT_YES -> changeNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            else -> changeNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+    }
+
+    private fun changeNightMode(@AppCompatDelegate.NightMode mode: Int) {
+        Log.d(TAG, "Setting night mode to value $mode")
+        AppCompatDelegate.setDefaultNightMode(mode)
+        updateNightModeIcon()
     }
 
     private fun showAboutPopup() {
@@ -74,5 +101,20 @@ class MainActivity : AppCompatActivity() {
             .setView(aboutBinding.root)
             .setNeutralButton(R.string.ok) { dialog, _ -> dialog.dismiss() }
             .show()
+    }
+
+    private fun updateNightModeIcon() {
+        optionsMenu
+            ?.findItem(R.id.action_night_mode)
+            ?.setIcon(getNightModeIcon())
+    }
+
+    @DrawableRes
+    private fun getNightModeIcon(): Int {
+        return when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_NO -> R.drawable.ic_night_mode_no
+            AppCompatDelegate.MODE_NIGHT_YES -> R.drawable.ic_night_mode_yes
+            else -> R.drawable.ic_night_mode_auto
+        }
     }
 }
