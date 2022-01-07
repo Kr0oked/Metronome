@@ -19,20 +19,20 @@
   -->
 
 <resources>
-    <string name="app_name">Metronome</string>
+    <string name="app_name">Metronom</string>
 
-    <string name="about">About</string>
+    <string name="about">Über die App</string>
 
     <string name="ok">OK</string>
 
     <string name="version">Version %s</string>
-    <string name="version_description">Version name</string>
+    <string name="version_description">Versionsname</string>
     <string name="copyright">Copyright @ 2022 <a href="mailto:philipp.bobek@mailbox.org">Philipp Bobek</a></string>
-    <string name="copyright_description">Copyright notice</string>
-    <string name="license">License <a href="https://www.gnu.org/licenses/gpl-3.0.txt">GNU GPLv3</a></string>
-    <string name="license_description">Software license</string>
-    <string name="source_code"><a href="https://github.com/Kr0oked/Metronome">Source code</a></string>
-    <string name="source_code_description">Link to the Source code management</string>
+    <string name="copyright_description">Copyright Hinweis</string>
+    <string name="license">Lizenz <a href="https://www.gnu.org/licenses/gpl-3.0.txt">GNU GPLv3</a></string>
+    <string name="license_description">Softwarelizenz</string>
+    <string name="source_code"><a href="https://github.com/Kr0oked/Metronome">Quelltext</a></string>
+    <string name="source_code_description">Link zur Quelltext Verwaltung</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Einstellungen</string>
 </resources>

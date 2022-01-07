@@ -19,10 +19,13 @@
 package com.bobek.metronome
 
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.ActivityMainBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
@@ -50,8 +53,26 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_about-> {
+                showAboutPopup()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun showAboutPopup() {
+        val aboutBinding = AboutAlertDialogViewBinding.inflate(layoutInflater)
+
+        aboutBinding.version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+        aboutBinding.copyright.movementMethod = LinkMovementMethod.getInstance()
+        aboutBinding.license.movementMethod = LinkMovementMethod.getInstance()
+        aboutBinding.sourceCode.movementMethod = LinkMovementMethod.getInstance()
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.app_name)
+            .setView(aboutBinding.root)
+            .setNeutralButton(R.string.ok) { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 }
