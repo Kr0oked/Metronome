@@ -18,23 +18,159 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://sochemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".MainActivity"
         tools:showIn="@layout/activity_main">
 
-    <TextView
-            android:id="@+id/hello_world"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/root_layout_padding"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/beats_edit"
+                android:layout_width="@dimen/metronom_values_text_width"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:text="@={Beats.beatsToString(metronome.beats)}"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/beats_slider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/beats_slider"
+                app:layout_constraintTop_toTopOf="@+id/beats_slider" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/subdivisions_edit"
+                android:layout_width="@dimen/metronom_values_text_width"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:text="@={Subdivisions.subdivisionsToString(metronome.subdivisions)}"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/subdivisions_slider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/subdivisions_slider"
+                app:layout_constraintTop_toTopOf="@+id/subdivisions_slider" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/tempo_edit"
+                android:layout_width="@dimen/metronom_values_text_width"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:text="@={Tempo.tempoToString(metronome.tempo)}"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/tempo_slider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tempo_slider"
+                app:layout_constraintTop_toTopOf="@+id/tempo_slider" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/beats_label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/beats_slider"
+                android:text="@string/beats_label"
+                app:layout_constraintBottom_toTopOf="@+id/beats_slider"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/subdivisions_label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/subdivisions_slider"
+                android:text="@string/subdivisions_label"
+                app:layout_constraintBottom_toTopOf="@+id/subdivisions_slider"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tempo_label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/tempo_slider"
+                android:text="@string/tempo_label"
+                app:layout_constraintBottom_toTopOf="@+id/tempo_slider"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/beats_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:itemCount="4"
+                tools:layoutManager="GridLayoutManager"
+                tools:listitem="@layout/recycler_view_item"
+                tools:spanCount="4" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/start_stop_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/start_stop_button_description"
+                app:backgroundTint="@color/colorPrimary"
+                app:elevation="0dp"
+                app:fabCustomSize="70dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_play_arrow" />
+
+        <com.google.android.material.slider.Slider
+                android:id="@+id/beats_slider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:stepSize="1"
+                android:value="@={Beats.beatsToFloat(metronome.beats)}"
+                android:valueFrom="@{Beats.MIN}"
+                android:valueTo="@{Beats.MAX}"
+                app:layout_constraintBottom_toTopOf="@+id/subdivisions_slider"
+                app:layout_constraintEnd_toStartOf="@id/beats_edit"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/beats_container" />
+
+        <com.google.android.material.slider.Slider
+                android:id="@+id/subdivisions_slider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:stepSize="1"
+                android:value="@={Subdivisions.subdivisionsToFloat(metronome.subdivisions)}"
+                android:valueFrom="@{Subdivisions.MIN}"
+                android:valueTo="@{Subdivisions.MAX}"
+                app:layout_constraintBottom_toTopOf="@+id/tempo_slider"
+                app:layout_constraintEnd_toStartOf="@id/subdivisions_edit"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/beats_slider" />
+
+        <com.google.android.material.slider.Slider
+                android:id="@+id/tempo_slider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:stepSize="2"
+                android:value="@={Tempo.tempoToFloat(metronome.tempo)}"
+                android:valueFrom="@{Tempo.MIN}"
+                android:valueTo="@{Tempo.MAX}"
+                app:layout_constraintBottom_toTopOf="@+id/start_stop_button"
+                app:layout_constraintEnd_toStartOf="@id/tempo_edit"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/subdivisions_slider" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <import type="com.bobek.metronome.view.Beats" />
+
+        <import type="com.bobek.metronome.view.Subdivisions" />
+
+        <import type="com.bobek.metronome.view.Tempo" />
+
+        <variable
+                name="metronome"
+                type="com.bobek.metronome.view.MetronomeViewModel" />
+    </data>
+
+</layout>

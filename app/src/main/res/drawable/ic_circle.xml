@@ -18,7 +18,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
-    <dimen name="root_layout_padding">8dp</dimen>
-    <dimen name="metronom_values_text_width">50dp</dimen>
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+        android:shape="oval">
+    <solid android:color="@android:color/white" />
+</shape>

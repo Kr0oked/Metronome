@@ -21,13 +21,16 @@ package com.bobek.metronome
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.databinding.DataBindingUtil
 import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.ActivityMainBinding
+import com.bobek.metronome.view.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
@@ -39,18 +42,27 @@ class MainActivity : AppCompatActivity() {
 
     private var optionsMenu: Menu? = null
 
+    private val metronomeViewModel = MetronomeViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.lifecycleOwner = this
+        binding.metronome = metronomeViewModel
 
-        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        binding.contentMain.startStopButton.setOnClickListener { view ->
+            Snackbar
+                .make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null)
+                .show()
         }
+
+        metronomeViewModel.beats.observe(this) { beats -> Log.i(TAG, "Beats: $beats") }
+        metronomeViewModel.subdivisions.observe(this) { beats -> Log.i(TAG, "Subdivisions: $beats") }
+        metronomeViewModel.tempo.observe(this) { tempo -> Log.i(TAG, "Tempo: $tempo") }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -89,16 +101,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showAboutPopup() {
-        val aboutBinding = AboutAlertDialogViewBinding.inflate(layoutInflater)
+        val alertDialogBuilder = MaterialAlertDialogBuilder(this)
+        val dialogContextInflater = LayoutInflater.from(alertDialogBuilder.context)
 
-        aboutBinding.version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
-        aboutBinding.copyright.movementMethod = LinkMovementMethod.getInstance()
-        aboutBinding.license.movementMethod = LinkMovementMethod.getInstance()
-        aboutBinding.sourceCode.movementMethod = LinkMovementMethod.getInstance()
+        val dialogBinding = AboutAlertDialogViewBinding.inflate(dialogContextInflater)
+        dialogBinding.version = getString(R.string.version, BuildConfig.VERSION_NAME)
+        dialogBinding.copyrightText.movementMethod = LinkMovementMethod.getInstance()
+        dialogBinding.licenseText.movementMethod = LinkMovementMethod.getInstance()
+        dialogBinding.sourceCodeText.movementMethod = LinkMovementMethod.getInstance()
 
-        MaterialAlertDialogBuilder(this)
+        alertDialogBuilder
             .setTitle(R.string.app_name)
-            .setView(aboutBinding.root)
+            .setView(dialogBinding.root)
             .setNeutralButton(R.string.ok) { dialog, _ -> dialog.dismiss() }
             .show()
     }

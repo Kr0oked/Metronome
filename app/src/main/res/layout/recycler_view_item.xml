@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <!--
   ~ This file is part of Metronome.
   ~ Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
@@ -18,6 +16,10 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
-    <dimen name="fab_margin">200dp</dimen>
-</resources>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:tools="http://schemas.android.com/tools"
+   android:id="@+id/imageView1"
+   android:layout_width="50dp"
+   android:layout_height="50dp"
+   android:layout_margin="5dp"
+   tools:src="@tools:sample/avatars" />

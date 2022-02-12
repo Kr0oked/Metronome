@@ -24,6 +24,8 @@
     <string name="action_night_mode">Nachtmodus wechseln</string>
     <string name="about">Über die App</string>
 
+    <string name="start_stop_button_description">Startet oder stoppt das Metronom</string>
+
     <string name="ok">OK</string>
 
     <string name="version">Version %s</string>
