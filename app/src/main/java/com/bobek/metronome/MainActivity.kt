@@ -104,8 +104,8 @@ class MainActivity : AppCompatActivity() {
         val alertDialogBuilder = MaterialAlertDialogBuilder(this)
         val dialogContextInflater = LayoutInflater.from(alertDialogBuilder.context)
 
-        val dialogBinding = AboutAlertDialogViewBinding.inflate(dialogContextInflater)
-        dialogBinding.version = getString(R.string.version, BuildConfig.VERSION_NAME)
+        val dialogBinding = AboutAlertDialogViewBinding.inflate(dialogContextInflater, null, false)
+        dialogBinding.version = BuildConfig.VERSION_NAME
         dialogBinding.copyrightText.movementMethod = LinkMovementMethod.getInstance()
         dialogBinding.licenseText.movementMethod = LinkMovementMethod.getInstance()
         dialogBinding.sourceCodeText.movementMethod = LinkMovementMethod.getInstance()
