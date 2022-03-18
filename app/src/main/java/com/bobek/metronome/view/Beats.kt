@@ -20,26 +20,15 @@ package com.bobek.metronome.view
 
 import androidx.databinding.InverseMethod
 
-class Beats(value: Int = MIN) {
+data class Beats(val value: Int = MIN) {
 
-    val value = if (value in MIN..MAX) value else MIN
+    init {
+        require(value in MIN..MAX) { "value must be between $MIN and $MAX" }
+    }
 
     companion object {
         const val MIN = 1
         const val MAX = 8
-
-        @InverseMethod("stringToBeats")
-        @JvmStatic
-        fun beatsToString(beats: Beats): String = beats.value.toString()
-
-        @JvmStatic
-        fun stringToBeats(string: String): Beats {
-            return try {
-                Beats(string.toInt())
-            } catch (exception: NumberFormatException) {
-                Beats()
-            }
-        }
 
         @InverseMethod("floatToBeats")
         @JvmStatic
@@ -47,10 +36,6 @@ class Beats(value: Int = MIN) {
 
         @JvmStatic
         fun floatToBeats(float: Float): Beats = Beats(float.toInt())
-    }
-
-    override fun toString(): String {
-        return "Beats(value=$value)"
     }
 }
 

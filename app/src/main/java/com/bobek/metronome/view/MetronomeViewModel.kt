@@ -22,9 +22,83 @@ import androidx.lifecycle.MutableLiveData
 
 class MetronomeViewModel {
 
-    val beats = MutableLiveData(Beats())
+    val beatsData = MutableLiveData(Beats())
 
-    val subdivisions = MutableLiveData(Subdivisions())
+    val beatsText = MutableLiveData<String>()
 
-    val tempo = MutableLiveData(Tempo())
+    val beatsTextError = MutableLiveData<Boolean>()
+
+    val subdivisionsData = MutableLiveData(Subdivisions())
+
+    val subdivisionsText = MutableLiveData<String>()
+
+    val subdivisionsTextError = MutableLiveData<Boolean>()
+
+    val tempoData = MutableLiveData(Tempo())
+
+    val tempoText = MutableLiveData<String>()
+
+    val tempoTextError = MutableLiveData<Boolean>()
+
+    init {
+        beatsData.observeForever { beats -> beatsText.value = beats.value.toString() }
+        beatsText.observeForever(this::processBeatsText)
+
+        subdivisionsData.observeForever { subdivisions -> subdivisionsText.value = subdivisions.value.toString() }
+        subdivisionsText.observeForever(this::processSubdivisionsText)
+
+        tempoData.observeForever { tempo -> tempoText.value = tempo.value.toString() }
+        tempoText.observeForever(this::processTempoText)
+    }
+
+    private fun processBeatsText(text: String) {
+        try {
+            val numericValue = text.toInt()
+            val beats = Beats(numericValue)
+
+            if (beatsData.value != beats) {
+                beatsData.value = beats
+            }
+
+            beatsTextError.value = false
+        } catch (exception: NumberFormatException) {
+            beatsTextError.value = true
+        } catch (exception: IllegalArgumentException) {
+            beatsTextError.value = true
+        }
+    }
+
+    private fun processSubdivisionsText(text: String) {
+        try {
+            val numericValue = text.toInt()
+            val subdivisions = Subdivisions(numericValue)
+
+            if (subdivisionsData.value != subdivisions) {
+                subdivisionsData.value = subdivisions
+            }
+
+            subdivisionsTextError.value = false
+        } catch (exception: NumberFormatException) {
+            subdivisionsTextError.value = true
+        } catch (exception: IllegalArgumentException) {
+            subdivisionsTextError.value = true
+        }
+    }
+
+    private fun processTempoText(text: String) {
+        try {
+            val numericValue = text.toInt()
+            val tempo = Tempo(numericValue)
+
+            if (tempoData.value != tempo) {
+                tempoData.value = tempo
+            }
+
+            tempoTextError.value = false
+        } catch (exception: NumberFormatException) {
+            tempoTextError.value = true
+        } catch (exception: IllegalArgumentException) {
+            tempoTextError.value = true
+        }
+    }
 }

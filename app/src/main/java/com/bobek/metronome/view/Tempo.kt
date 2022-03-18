@@ -20,26 +20,15 @@ package com.bobek.metronome.view
 
 import androidx.databinding.InverseMethod
 
-class Tempo(value: Int = MIN) {
+data class Tempo(val value: Int = MIN) {
 
-    val value = if (value in MIN..MAX) value else MIN
+    init {
+        require(value in MIN..MAX) { "value must be between $MIN and $MAX" }
+    }
 
     companion object {
         const val MIN = 40
         const val MAX = 208
-
-        @InverseMethod("stringToTempo")
-        @JvmStatic
-        fun tempoToString(tempo: Tempo): String = tempo.value.toString()
-
-        @JvmStatic
-        fun stringToTempo(string: String): Tempo {
-            return try {
-                Tempo(string.toInt())
-            } catch (exception: NumberFormatException) {
-                Tempo()
-            }
-        }
 
         @InverseMethod("floatToTempo")
         @JvmStatic
@@ -47,9 +36,5 @@ class Tempo(value: Int = MIN) {
 
         @JvmStatic
         fun floatToTempo(float: Float): Tempo = Tempo(float.toInt())
-    }
-
-    override fun toString(): String {
-        return "tempo(value=$value)"
     }
 }

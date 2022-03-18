@@ -27,6 +27,7 @@ import android.view.MenuItem
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.NightMode
 import androidx.databinding.DataBindingUtil
 import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.ActivityMainBinding
@@ -55,14 +56,23 @@ class MainActivity : AppCompatActivity() {
 
         binding.contentMain.startStopButton.setOnClickListener { view ->
             Snackbar
-                .make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .make(
+                    view,
+                    "Beats: ${metronomeViewModel.beatsData.value?.value}, " +
+                            "Subdivisions: ${metronomeViewModel.subdivisionsData.value?.value}, " +
+                            "Tempo: ${metronomeViewModel.tempoData.value?.value}",
+                    Snackbar.LENGTH_LONG
+                )
                 .setAction("Action", null)
                 .show()
         }
 
-        metronomeViewModel.beats.observe(this) { beats -> Log.i(TAG, "Beats: $beats") }
-        metronomeViewModel.subdivisions.observe(this) { beats -> Log.i(TAG, "Subdivisions: $beats") }
-        metronomeViewModel.tempo.observe(this) { tempo -> Log.i(TAG, "Tempo: $tempo") }
+        metronomeViewModel.beatsData
+            .observe(this) { beats -> Log.d(TAG, "Beats: $beats") }
+        metronomeViewModel.subdivisionsData
+            .observe(this) { subdivisions -> Log.d(TAG, "Subdivisions: $subdivisions") }
+        metronomeViewModel.tempoData
+            .observe(this) { tempo -> Log.d(TAG, "Tempo: $tempo") }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -94,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun changeNightMode(@AppCompatDelegate.NightMode mode: Int) {
+    private fun changeNightMode(@NightMode mode: Int) {
         Log.d(TAG, "Setting night mode to value $mode")
         AppCompatDelegate.setDefaultNightMode(mode)
         updateNightModeIcon()

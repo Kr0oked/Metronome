@@ -25,9 +25,17 @@ import com.google.android.material.slider.Slider
 
 object SliderAdapter {
 
+    @BindingAdapter("android:value")
+    @JvmStatic
+    fun setValue(slider: Slider, newValue: Float) {
+        if (slider.value != newValue) {
+            slider.value = newValue
+        }
+    }
+
     @InverseBindingAdapter(attribute = "android:value")
     @JvmStatic
-    fun getValue(slider: Slider) = slider.value
+    fun getValue(slider: Slider): Float = slider.value
 
     @BindingAdapter("android:valueAttrChanged")
     @JvmStatic
