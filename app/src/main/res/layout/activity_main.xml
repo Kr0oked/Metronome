@@ -53,7 +53,7 @@
 
         <variable
                 name="metronome"
-                type="com.bobek.metronome.view.MetronomeViewModel" />
+                type="com.bobek.metronome.view.model.MetronomeViewModel" />
     </data>
 
 </layout>

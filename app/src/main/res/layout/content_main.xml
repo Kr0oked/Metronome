@@ -45,16 +45,17 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/start_stop_button"
+                playing="@{metronome.playing}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/start_stop_button_description"
+                android:onClick="@{() -> metronome.startStop()}"
                 app:backgroundTint="@color/colorPrimary"
                 app:elevation="0dp"
                 app:fabCustomSize="70dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/ic_play_arrow" />
+                app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.slider.Slider
                 android:id="@+id/beats_slider"
@@ -98,7 +99,7 @@
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/beats_edit_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                error="@{metronome.beatsTextError ? ` ` : null}"
+                error="@{metronome.beatsTextError}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
@@ -121,7 +122,7 @@
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/subdivisions_edit_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                error="@{metronome.subdivisionsTextError ? ` ` : null}"
+                error="@{metronome.subdivisionsTextError}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
@@ -144,7 +145,7 @@
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tempo_edit_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                error="@{metronome.tempoTextError ? ` ` : null}"
+                error="@{metronome.tempoTextError}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
@@ -195,15 +196,15 @@
 
     <data>
 
-        <import type="com.bobek.metronome.view.Beats" />
+        <import type="com.bobek.metronome.view.model.Beats" />
 
-        <import type="com.bobek.metronome.view.Subdivisions" />
+        <import type="com.bobek.metronome.view.model.Subdivisions" />
 
-        <import type="com.bobek.metronome.view.Tempo" />
+        <import type="com.bobek.metronome.view.model.Tempo" />
 
         <variable
                 name="metronome"
-                type="com.bobek.metronome.view.MetronomeViewModel" />
+                type="com.bobek.metronome.view.model.MetronomeViewModel" />
     </data>
 
 </layout>

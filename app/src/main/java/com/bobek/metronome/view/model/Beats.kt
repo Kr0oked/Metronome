@@ -16,16 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.view
+package com.bobek.metronome.view.model
 
-import androidx.databinding.BindingAdapter
-import com.google.android.material.textfield.TextInputLayout
+import androidx.databinding.InverseMethod
 
-object TextInputLayoutAdapter {
+data class Beats(val value: Int = MIN) {
 
-    @BindingAdapter("error")
-    @JvmStatic
-    fun setError(textInputLayout: TextInputLayout, error: String?) {
-        textInputLayout.error = error
+    init {
+        require(value in MIN..MAX) { "value must be between $MIN and $MAX" }
+    }
+
+    companion object {
+        const val MIN = 1
+        const val MAX = 8
+
+        @InverseMethod("floatToBeats")
+        @JvmStatic
+        fun beatsToFloat(beats: Beats): Float = beats.value.toFloat()
+
+        @JvmStatic
+        fun floatToBeats(float: Float): Beats = Beats(float.toInt())
     }
 }
+

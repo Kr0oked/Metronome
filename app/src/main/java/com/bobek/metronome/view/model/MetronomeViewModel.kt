@@ -16,38 +16,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.view
+package com.bobek.metronome.view.model
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
+
+private const val TAG = "MetronomeViewModel"
 
 class MetronomeViewModel {
 
-    val beatsData = MutableLiveData(Beats())
+    val beatsData = MutableLiveData(Beats(4))
+    val beatsText = MutableLiveData("")
+    val beatsTextError = MutableLiveData(false)
 
-    val beatsText = MutableLiveData<String>()
+    val subdivisionsData = MutableLiveData(Subdivisions(1))
+    val subdivisionsText = MutableLiveData("")
+    val subdivisionsTextError = MutableLiveData(false)
 
-    val beatsTextError = MutableLiveData<Boolean>()
+    val tempoData = MutableLiveData(Tempo(80))
+    val tempoText = MutableLiveData("")
+    val tempoTextError = MutableLiveData(false)
 
-    val subdivisionsData = MutableLiveData(Subdivisions())
-
-    val subdivisionsText = MutableLiveData<String>()
-
-    val subdivisionsTextError = MutableLiveData<Boolean>()
-
-    val tempoData = MutableLiveData(Tempo())
-
-    val tempoText = MutableLiveData<String>()
-
-    val tempoTextError = MutableLiveData<Boolean>()
+    val playing = MutableLiveData(false)
 
     init {
         beatsData.observeForever { beats -> beatsText.value = beats.value.toString() }
+        beatsData.observeForever { beats -> Log.d(TAG, "Beats: $beats") }
         beatsText.observeForever(this::processBeatsText)
 
         subdivisionsData.observeForever { subdivisions -> subdivisionsText.value = subdivisions.value.toString() }
+        subdivisionsData.observeForever { subdivisions -> Log.d(TAG, "Subdivisions: $subdivisions") }
         subdivisionsText.observeForever(this::processSubdivisionsText)
 
         tempoData.observeForever { tempo -> tempoText.value = tempo.value.toString() }
+        tempoData.observeForever { tempo -> Log.d(TAG, "Tempo: $tempo") }
         tempoText.observeForever(this::processTempoText)
     }
 
@@ -100,5 +102,18 @@ class MetronomeViewModel {
         } catch (exception: IllegalArgumentException) {
             tempoTextError.value = true
         }
+    }
+
+    fun startStop() {
+        playing.value = playing.value!!.not()
+    }
+
+    override fun toString(): String {
+        return "MetronomeViewModel(" +
+                "beats=${beatsData.value?.value}, " +
+                "subdivisions=${subdivisionsData.value?.value}, " +
+                "tempo=${tempoData.value?.value}," +
+                "playing=${playing.value}" +
+                ")"
     }
 }

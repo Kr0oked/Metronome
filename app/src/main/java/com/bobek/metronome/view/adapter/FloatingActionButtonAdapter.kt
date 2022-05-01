@@ -16,26 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.view
+package com.bobek.metronome.view.adapter
 
-import androidx.databinding.InverseMethod
-import java.lang.IllegalArgumentException
+import androidx.databinding.BindingAdapter
+import com.bobek.metronome.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-data class Subdivisions(val value: Int = MIN) {
+object FloatingActionButtonAdapter {
 
-    init {
-        require(value in MIN..MAX) {"value must be between $MIN and $MAX"}
-    }
-
-    companion object {
-        const val MIN = 1
-        const val MAX = 4
-
-        @InverseMethod("floatToSubdivisions")
-        @JvmStatic
-        fun subdivisionsToFloat(subdivisions: Subdivisions): Float = subdivisions.value.toFloat()
-
-        @JvmStatic
-        fun floatToSubdivisions(float: Float): Subdivisions = Subdivisions(float.toInt())
+    @BindingAdapter("playing")
+    @JvmStatic
+    fun setPlaying(button: FloatingActionButton, playing: Boolean) {
+        if (playing) {
+            button.setImageResource(R.drawable.ic_pause)
+        } else {
+            button.setImageResource(R.drawable.ic_play_arrow)
+        }
     }
 }

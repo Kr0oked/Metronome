@@ -18,6 +18,8 @@
 
 package com.bobek.metronome
 
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.Log
@@ -31,19 +33,35 @@ import androidx.appcompat.app.AppCompatDelegate.NightMode
 import androidx.databinding.DataBindingUtil
 import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.ActivityMainBinding
-import com.bobek.metronome.view.MetronomeViewModel
+import com.bobek.metronome.view.model.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
+import java.util.*
 
 private const val TAG = "MainActivity"
+private const val NO_DELAY = 0L
+private const val MINUTE_IN_MILLIS = 60_000L
+private const val MAX_STREAMS = 8
+private const val DEFAULT_SOUND_PRIORITY = 1
+private const val NO_LOOP = 0
+private const val VOLUME_MAX = 1.0f
+private const val NORMAL_PLAYBACK = 1.0f
+private const val SOUND_ID_UNINITIALIZED = -1
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var optionsMenu: Menu
     private lateinit var binding: ActivityMainBinding
-
-    private var optionsMenu: Menu? = null
+    private lateinit var soundPool: SoundPool
 
     private val metronomeViewModel = MetronomeViewModel()
+
+    private var timer = Timer()
+
+    private var strongTickSoundId = SOUND_ID_UNINITIALIZED
+    private var weakTickSoundId = SOUND_ID_UNINITIALIZED
+    private var subTickSoundId = SOUND_ID_UNINITIALIZED
+
+    private var counter = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,25 +72,104 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        binding.contentMain.startStopButton.setOnClickListener { view ->
-            Snackbar
-                .make(
-                    view,
-                    "Beats: ${metronomeViewModel.beatsData.value?.value}, " +
-                            "Subdivisions: ${metronomeViewModel.subdivisionsData.value?.value}, " +
-                            "Tempo: ${metronomeViewModel.tempoData.value?.value}",
-                    Snackbar.LENGTH_LONG
-                )
-                .setAction("Action", null)
-                .show()
+        soundPool = buildSoundPool()
+        strongTickSoundId = soundPool.load(this, R.raw.strong_tick, DEFAULT_SOUND_PRIORITY)
+        weakTickSoundId = soundPool.load(this, R.raw.weak_tick, DEFAULT_SOUND_PRIORITY)
+        subTickSoundId = soundPool.load(this, R.raw.sub_tick, DEFAULT_SOUND_PRIORITY)
+
+        metronomeViewModel.playing.observe(this) { playing ->
+            if (playing) {
+                resetTimer()
+                scheduleTickerTask()
+                Log.i(TAG, "Started metronome")
+            } else {
+                resetTimer()
+                counter = 0L
+                Log.i(TAG, "Stopped metronome")
+            }
         }
 
-        metronomeViewModel.beatsData
-            .observe(this) { beats -> Log.d(TAG, "Beats: $beats") }
-        metronomeViewModel.subdivisionsData
-            .observe(this) { subdivisions -> Log.d(TAG, "Subdivisions: $subdivisions") }
-        metronomeViewModel.tempoData
-            .observe(this) { tempo -> Log.d(TAG, "Tempo: $tempo") }
+        metronomeViewModel.beatsData.observe(this) { dataChanged() }
+        metronomeViewModel.subdivisionsData.observe(this) { dataChanged() }
+        metronomeViewModel.tempoData.observe(this) { dataChanged() }
+    }
+
+    private fun dataChanged() {
+        if (metronomeViewModel.playing.value == true) {
+            resetTimer()
+            scheduleTickerTask()
+            Log.i(TAG, "Adjusted metronome")
+        }
+    }
+
+    private fun resetTimer() {
+        timer.cancel()
+        timer = Timer()
+    }
+
+    private fun scheduleTickerTask() {
+        timer.scheduleAtFixedRate(getTickerTask(), NO_DELAY, calculateTickerPeriod())
+    }
+
+    private fun getTickerTask() = object : TimerTask() {
+        override fun run() {
+            Log.d(TAG, "Playing tick $counter")
+            val streamId = playTick()
+            Log.v(TAG, "Started stream with ID <$streamId>")
+            counter++
+        }
+    }
+
+    private fun playTick(): Int {
+        return when {
+            isStrongTick() -> play(strongTickSoundId)
+            isWeakTick() -> play(weakTickSoundId)
+            else -> play(subTickSoundId)
+        }
+    }
+
+    private fun calculateTickerPeriod() = MINUTE_IN_MILLIS / getTempo() / getSubdivisions()
+
+    private fun isStrongTick() = counter % (getBeats() * getSubdivisions()) == 0L
+
+    private fun isWeakTick() = counter % getSubdivisions() == 0L
+
+    private fun play(soundId: Int) = soundPool.play(
+        soundId,
+        VOLUME_MAX,
+        VOLUME_MAX,
+        DEFAULT_SOUND_PRIORITY,
+        NO_LOOP,
+        NORMAL_PLAYBACK
+    )
+
+    private fun buildSoundPool() = SoundPool.Builder()
+        .setMaxStreams(MAX_STREAMS)
+        .setAudioAttributes(
+            AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
+                .build()
+        )
+        .build()
+
+    private fun getBeats() = metronomeViewModel.beatsData.value!!.value
+
+    private fun getSubdivisions() = metronomeViewModel.subdivisionsData.value!!.value
+
+    private fun getTempo() = metronomeViewModel.tempoData.value!!.value
+
+    override fun onPause() {
+        super.onPause()
+        metronomeViewModel.playing.value = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        soundPool.release()
+        strongTickSoundId = SOUND_ID_UNINITIALIZED
+        weakTickSoundId = SOUND_ID_UNINITIALIZED
+        subTickSoundId = SOUND_ID_UNINITIALIZED
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -129,8 +226,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateNightModeIcon() {
         optionsMenu
-            ?.findItem(R.id.action_night_mode)
-            ?.setIcon(getNightModeIcon())
+            .findItem(R.id.action_night_mode)
+            .setIcon(getNightModeIcon())
     }
 
     @DrawableRes

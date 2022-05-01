@@ -16,29 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.view
+package com.bobek.metronome.view.adapter
 
 import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
-import androidx.databinding.InverseBindingListener
-import com.google.android.material.slider.Slider
+import com.google.android.material.textfield.TextInputLayout
 
-object SliderAdapter {
+object TextInputLayoutAdapter {
 
-    @BindingAdapter("android:value")
+    @BindingAdapter("error")
     @JvmStatic
-    fun setValue(slider: Slider, newValue: Float) {
-        if (slider.value != newValue) {
-            slider.value = newValue
+    fun setError(textInputLayout: TextInputLayout, error: Boolean) {
+        if (error) {
+            textInputLayout.error = " ";
+        } else {
+            textInputLayout.error = null;
         }
     }
-
-    @InverseBindingAdapter(attribute = "android:value")
-    @JvmStatic
-    fun getValue(slider: Slider): Float = slider.value
-
-    @BindingAdapter("android:valueAttrChanged")
-    @JvmStatic
-    fun setListener(slider: Slider, attrChange: InverseBindingListener) =
-        slider.addOnChangeListener { _, _, _ -> attrChange.onChange() }
 }
