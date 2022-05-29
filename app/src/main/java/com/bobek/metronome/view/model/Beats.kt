@@ -23,7 +23,7 @@ import androidx.databinding.InverseMethod
 data class Beats(val value: Int = MIN) {
 
     init {
-        require(value in MIN..MAX) { "value must be between $MIN and $MAX" }
+        require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
     }
 
     companion object {

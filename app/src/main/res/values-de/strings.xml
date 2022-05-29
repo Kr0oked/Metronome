@@ -24,7 +24,12 @@
     <string name="action_night_mode">Nachtmodus wechseln</string>
     <string name="about">Über die App</string>
 
+    <string name="beats_label">Schläge</string>
+    <string name="subdivisions_label">Unterteilungen</string>
+    <string name="tempo_label">Tempo in BPM</string>
+
     <string name="start_stop_button_description">Startet oder stoppt das Metronom</string>
+    <string name="beat_visualization_image_description">Visulisierung der Schläge</string>
 
     <string name="ok">OK</string>
 

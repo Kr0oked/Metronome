@@ -112,7 +112,7 @@ class MetronomeViewModel {
         return "MetronomeViewModel(" +
                 "beats=${beatsData.value?.value}, " +
                 "subdivisions=${subdivisionsData.value?.value}, " +
-                "tempo=${tempoData.value?.value}," +
+                "tempo=${tempoData.value?.value}, " +
                 "playing=${playing.value}" +
                 ")"
     }

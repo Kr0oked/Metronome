@@ -21,4 +21,6 @@
 <resources>
     <dimen name="root_layout_padding">8dp</dimen>
     <dimen name="metronom_values_text_width">50dp</dimen>
+    <dimen name="slider_auto_size">0dp</dimen>
+    <dimen name="beat_visualization_size">40dp</dimen>
 </resources>
