@@ -44,7 +44,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.*
 
 private const val TAG = "MainActivity"
-private const val NO_DELAY = 0L
 private const val MINUTE_IN_MILLIS = 60_000L
 private const val MAX_STREAMS = 8
 private const val DEFAULT_SOUND_PRIORITY = 1
@@ -68,6 +67,7 @@ class MainActivity : AppCompatActivity() {
     private var subTickSoundId = SOUND_ID_UNINITIALIZED
 
     private var counter = 0L
+    private var lastTickTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,7 +103,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun startMetronome() {
         resetTimer()
-        scheduleTickerTask()
+        lastTickTime = System.currentTimeMillis()
+        timer.scheduleAtFixedRate(getTickerTask(), Date(lastTickTime), calculateTickerPeriod())
         Log.i(TAG, "Started metronome")
     }
 
@@ -132,16 +133,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun dataChanged() {
         if (metronomeViewModel.playing.value == true) {
-            resetTimer()
-            scheduleTickerTask()
-            Log.i(TAG, "Adjusted metronome")
+            adjustMetronome()
         }
     }
 
-    private fun scheduleTickerTask() = timer.scheduleAtFixedRate(getTickerTask(), NO_DELAY, calculateTickerPeriod())
+    private fun adjustMetronome() {
+        resetTimer()
+        val tickerPeriod = calculateTickerPeriod()
+        val startTime = lastTickTime + tickerPeriod
+        timer.scheduleAtFixedRate(getTickerTask(), Date(startTime), tickerPeriod)
+        Log.i(TAG, "Adjusted metronome")
+    }
 
     private fun getTickerTask() = object : TimerTask() {
         override fun run() {
+            lastTickTime = System.currentTimeMillis()
             val currentBeat = getCurrentBeat()
             val currentTickType = getCurrentTickType()
             Log.d(TAG, "Playing tick $counter which is beat $currentBeat and $currentTickType")
