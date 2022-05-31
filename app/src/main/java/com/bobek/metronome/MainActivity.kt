@@ -29,6 +29,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 import android.widget.ImageView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -102,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         .build()
 
     private fun startMetronome() {
+        window.addFlags(FLAG_KEEP_SCREEN_ON)
         resetTimer()
         lastTickTime = System.currentTimeMillis()
         timer.scheduleAtFixedRate(getTickerTask(), Date(lastTickTime), calculateTickerPeriod())
@@ -109,6 +111,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun stopMetronome() {
+        window.clearFlags(FLAG_KEEP_SCREEN_ON)
         resetTimer()
         counter = 0L
         Log.i(TAG, "Stopped metronome")
