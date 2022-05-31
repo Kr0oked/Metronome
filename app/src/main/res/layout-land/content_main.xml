@@ -232,7 +232,7 @@
                         app:layout_constraintEnd_toStartOf="@id/beats_visualization_2_image"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/colorPrimaryDark" />
+                        app:tint="@color/beat_visualization_strong" />
 
                 <ImageView
                         android:id="@+id/beats_visualization_2_image"
@@ -244,7 +244,7 @@
                         app:layout_constraintEnd_toStartOf="@id/beats_visualization_3_image"
                         app:layout_constraintStart_toEndOf="@+id/beats_visualization_1_image"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/colorPrimary" />
+                        app:tint="@color/beat_visualization_weak" />
 
                 <ImageView
                         android:id="@+id/beats_visualization_3_image"
@@ -256,7 +256,7 @@
                         app:layout_constraintEnd_toStartOf="@id/beats_visualization_4_image"
                         app:layout_constraintStart_toEndOf="@+id/beats_visualization_2_image"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/colorPrimary" />
+                        app:tint="@color/beat_visualization_weak" />
 
                 <ImageView
                         android:id="@+id/beats_visualization_4_image"
@@ -268,7 +268,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/beats_visualization_3_image"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/colorPrimary" />
+                        app:tint="@color/beat_visualization_weak" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -289,7 +289,7 @@
                         app:layout_constraintEnd_toStartOf="@id/beats_visualization_6_image"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/colorPrimary" />
+                        app:tint="@color/beat_visualization_weak" />
 
                 <ImageView
                         android:id="@+id/beats_visualization_6_image"
@@ -301,7 +301,7 @@
                         app:layout_constraintEnd_toStartOf="@id/beats_visualization_7_image"
                         app:layout_constraintStart_toEndOf="@+id/beats_visualization_5_image"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/colorPrimary" />
+                        app:tint="@color/beat_visualization_weak" />
 
                 <ImageView
                         android:id="@+id/beats_visualization_7_image"
@@ -313,7 +313,7 @@
                         app:layout_constraintEnd_toStartOf="@id/beats_visualization_8_image"
                         app:layout_constraintStart_toEndOf="@+id/beats_visualization_6_image"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/colorPrimary" />
+                        app:tint="@color/beat_visualization_weak" />
 
                 <ImageView
                         android:id="@+id/beats_visualization_8_image"
@@ -325,7 +325,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/beats_visualization_7_image"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/colorPrimary" />
+                        app:tint="@color/beat_visualization_weak" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -336,7 +336,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/start_stop_button_description"
                     android:onClick="@{() -> metronome.startStop()}"
-                    app:backgroundTint="@color/colorPrimary"
+                    app:backgroundTint="@color/color_primary"
                     app:elevation="0dp"
                     app:fabCustomSize="70dp"
                     app:layout_constraintBottom_toBottomOf="parent"

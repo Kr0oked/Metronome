@@ -185,13 +185,13 @@ class MainActivity : AppCompatActivity() {
         if (tickType == TickType.STRONG) {
             getBeatsVisualizations()[beat]?.also {
                 runOnUiThread {
-                    visualizeTick(it, R.color.colorSecondaryDark, R.color.colorPrimaryDark)
+                    visualizeTick(it, R.color.beat_visualization_strong_tick, R.color.beat_visualization_strong)
                 }
             }
         } else if (tickType == TickType.WEAK) {
             getBeatsVisualizations()[beat]?.also {
                 runOnUiThread {
-                    visualizeTick(it, R.color.colorSecondary, R.color.colorPrimary)
+                    visualizeTick(it, R.color.beat_visualization_weak_tick, R.color.beat_visualization_weak)
                 }
             }
         }
