@@ -43,6 +43,7 @@
                     android:layout_height="@dimen/beat_visualization_size"
                     android:contentDescription="@string/beat_visualization_image_description"
                     android:src="@drawable/ic_circle"
+                    android:visibility="@{metronome.beatsData.value >= 1 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toStartOf="@id/beats_visualization_2_image"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -54,6 +55,7 @@
                     android:layout_height="@dimen/beat_visualization_size"
                     android:contentDescription="@string/beat_visualization_image_description"
                     android:src="@drawable/ic_circle"
+                    android:visibility="@{metronome.beatsData.value >= 2 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toStartOf="@id/beats_visualization_3_image"
                     app:layout_constraintStart_toEndOf="@+id/beats_visualization_1_image"
                     app:layout_constraintTop_toTopOf="parent"
@@ -65,6 +67,7 @@
                     android:layout_height="@dimen/beat_visualization_size"
                     android:contentDescription="@string/beat_visualization_image_description"
                     android:src="@drawable/ic_circle"
+                    android:visibility="@{metronome.beatsData.value >= 3 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toStartOf="@id/beats_visualization_4_image"
                     app:layout_constraintStart_toEndOf="@+id/beats_visualization_2_image"
                     app:layout_constraintTop_toTopOf="parent"
@@ -76,6 +79,7 @@
                     android:layout_height="@dimen/beat_visualization_size"
                     android:contentDescription="@string/beat_visualization_image_description"
                     android:src="@drawable/ic_circle"
+                    android:visibility="@{metronome.beatsData.value >= 4 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toStartOf="@id/beats_visualization_5_image"
                     app:layout_constraintStart_toEndOf="@+id/beats_visualization_3_image"
                     app:layout_constraintTop_toTopOf="parent"
@@ -87,6 +91,7 @@
                     android:layout_height="@dimen/beat_visualization_size"
                     android:contentDescription="@string/beat_visualization_image_description"
                     android:src="@drawable/ic_circle"
+                    android:visibility="@{metronome.beatsData.value >= 5 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toStartOf="@id/beats_visualization_6_image"
                     app:layout_constraintStart_toEndOf="@+id/beats_visualization_4_image"
                     app:layout_constraintTop_toTopOf="parent"
@@ -98,6 +103,7 @@
                     android:layout_height="@dimen/beat_visualization_size"
                     android:contentDescription="@string/beat_visualization_image_description"
                     android:src="@drawable/ic_circle"
+                    android:visibility="@{metronome.beatsData.value >= 6 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toStartOf="@id/beats_visualization_7_image"
                     app:layout_constraintStart_toEndOf="@+id/beats_visualization_5_image"
                     app:layout_constraintTop_toTopOf="parent"
@@ -109,6 +115,7 @@
                     android:layout_height="@dimen/beat_visualization_size"
                     android:contentDescription="@string/beat_visualization_image_description"
                     android:src="@drawable/ic_circle"
+                    android:visibility="@{metronome.beatsData.value >= 7 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toStartOf="@id/beats_visualization_8_image"
                     app:layout_constraintStart_toEndOf="@+id/beats_visualization_6_image"
                     app:layout_constraintTop_toTopOf="parent"
@@ -120,6 +127,7 @@
                     android:layout_height="@dimen/beat_visualization_size"
                     android:contentDescription="@string/beat_visualization_image_description"
                     android:src="@drawable/ic_circle"
+                    android:visibility="@{metronome.beatsData.value >= 8 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/beats_visualization_7_image"
                     app:layout_constraintTop_toTopOf="parent"
@@ -309,6 +317,8 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
+
+        <import type="android.view.View" />
 
         <import type="com.bobek.metronome.view.model.Beats" />
 

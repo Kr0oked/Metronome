@@ -27,8 +27,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 import android.widget.ImageView
 import androidx.annotation.ColorRes
@@ -86,7 +84,6 @@ class MainActivity : AppCompatActivity() {
 
         metronomeViewModel.playing.observe(this) { playing -> if (playing) startMetronome() }
         metronomeViewModel.playing.observe(this) { playing -> if (!playing) stopMetronome() }
-        metronomeViewModel.beatsData.observe(this) { setupBeatsVisualizations() }
         metronomeViewModel.beatsData.observe(this) { dataChanged() }
         metronomeViewModel.subdivisionsData.observe(this) { dataChanged() }
         metronomeViewModel.tempoData.observe(this) { dataChanged() }
@@ -120,18 +117,6 @@ class MainActivity : AppCompatActivity() {
     private fun resetTimer() {
         timer.cancel()
         timer = Timer()
-    }
-
-    private fun setupBeatsVisualizations() {
-        getBeatsVisualizations().forEach { (beats, visualization) ->
-            run {
-                if (beats <= getBeats().value) {
-                    visualization.visibility = VISIBLE
-                } else {
-                    visualization.visibility = GONE
-                }
-            }
-        }
     }
 
     private fun dataChanged() {
