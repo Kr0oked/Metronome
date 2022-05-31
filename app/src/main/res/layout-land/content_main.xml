@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of Metronome.
+  ~ Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Metronome is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".MainActivity"
+        tools:showIn="@layout/activity_main">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/section_left"
+                app:layout_constraintHorizontal_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:padding="@dimen/root_layout_padding"
+                app:layout_constraintEnd_toStartOf="@id/section_right"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/beats_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@id/subdivisions_section"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.slider.Slider
+                        android:id="@+id/beats_slider"
+                        android:layout_width="@dimen/slider_auto_size"
+                        android:layout_height="wrap_content"
+                        android:stepSize="1.0"
+                        android:value="@={Beats.beatsToFloat(metronome.beatsData)}"
+                        android:valueFrom="@{Beats.MIN}"
+                        android:valueTo="@{Beats.MAX}"
+                        app:layout_constraintEnd_toStartOf="@id/beats_edit_layout"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/beats_label_text" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/beats_edit_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        error="@{metronome.beatsTextError}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/beats_edit_hint"
+                        app:errorEnabled="true"
+                        app:hintEnabled="false"
+                        app:layout_constraintBottom_toBottomOf="@+id/beats_slider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/beats_slider"
+                        app:layout_constraintTop_toTopOf="@+id/beats_slider">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/beats_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:maxLength="1"
+                            android:text="@={metronome.beatsText}"
+                            android:textAlignment="center" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/beats_label_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@id/beats_slider"
+                        android:text="@string/beats_label"
+                        app:layout_constraintBottom_toTopOf="@+id/beats_slider"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/subdivisions_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@id/tempo_section"
+                    app:layout_constraintTop_toBottomOf="@id/beats_section">
+
+                <com.google.android.material.slider.Slider
+                        android:id="@+id/subdivisions_slider"
+                        android:layout_width="@dimen/slider_auto_size"
+                        android:layout_height="wrap_content"
+                        android:stepSize="1.0"
+                        android:value="@={Subdivisions.subdivisionsToFloat(metronome.subdivisionsData)}"
+                        android:valueFrom="@{Subdivisions.MIN}"
+                        android:valueTo="@{Subdivisions.MAX}"
+                        app:layout_constraintEnd_toStartOf="@id/subdivisions_edit_layout"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/subdivisions_label_text" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/subdivisions_edit_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        error="@{metronome.subdivisionsTextError}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/subdivisions_edit_hint"
+                        app:errorEnabled="true"
+                        app:hintEnabled="false"
+                        app:layout_constraintBottom_toBottomOf="@+id/subdivisions_slider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/subdivisions_slider"
+                        app:layout_constraintTop_toTopOf="@+id/subdivisions_slider">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/subdivisions_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:maxLength="1"
+                            android:text="@={metronome.subdivisionsText}"
+                            android:textAlignment="center" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/subdivisions_label_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@id/subdivisions_slider"
+                        android:text="@string/subdivisions_label"
+                        app:layout_constraintBottom_toTopOf="@+id/subdivisions_slider"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/tempo_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/subdivisions_section">
+
+                <com.google.android.material.slider.Slider
+                        android:id="@+id/tempo_slider"
+                        android:layout_width="@dimen/slider_auto_size"
+                        android:layout_height="wrap_content"
+                        android:stepSize="2.0"
+                        android:value="@={Tempo.tempoToFloat(metronome.tempoData)}"
+                        android:valueFrom="@{Tempo.MIN}"
+                        android:valueTo="@{Tempo.MAX}"
+                        app:layout_constraintEnd_toStartOf="@id/tempo_edit_layout"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tempo_label_text" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tempo_edit_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        error="@{metronome.tempoTextError}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/tempo_edit_hint"
+                        app:errorEnabled="true"
+                        app:hintEnabled="false"
+                        app:layout_constraintBottom_toBottomOf="@+id/tempo_slider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tempo_slider"
+                        app:layout_constraintTop_toTopOf="@+id/tempo_slider">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/tempo_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:maxLength="3"
+                            android:text="@={metronome.tempoText}"
+                            android:textAlignment="center" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tempo_label_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@id/tempo_slider"
+                        android:text="@string/tempo_label"
+                        app:layout_constraintBottom_toTopOf="@+id/tempo_slider"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/section_right"
+                app:layout_constraintHorizontal_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:padding="@dimen/root_layout_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/section_left"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/beats_visualizations_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                        android:id="@+id/beats_visualization_1_image"
+                        android:layout_width="@dimen/beat_visualization_size"
+                        android:layout_height="@dimen/beat_visualization_size"
+                        android:contentDescription="@string/beat_visualization_image_description"
+                        android:src="@drawable/ic_circle"
+                        app:layout_constraintEnd_toStartOf="@id/beats_visualization_2_image"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/colorPrimaryDark" />
+
+                <ImageView
+                        android:id="@+id/beats_visualization_2_image"
+                        android:layout_width="@dimen/beat_visualization_size"
+                        android:layout_height="@dimen/beat_visualization_size"
+                        android:contentDescription="@string/beat_visualization_image_description"
+                        android:src="@drawable/ic_circle"
+                        app:layout_constraintEnd_toStartOf="@id/beats_visualization_3_image"
+                        app:layout_constraintStart_toEndOf="@+id/beats_visualization_1_image"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/colorPrimary" />
+
+                <ImageView
+                        android:id="@+id/beats_visualization_3_image"
+                        android:layout_width="@dimen/beat_visualization_size"
+                        android:layout_height="@dimen/beat_visualization_size"
+                        android:contentDescription="@string/beat_visualization_image_description"
+                        android:src="@drawable/ic_circle"
+                        app:layout_constraintEnd_toStartOf="@id/beats_visualization_4_image"
+                        app:layout_constraintStart_toEndOf="@+id/beats_visualization_2_image"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/colorPrimary" />
+
+                <ImageView
+                        android:id="@+id/beats_visualization_4_image"
+                        android:layout_width="@dimen/beat_visualization_size"
+                        android:layout_height="@dimen/beat_visualization_size"
+                        android:contentDescription="@string/beat_visualization_image_description"
+                        android:src="@drawable/ic_circle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/beats_visualization_3_image"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/colorPrimary" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/beats_visualizations_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/root_layout_padding"
+                    app:layout_constraintTop_toBottomOf="@id/beats_visualizations_1">
+
+                <ImageView
+                        android:id="@+id/beats_visualization_5_image"
+                        android:layout_width="@dimen/beat_visualization_size"
+                        android:layout_height="@dimen/beat_visualization_size"
+                        android:contentDescription="@string/beat_visualization_image_description"
+                        android:src="@drawable/ic_circle"
+                        app:layout_constraintEnd_toStartOf="@id/beats_visualization_6_image"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/colorPrimary" />
+
+                <ImageView
+                        android:id="@+id/beats_visualization_6_image"
+                        android:layout_width="@dimen/beat_visualization_size"
+                        android:layout_height="@dimen/beat_visualization_size"
+                        android:contentDescription="@string/beat_visualization_image_description"
+                        android:src="@drawable/ic_circle"
+                        app:layout_constraintEnd_toStartOf="@id/beats_visualization_7_image"
+                        app:layout_constraintStart_toEndOf="@+id/beats_visualization_5_image"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/colorPrimary" />
+
+                <ImageView
+                        android:id="@+id/beats_visualization_7_image"
+                        android:layout_width="@dimen/beat_visualization_size"
+                        android:layout_height="@dimen/beat_visualization_size"
+                        android:contentDescription="@string/beat_visualization_image_description"
+                        android:src="@drawable/ic_circle"
+                        app:layout_constraintEnd_toStartOf="@id/beats_visualization_8_image"
+                        app:layout_constraintStart_toEndOf="@+id/beats_visualization_6_image"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/colorPrimary" />
+
+                <ImageView
+                        android:id="@+id/beats_visualization_8_image"
+                        android:layout_width="@dimen/beat_visualization_size"
+                        android:layout_height="@dimen/beat_visualization_size"
+                        android:contentDescription="@string/beat_visualization_image_description"
+                        android:src="@drawable/ic_circle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/beats_visualization_7_image"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/colorPrimary" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/start_stop_button"
+                    playing="@{metronome.playing}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/start_stop_button_description"
+                    android:onClick="@{() -> metronome.startStop()}"
+                    app:backgroundTint="@color/colorPrimary"
+                    app:elevation="0dp"
+                    app:fabCustomSize="70dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <import type="com.bobek.metronome.view.model.Beats" />
+
+        <import type="com.bobek.metronome.view.model.Subdivisions" />
+
+        <import type="com.bobek.metronome.view.model.Tempo" />
+
+        <variable
+                name="metronome"
+                type="com.bobek.metronome.view.model.MetronomeViewModel" />
+    </data>
+
+</layout>
