@@ -129,31 +129,22 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/beats_section"
-                app:layout_constraintTop_toBottomOf="@id/beats_visualizations"
-                app:layout_constraintBottom_toTopOf="@id/subdivisions_section"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/beats_label_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@id/beats_slider"
-                    android:text="@string/beats_label"
-                    app:layout_constraintBottom_toTopOf="@+id/beats_slider"
-                    app:layout_constraintStart_toStartOf="parent" />
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/subdivisions_section"
+                app:layout_constraintTop_toBottomOf="@id/beats_visualizations">
 
             <com.google.android.material.slider.Slider
                     android:id="@+id/beats_slider"
                     android:layout_width="@dimen/slider_auto_size"
                     android:layout_height="wrap_content"
-                    android:stepSize="1"
+                    android:stepSize="1.0"
                     android:value="@={Beats.beatsToFloat(metronome.beatsData)}"
                     android:valueFrom="@{Beats.MIN}"
                     android:valueTo="@{Beats.MAX}"
-                    app:layout_constraintTop_toBottomOf="@id/beats_label_text"
                     app:layout_constraintEnd_toStartOf="@id/beats_edit_layout"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/beats_label_text" />
 
             <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/beats_edit_layout"
@@ -161,7 +152,9 @@
                     error="@{metronome.beatsTextError}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:hint="@string/beats_edit_hint"
                     app:errorEnabled="true"
+                    app:hintEnabled="false"
                     app:layout_constraintBottom_toBottomOf="@+id/beats_slider"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/beats_slider"
@@ -178,35 +171,35 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/beats_label_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@id/beats_slider"
+                    android:text="@string/beats_label"
+                    app:layout_constraintBottom_toTopOf="@+id/beats_slider"
+                    app:layout_constraintStart_toStartOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/subdivisions_section"
-                app:layout_constraintTop_toBottomOf="@id/beats_section"
-                app:layout_constraintBottom_toTopOf="@id/tempo_section"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/subdivisions_label_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@id/subdivisions_slider"
-                    android:text="@string/subdivisions_label"
-                    app:layout_constraintBottom_toTopOf="@+id/subdivisions_slider"
-                    app:layout_constraintStart_toStartOf="parent" />
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/tempo_section"
+                app:layout_constraintTop_toBottomOf="@id/beats_section">
 
             <com.google.android.material.slider.Slider
                     android:id="@+id/subdivisions_slider"
                     android:layout_width="@dimen/slider_auto_size"
                     android:layout_height="wrap_content"
-                    android:stepSize="1"
+                    android:stepSize="1.0"
                     android:value="@={Subdivisions.subdivisionsToFloat(metronome.subdivisionsData)}"
                     android:valueFrom="@{Subdivisions.MIN}"
                     android:valueTo="@{Subdivisions.MAX}"
-                    app:layout_constraintTop_toBottomOf="@id/subdivisions_label_text"
                     app:layout_constraintEnd_toStartOf="@id/subdivisions_edit_layout"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/subdivisions_label_text" />
 
             <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/subdivisions_edit_layout"
@@ -214,7 +207,9 @@
                     error="@{metronome.subdivisionsTextError}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:hint="@string/subdivisions_edit_hint"
                     app:errorEnabled="true"
+                    app:hintEnabled="false"
                     app:layout_constraintBottom_toBottomOf="@+id/subdivisions_slider"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/subdivisions_slider"
@@ -231,35 +226,35 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/subdivisions_label_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@id/subdivisions_slider"
+                    android:text="@string/subdivisions_label"
+                    app:layout_constraintBottom_toTopOf="@+id/subdivisions_slider"
+                    app:layout_constraintStart_toStartOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                app:layout_constraintTop_toBottomOf="@id/subdivisions_section"
-                app:layout_constraintBottom_toTopOf="@id/start_stop_button"
                 android:id="@+id/tempo_section"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tempo_label_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@id/tempo_slider"
-                    android:text="@string/tempo_label"
-                    app:layout_constraintBottom_toTopOf="@+id/tempo_slider"
-                    app:layout_constraintStart_toStartOf="parent" />
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/start_stop_button"
+                app:layout_constraintTop_toBottomOf="@id/subdivisions_section">
 
             <com.google.android.material.slider.Slider
                     android:id="@+id/tempo_slider"
                     android:layout_width="@dimen/slider_auto_size"
                     android:layout_height="wrap_content"
-                    android:stepSize="2"
+                    android:stepSize="2.0"
                     android:value="@={Tempo.tempoToFloat(metronome.tempoData)}"
                     android:valueFrom="@{Tempo.MIN}"
                     android:valueTo="@{Tempo.MAX}"
-                    app:layout_constraintTop_toBottomOf="@id/tempo_label_text"
                     app:layout_constraintEnd_toStartOf="@id/tempo_edit_layout"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tempo_label_text" />
 
             <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tempo_edit_layout"
@@ -267,7 +262,9 @@
                     error="@{metronome.tempoTextError}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:hint="@string/tempo_edit_hint"
                     app:errorEnabled="true"
+                    app:hintEnabled="false"
                     app:layout_constraintBottom_toBottomOf="@+id/tempo_slider"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/tempo_slider"
@@ -283,6 +280,15 @@
                         android:textAlignment="center" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tempo_label_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@id/tempo_slider"
+                    android:text="@string/tempo_label"
+                    app:layout_constraintBottom_toTopOf="@+id/tempo_slider"
+                    app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
