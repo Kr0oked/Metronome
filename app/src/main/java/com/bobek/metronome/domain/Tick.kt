@@ -16,26 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.view.model
+package com.bobek.metronome.domain
 
-import androidx.databinding.InverseMethod
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-data class Beats(val value: Int = MIN) {
+@Parcelize
+data class Tick(val beat: Int, val type: TickType) : Parcelable {
 
     init {
-        require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
-    }
-
-    companion object {
-        const val MIN = 1
-        const val MAX = 8
-
-        @InverseMethod("floatToBeats")
-        @JvmStatic
-        fun beatsToFloat(beats: Beats): Float = beats.value.toFloat()
-
-        @JvmStatic
-        fun floatToBeats(float: Float): Beats = Beats(float.toInt())
+        require(beat in Beats.MIN..Beats.MAX) { "beat must be between ${Beats.MIN} and ${Beats.MAX} but was $beat" }
     }
 }
-

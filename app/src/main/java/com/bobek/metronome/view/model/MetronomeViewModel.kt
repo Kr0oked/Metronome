@@ -20,20 +20,23 @@ package com.bobek.metronome.view.model
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.bobek.metronome.domain.Beats
+import com.bobek.metronome.domain.Subdivisions
+import com.bobek.metronome.domain.Tempo
 
 private const val TAG = "MetronomeViewModel"
 
 class MetronomeViewModel {
 
-    val beatsData = MutableLiveData(Beats(4))
+    val beatsData = MutableLiveData(Beats())
     val beatsText = MutableLiveData("")
     val beatsTextError = MutableLiveData(false)
 
-    val subdivisionsData = MutableLiveData(Subdivisions(1))
+    val subdivisionsData = MutableLiveData(Subdivisions())
     val subdivisionsText = MutableLiveData("")
     val subdivisionsTextError = MutableLiveData(false)
 
-    val tempoData = MutableLiveData(Tempo(80))
+    val tempoData = MutableLiveData(Tempo())
     val tempoText = MutableLiveData("")
     val tempoTextError = MutableLiveData(false)
 

@@ -16,25 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.view.model
+package com.bobek.metronome.domain
 
 import androidx.databinding.InverseMethod
 
-data class Tempo(val value: Int = MIN) {
+data class Subdivisions(val value: Int = DEFAULT) {
 
     init {
         require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
     }
 
     companion object {
-        const val MIN = 40
-        const val MAX = 208
+        const val MIN = 1
+        const val MAX = 4
+        const val DEFAULT = 1
 
-        @InverseMethod("floatToTempo")
+        @InverseMethod("floatToSubdivisions")
         @JvmStatic
-        fun tempoToFloat(tempo: Tempo): Float = tempo.value.toFloat()
+        fun subdivisionsToFloat(subdivisions: Subdivisions): Float = subdivisions.value.toFloat()
 
         @JvmStatic
-        fun floatToTempo(float: Float): Tempo = Tempo(float.toInt())
+        fun floatToSubdivisions(float: Float): Subdivisions = Subdivisions(float.toInt())
     }
 }

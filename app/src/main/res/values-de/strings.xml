@@ -36,6 +36,10 @@
     <string name="start_stop_button_description">Startet oder stoppt das Metronom</string>
     <string name="beat_visualization_image_description">Visulisierung der Schläge</string>
 
+    <string name="notification_channel_playback_name">Wiederagbe</string>
+    <string name="notification_channel_playback_description">Momentane Metronom Wiedergabe</string>
+    <string name="notification_playback_title">Metronom läuft</string>
+
     <string name="ok">OK</string>
 
     <string name="version">Version %s</string>

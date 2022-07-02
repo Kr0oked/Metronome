@@ -18,10 +18,10 @@
 
 package com.bobek.metronome
 
+import android.content.*
 import android.content.res.ColorStateList
-import android.media.AudioAttributes
-import android.media.SoundPool
 import android.os.Bundle
+import android.os.IBinder
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,210 +36,167 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.NightMode
 import androidx.core.content.ContextCompat.getColor
 import androidx.databinding.DataBindingUtil
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.ActivityMainBinding
+import com.bobek.metronome.domain.Tick
+import com.bobek.metronome.domain.TickType
 import com.bobek.metronome.view.model.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.util.*
 
 private const val TAG = "MainActivity"
-private const val MINUTE_IN_MILLIS = 60_000L
-private const val MAX_STREAMS = 8
-private const val DEFAULT_SOUND_PRIORITY = 1
-private const val NO_LOOP = 0
-private const val VOLUME_MAX = 1.0f
-private const val NORMAL_PLAYBACK = 1.0f
-private const val SOUND_ID_UNINITIALIZED = -1
+private const val TICK_VISUALIZATION_DURATION_MILLIS = 200L
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var optionsMenu: Menu
+    private val metronomeServiceConnection = MetronomeServiceConnection()
+    private val tickReceiver = TickReceiver()
+
+    private lateinit var viewModel: MetronomeViewModel
     private lateinit var binding: ActivityMainBinding
-    private lateinit var soundPool: SoundPool
+    private lateinit var optionsMenu: Menu
 
-    private val metronomeViewModel = MetronomeViewModel()
-
-    private var timer = Timer()
-
-    private var strongTickSoundId = SOUND_ID_UNINITIALIZED
-    private var weakTickSoundId = SOUND_ID_UNINITIALIZED
-    private var subTickSoundId = SOUND_ID_UNINITIALIZED
-
-    private var counter = 0L
-    private var lastTickTime = 0L
+    private var metronomeService: MetronomeService? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel = MetronomeViewModel()
+        viewModel.playing.observe(this) { playing -> if (playing) startMetronome() }
+        viewModel.playing.observe(this) { playing -> if (!playing) stopMetronome() }
+        viewModel.beatsData.observe(this) { beats -> metronomeService?.beats = beats }
+        viewModel.subdivisionsData.observe(this) { subdivisions -> metronomeService?.subdivisions = subdivisions }
+        viewModel.tempoData.observe(this) { tempo -> metronomeService?.tempo = tempo }
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
-        binding.metronome = metronomeViewModel
+        binding.metronome = viewModel
 
         setSupportActionBar(binding.toolbar)
 
-        soundPool = buildSoundPool()
-        strongTickSoundId = soundPool.load(this, R.raw.strong_tick, DEFAULT_SOUND_PRIORITY)
-        weakTickSoundId = soundPool.load(this, R.raw.weak_tick, DEFAULT_SOUND_PRIORITY)
-        subTickSoundId = soundPool.load(this, R.raw.sub_tick, DEFAULT_SOUND_PRIORITY)
-
-        metronomeViewModel.playing.observe(this) { playing -> if (playing) startMetronome() }
-        metronomeViewModel.playing.observe(this) { playing -> if (!playing) stopMetronome() }
-        metronomeViewModel.beatsData.observe(this) { dataChanged() }
-        metronomeViewModel.subdivisionsData.observe(this) { dataChanged() }
-        metronomeViewModel.tempoData.observe(this) { dataChanged() }
+        startAndBindToMetronomeService()
     }
 
-    private fun buildSoundPool() = SoundPool.Builder()
-        .setMaxStreams(MAX_STREAMS)
-        .setAudioAttributes(
-            AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_MEDIA)
-                .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
-                .build()
-        )
-        .build()
+    private fun startAndBindToMetronomeService() {
+        Intent(this, MetronomeService::class.java)
+            .also { service -> startService(service) }
+            .also { Log.d(TAG, "MetronomeService started") }
+            .also { service -> bindService(service, metronomeServiceConnection, BIND_ABOVE_CLIENT) }
+            .also { Log.d(TAG, "MetronomeService binding") }
+    }
 
     private fun startMetronome() {
+        metronomeService?.playing = true
         window.addFlags(FLAG_KEEP_SCREEN_ON)
-        resetTimer()
-        lastTickTime = System.currentTimeMillis()
-        timer.scheduleAtFixedRate(getTickerTask(), Date(lastTickTime), calculateTickerPeriod())
         Log.i(TAG, "Started metronome")
     }
 
     private fun stopMetronome() {
+        metronomeService?.playing = false
         window.clearFlags(FLAG_KEEP_SCREEN_ON)
-        resetTimer()
-        counter = 0L
         Log.i(TAG, "Stopped metronome")
     }
 
-    private fun resetTimer() {
-        timer.cancel()
-        timer = Timer()
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(tickReceiver, IntentFilter(MetronomeService.ACTION_TICK))
+        Log.d(TAG, "Registered for metronome ticks")
     }
 
-    private fun dataChanged() {
-        if (metronomeViewModel.playing.value == true) {
-            adjustMetronome()
-        }
-    }
-
-    private fun adjustMetronome() {
-        resetTimer()
-        val tickerPeriod = calculateTickerPeriod()
-        val startTime = lastTickTime + tickerPeriod
-        timer.scheduleAtFixedRate(getTickerTask(), Date(startTime), tickerPeriod)
-        Log.i(TAG, "Adjusted metronome")
-    }
-
-    private fun getTickerTask() = object : TimerTask() {
-        override fun run() {
-            lastTickTime = System.currentTimeMillis()
-            val currentBeat = getCurrentBeat()
-            val currentTickType = getCurrentTickType()
-            Log.d(TAG, "Playing tick $counter which is beat $currentBeat and $currentTickType")
-            playTick(currentTickType)
-            visualizeTick(currentBeat, currentTickType)
-            counter++
-        }
-    }
-
-    private fun getCurrentBeat() = (((counter / getSubdivisions().value) % getBeats().value) + 1).toInt()
-
-    private fun getCurrentTickType(): TickType {
-        return when {
-            isStrongTick() -> TickType.STRONG
-            isWeakTick() -> TickType.WEAK
-            else -> TickType.SUB
-        }
-    }
-
-    private fun playTick(tickType: TickType) {
-        when (tickType) {
-            TickType.STRONG -> play(strongTickSoundId)
-            TickType.WEAK -> play(weakTickSoundId)
-            TickType.SUB -> play(subTickSoundId)
-        }
-    }
-
-    private fun calculateTickerPeriod() = MINUTE_IN_MILLIS / getTempo().value / getSubdivisions().value
-
-    private fun isStrongTick() = counter % (getBeats().value * getSubdivisions().value) == 0L
-
-    private fun isWeakTick() = counter % getSubdivisions().value == 0L
-
-    private fun play(soundId: Int) {
-        val streamId = soundPool.play(
-            soundId,
-            VOLUME_MAX,
-            VOLUME_MAX,
-            DEFAULT_SOUND_PRIORITY,
-            NO_LOOP,
-            NORMAL_PLAYBACK
-        )
-        Log.v(TAG, "Started stream with ID <$streamId>")
-    }
-
-    private fun visualizeTick(beat: Int, tickType: TickType) {
-        if (tickType == TickType.STRONG) {
-            getBeatsVisualizations()[beat]?.also {
-                runOnUiThread {
-                    visualizeTick(it, R.color.beat_visualization_strong_tick, R.color.beat_visualization_strong)
-                }
-            }
-        } else if (tickType == TickType.WEAK) {
-            getBeatsVisualizations()[beat]?.also {
-                runOnUiThread {
-                    visualizeTick(it, R.color.beat_visualization_weak_tick, R.color.beat_visualization_weak)
-                }
-            }
-        }
-    }
-
-    private fun getBeatsVisualizations(): Map<Int, ImageView> {
-        return mapOf(
-            1 to binding.contentMain.beatsVisualization1Image,
-            2 to binding.contentMain.beatsVisualization2Image,
-            3 to binding.contentMain.beatsVisualization3Image,
-            4 to binding.contentMain.beatsVisualization4Image,
-            5 to binding.contentMain.beatsVisualization5Image,
-            6 to binding.contentMain.beatsVisualization6Image,
-            7 to binding.contentMain.beatsVisualization7Image,
-            8 to binding.contentMain.beatsVisualization8Image
-        )
-    }
-
-    private fun visualizeTick(image: ImageView, @ColorRes flashColorId: Int, @ColorRes originalColorId: Int) {
-        image
-            .animate()
-            .setDuration(200L)
-            .withStartAction {
-                image.imageTintList = ColorStateList.valueOf(getColor(this, flashColorId))
-            }
-            .withEndAction {
-                image.imageTintList = ColorStateList.valueOf(getColor(this, originalColorId))
-            }
-            .start()
-    }
-
-    private fun getBeats() = metronomeViewModel.beatsData.value!!
-
-    private fun getSubdivisions() = metronomeViewModel.subdivisionsData.value!!
-
-    private fun getTempo() = metronomeViewModel.tempoData.value!!
-
-    override fun onPause() {
-        super.onPause()
-        metronomeViewModel.playing.value = false
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this)
+            .unregisterReceiver(tickReceiver)
+        Log.d(TAG, "Unregistered for metronome ticks")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        soundPool.release()
-        strongTickSoundId = SOUND_ID_UNINITIALIZED
-        weakTickSoundId = SOUND_ID_UNINITIALIZED
-        subTickSoundId = SOUND_ID_UNINITIALIZED
+        Intent(this, MetronomeService::class.java)
+            .also { unbindService(metronomeServiceConnection) }
+        Log.d(TAG, "MetronomeService unbinding")
+    }
+
+    private inner class MetronomeServiceConnection : ServiceConnection {
+
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            Log.i(TAG, "MetronomeService connected")
+            val binder = service as MetronomeService.LocalBinder
+            metronomeService = binder.getService()
+            initializeViewModel()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            Log.i(TAG, "MetronomeService disconnected")
+            metronomeService = null
+        }
+    }
+
+    private fun initializeViewModel() {
+        metronomeService?.let { service ->
+            viewModel.beatsData.value = service.beats
+            viewModel.subdivisionsData.value = service.subdivisions
+            viewModel.tempoData.value = service.tempo
+            viewModel.playing.value = service.playing
+        }
+    }
+
+    private inner class TickReceiver : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, intent: Intent) {
+            intent.getParcelableExtra<Tick>(MetronomeService.EXTRA_TICK)
+                ?.also { tick -> Log.v(TAG, "Received $tick") }
+                ?.also { tick -> visualizeTick(tick) }
+        }
+    }
+
+    private fun visualizeTick(tick: Tick) {
+        getBeatsVisualizationImage(tick.beat)
+            ?.let { image ->
+                if (tick.type == TickType.STRONG) {
+                    visualizeStrongTick(image)
+                } else if (tick.type == TickType.WEAK) {
+                    visualizeWeakTick(image)
+                }
+            }
+    }
+
+    private fun getBeatsVisualizationImage(beat: Int): ImageView? {
+        return when (beat) {
+            1 -> binding.contentMain.beatsVisualization1Image
+            2 -> binding.contentMain.beatsVisualization2Image
+            3 -> binding.contentMain.beatsVisualization3Image
+            4 -> binding.contentMain.beatsVisualization4Image
+            5 -> binding.contentMain.beatsVisualization5Image
+            6 -> binding.contentMain.beatsVisualization6Image
+            7 -> binding.contentMain.beatsVisualization7Image
+            8 -> binding.contentMain.beatsVisualization8Image
+            else -> null
+        }
+    }
+
+    private fun visualizeStrongTick(image: ImageView) {
+        visualizeTick(image, R.color.beat_visualization_strong_tick, R.color.beat_visualization_strong)
+    }
+
+    private fun visualizeWeakTick(it: ImageView) {
+        visualizeTick(it, R.color.beat_visualization_weak_tick, R.color.beat_visualization_weak)
+    }
+
+    private fun visualizeTick(image: ImageView, @ColorRes flashColorId: Int, @ColorRes originalColorId: Int) {
+        runOnUiThread {
+            image
+                .animate()
+                .setDuration(TICK_VISUALIZATION_DURATION_MILLIS)
+                .withStartAction {
+                    image.imageTintList = ColorStateList.valueOf(getColor(this, flashColorId))
+                }
+                .withEndAction {
+                    image.imageTintList = ColorStateList.valueOf(getColor(this, originalColorId))
+                }
+                .start()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
