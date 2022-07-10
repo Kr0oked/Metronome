@@ -39,6 +39,7 @@
     <string name="notification_channel_playback_name">Wiederagbe</string>
     <string name="notification_channel_playback_description">Momentane Metronom Wiedergabe</string>
     <string name="notification_playback_title">Metronom läuft</string>
+    <string name="notification_playback_action_stop_title">Stopp</string>
 
     <string name="ok">OK</string>
 

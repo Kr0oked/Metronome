@@ -39,6 +39,7 @@
     <string name="notification_channel_playback_name">Playback</string>
     <string name="notification_channel_playback_description">Current metronome playback</string>
     <string name="notification_playback_title">Metronome is playing</string>
+    <string name="notification_playback_action_stop_title">Stop</string>
 
     <string name="ok">OK</string>
 

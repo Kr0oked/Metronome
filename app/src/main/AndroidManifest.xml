@@ -32,6 +32,7 @@
 
         <activity
                 android:name=".MainActivity"
+                android:launchMode="singleTask"
                 android:exported="true"
                 android:theme="@style/Theme.Metronome.NoActionBar">
             <intent-filter>

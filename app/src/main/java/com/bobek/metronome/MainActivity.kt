@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     private val metronomeServiceConnection = MetronomeServiceConnection()
     private val tickReceiver = TickReceiver()
+    private val refreshReceiver = RefreshReceiver()
 
     private lateinit var viewModel: MetronomeViewModel
     private lateinit var binding: ActivityMainBinding
@@ -74,7 +75,16 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+        registerForMetronomeActions()
         startAndBindToMetronomeService()
+    }
+
+    private fun registerForMetronomeActions() {
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(refreshReceiver, IntentFilter(MetronomeService.ACTION_REFRESH))
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(tickReceiver, IntentFilter(MetronomeService.ACTION_TICK))
+        Log.d(TAG, "Registered for metronome actions")
     }
 
     private fun startAndBindToMetronomeService() {
@@ -97,25 +107,24 @@ class MainActivity : AppCompatActivity() {
         Log.i(TAG, "Stopped metronome")
     }
 
-    override fun onStart() {
-        super.onStart()
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(tickReceiver, IntentFilter(MetronomeService.ACTION_TICK))
-        Log.d(TAG, "Registered for metronome ticks")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        LocalBroadcastManager.getInstance(this)
-            .unregisterReceiver(tickReceiver)
-        Log.d(TAG, "Unregistered for metronome ticks")
-    }
-
     override fun onDestroy() {
         super.onDestroy()
+        unregisterFromMetronomeActions()
+        unbindFromMetronomeService()
+    }
+
+    private fun unregisterFromMetronomeActions() {
+        LocalBroadcastManager.getInstance(this)
+            .unregisterReceiver(refreshReceiver)
+        LocalBroadcastManager.getInstance(this)
+            .unregisterReceiver(tickReceiver)
+        Log.d(TAG, "Unregistered for metronome actions")
+    }
+
+    private fun unbindFromMetronomeService() {
         Intent(this, MetronomeService::class.java)
             .also { unbindService(metronomeServiceConnection) }
-        Log.d(TAG, "MetronomeService unbinding")
+        Log.d(TAG, "MetronomeService unbound")
     }
 
     private inner class MetronomeServiceConnection : ServiceConnection {
@@ -124,7 +133,7 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "MetronomeService connected")
             val binder = service as MetronomeService.LocalBinder
             metronomeService = binder.getService()
-            initializeViewModel()
+            synchronizeViewModel()
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -133,17 +142,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initializeViewModel() {
-        metronomeService?.let { service ->
-            viewModel.beatsData.value = service.beats
-            viewModel.subdivisionsData.value = service.subdivisions
-            viewModel.tempoData.value = service.tempo
-            viewModel.playing.value = service.playing
-        }
-    }
-
     private inner class TickReceiver : BroadcastReceiver() {
-
         override fun onReceive(context: Context, intent: Intent) {
             intent.getParcelableExtra<Tick>(MetronomeService.EXTRA_TICK)
                 ?.also { tick -> Log.v(TAG, "Received $tick") }
@@ -196,6 +195,22 @@ class MainActivity : AppCompatActivity() {
                     image.imageTintList = ColorStateList.valueOf(getColor(this, originalColorId))
                 }
                 .start()
+        }
+    }
+
+    private inner class RefreshReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            Log.v(TAG, " Received refresh command")
+            synchronizeViewModel()
+        }
+    }
+
+    private fun synchronizeViewModel() {
+        metronomeService?.let { service ->
+            viewModel.beatsData.value = service.beats
+            viewModel.subdivisionsData.value = service.subdivisions
+            viewModel.tempoData.value = service.tempo
+            viewModel.playing.value = service.playing
         }
     }
 
