@@ -146,7 +146,7 @@
                     android:id="@+id/beats_slider"
                     android:layout_width="@dimen/slider_auto_size"
                     android:layout_height="wrap_content"
-                    android:stepSize="1.0"
+                    android:stepSize="1"
                     android:value="@={Beats.beatsToFloat(metronome.beatsData)}"
                     android:valueFrom="@{Beats.MIN}"
                     android:valueTo="@{Beats.MAX}"
@@ -201,7 +201,7 @@
                     android:id="@+id/subdivisions_slider"
                     android:layout_width="@dimen/slider_auto_size"
                     android:layout_height="wrap_content"
-                    android:stepSize="1.0"
+                    android:stepSize="1"
                     android:value="@={Subdivisions.subdivisionsToFloat(metronome.subdivisionsData)}"
                     android:valueFrom="@{Subdivisions.MIN}"
                     android:valueTo="@{Subdivisions.MAX}"
@@ -256,7 +256,7 @@
                     android:id="@+id/tempo_slider"
                     android:layout_width="@dimen/slider_auto_size"
                     android:layout_height="wrap_content"
-                    android:stepSize="2.0"
+                    android:stepSize="1"
                     android:value="@={Tempo.tempoToFloat(metronome.tempoData)}"
                     android:valueFrom="@{Tempo.MIN}"
                     android:valueTo="@{Tempo.MAX}"
@@ -300,19 +300,33 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.google.android.material.button.MaterialButton
                 android:id="@+id/start_stop_button"
                 playing="@{metronome.playing}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/start_stop_button_description"
                 android:onClick="@{() -> metronome.startStop()}"
-                app:backgroundTint="@color/color_primary"
-                app:elevation="0dp"
-                app:fabCustomSize="70dp"
+                app:icon="@drawable/ic_play_arrow"
+                app:iconGravity="textTop"
+                app:iconPadding="@dimen/no_padding"
+                app:iconSize="@dimen/button_icon_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/tap_tempo_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/tap_tempo_button_description"
+                app:icon="@drawable/ic_drum"
+                app:iconGravity="textTop"
+                app:iconPadding="@dimen/no_padding"
+                app:iconSize="@dimen/button_icon_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

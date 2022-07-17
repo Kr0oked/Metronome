@@ -20,17 +20,17 @@ package com.bobek.metronome.view.adapter
 
 import androidx.databinding.BindingAdapter
 import com.bobek.metronome.R
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.button.MaterialButton
 
-object FloatingActionButtonAdapter {
+object MaterialButtonAdapter {
 
     @BindingAdapter("playing")
     @JvmStatic
-    fun setPlaying(button: FloatingActionButton, playing: Boolean) {
+    fun setPlaying(button: MaterialButton, playing: Boolean) {
         if (playing) {
-            button.setImageResource(R.drawable.ic_pause)
+            button.setIconResource(R.drawable.ic_pause)
         } else {
-            button.setImageResource(R.drawable.ic_play_arrow)
+            button.setIconResource(R.drawable.ic_play_arrow)
         }
     }
 }

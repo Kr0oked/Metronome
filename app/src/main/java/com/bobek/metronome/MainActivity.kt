@@ -39,6 +39,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.ActivityMainBinding
+import com.bobek.metronome.domain.Tempo
 import com.bobek.metronome.domain.Tick
 import com.bobek.metronome.domain.TickType
 import com.bobek.metronome.view.model.MetronomeViewModel
@@ -59,6 +60,8 @@ class MainActivity : AppCompatActivity() {
 
     private var metronomeService: MetronomeService? = null
 
+    private var lastTap: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -72,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
         binding.metronome = viewModel
+        binding.contentMain.tapTempoButton.setOnClickListener { tapTempo() }
 
         setSupportActionBar(binding.toolbar)
 
@@ -106,6 +110,21 @@ class MainActivity : AppCompatActivity() {
         window.clearFlags(FLAG_KEEP_SCREEN_ON)
         Log.i(TAG, "Stopped metronome")
     }
+
+    private fun tapTempo() {
+        val currentTime = System.currentTimeMillis()
+        val tempoValue = calculateTapTempo(lastTap, currentTime)
+
+        try {
+            viewModel.tempoData.value = Tempo(tempoValue)
+        } catch (exception: IllegalArgumentException) {
+            Log.v(TAG, "Illegal tapped tempo", exception)
+        }
+
+        lastTap = currentTime
+    }
+
+    private fun calculateTapTempo(firstTap: Long, secondTap: Long): Int = (60_000 / (secondTap - firstTap)).toInt()
 
     override fun onDestroy() {
         super.onDestroy()

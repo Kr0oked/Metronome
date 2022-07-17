@@ -34,6 +34,7 @@
     <string name="tempo_edit_hint">Tempo input</string>
 
     <string name="start_stop_button_description">Starts or stops the metronome</string>
+    <string name="tap_tempo_button_description">Tap multiple times to set the tempo</string>
     <string name="beat_visualization_image_description">Beat visualization</string>
 
     <string name="notification_channel_playback_name">Playback</string>
