@@ -41,6 +41,7 @@ class MetronomeViewModel {
     val tempoTextError = MutableLiveData(false)
 
     val playing = MutableLiveData(false)
+    val connected = MutableLiveData(false)
 
     init {
         beatsData.observeForever { beats -> beatsText.value = beats.value.toString() }

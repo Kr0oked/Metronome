@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
     private var lastTap: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "Lifecycle: onCreate")
         super.onCreate(savedInstanceState)
 
         viewModel = MetronomeViewModel()
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         Intent(this, MetronomeService::class.java)
             .also { service -> startService(service) }
             .also { Log.d(TAG, "MetronomeService started") }
-            .also { service -> bindService(service, metronomeServiceConnection, BIND_ABOVE_CLIENT) }
+            .also { service -> bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT) }
             .also { Log.d(TAG, "MetronomeService binding") }
     }
 
@@ -126,7 +127,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun calculateTapTempo(firstTap: Long, secondTap: Long): Int = (60_000 / (secondTap - firstTap)).toInt()
 
+    override fun onStart() {
+        Log.d(TAG, "Lifecycle: onStart")
+        super.onStart()
+    }
+
+    override fun onResume() {
+        Log.d(TAG, "Lifecycle: onResume")
+        super.onResume()
+    }
+
+    override fun onPause() {
+        Log.d(TAG, "Lifecycle: onPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Log.d(TAG, "Lifecycle: onStop")
+        super.onStop()
+    }
+
     override fun onDestroy() {
+        Log.d(TAG, "Lifecycle: onDestroy")
         super.onDestroy()
         unregisterFromMetronomeActions()
         unbindFromMetronomeService()
@@ -152,12 +174,14 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "MetronomeService connected")
             val binder = service as MetronomeService.LocalBinder
             metronomeService = binder.getService()
+            viewModel.connected.value = true
             synchronizeViewModel()
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
             Log.i(TAG, "MetronomeService disconnected")
             metronomeService = null
+            viewModel.connected.value = false
         }
     }
 

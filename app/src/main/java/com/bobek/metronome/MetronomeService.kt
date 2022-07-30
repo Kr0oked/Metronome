@@ -85,6 +85,7 @@ class MetronomeService : Service() {
         }
 
     override fun onCreate() {
+        Log.d(TAG, "Lifecycle: onCreate")
         NotificationManagerCompat.from(this)
             .createNotificationChannel(buildPlaybackNotificationChannel())
         registerReceiver(stopReceiver, IntentFilter(ACTION_STOP))
@@ -97,9 +98,27 @@ class MetronomeService : Service() {
         .setDescription(getString(R.string.notification_channel_playback_description))
         .build()
 
-    override fun onBind(intent: Intent): IBinder = LocalBinder()
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "Lifecycle: onStartCommand")
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onBind(intent: Intent?): IBinder {
+        Log.d(TAG, "Lifecycle: onBind")
+        return LocalBinder()
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        Log.d(TAG, "Lifecycle: onUnbind")
+        return super.onUnbind(intent)
+    }
+
+    override fun onRebind(intent: Intent?) {
+        Log.d(TAG, "Lifecycle: onRebind")
+    }
 
     override fun onDestroy() {
+        Log.d(TAG, "Lifecycle: onDestroy")
         playing = false
         metronomePlayer.release()
         unregisterReceiver(stopReceiver)
