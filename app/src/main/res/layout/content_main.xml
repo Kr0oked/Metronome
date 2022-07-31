@@ -183,10 +183,11 @@
                     android:id="@+id/beats_label_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/slider_label_margin"
                     android:labelFor="@id/beats_slider"
                     android:text="@string/beats_label"
                     app:layout_constraintBottom_toTopOf="@+id/beats_slider"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="@id/beats_slider" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -238,10 +239,11 @@
                     android:id="@+id/subdivisions_label_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/slider_label_margin"
                     android:labelFor="@id/subdivisions_slider"
                     android:text="@string/subdivisions_label"
                     app:layout_constraintBottom_toTopOf="@+id/subdivisions_slider"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="@id/subdivisions_slider" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -293,10 +295,20 @@
                     android:id="@+id/tempo_label_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/slider_label_margin"
                     android:labelFor="@id/tempo_slider"
                     android:text="@string/tempo_label"
                     app:layout_constraintBottom_toTopOf="@+id/tempo_slider"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="@id/tempo_slider" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tempo_marking_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/slider_label_margin"
+                    android:text="@{metronome.tempoData.marking.labelResourceId}"
+                    app:layout_constraintBottom_toTopOf="@+id/tempo_slider"
+                    app:layout_constraintEnd_toEndOf="@id/tempo_slider" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

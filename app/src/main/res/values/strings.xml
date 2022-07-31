@@ -54,4 +54,13 @@
     <string name="source_code_description">Link to the Source code management</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="tempo_marking_largo" translatable="false">Largo</string>
+    <string name="tempo_marking_larghetto" translatable="false">Larghetto</string>
+    <string name="tempo_marking_adagio" translatable="false">Adagio</string>
+    <string name="tempo_marking_andante" translatable="false">Andante</string>
+    <string name="tempo_marking_moderato" translatable="false">Moderato</string>
+    <string name="tempo_marking_allegro" translatable="false">Allegro</string>
+    <string name="tempo_marking_presto" translatable="false">Presto</string>
+    <string name="tempo_marking_prestissimo" translatable="false">Prestissimo</string>
 </resources>

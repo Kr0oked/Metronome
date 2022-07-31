@@ -22,6 +22,8 @@ import androidx.databinding.InverseMethod
 
 data class Tempo(val value: Int = DEFAULT) {
 
+    val marking = TempoMarking.forTempo(value)
+
     init {
         require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
     }
