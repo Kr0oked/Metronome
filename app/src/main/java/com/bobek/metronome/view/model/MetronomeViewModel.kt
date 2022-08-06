@@ -20,9 +20,9 @@ package com.bobek.metronome.view.model
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.bobek.metronome.domain.Beats
-import com.bobek.metronome.domain.Subdivisions
-import com.bobek.metronome.domain.Tempo
+import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Subdivisions
+import com.bobek.metronome.data.Tempo
 
 private const val TAG = "MetronomeViewModel"
 

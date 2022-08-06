@@ -16,13 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome
+package com.bobek.metronome.audio
 
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.util.Log
-import com.bobek.metronome.domain.TickType
+import com.bobek.metronome.R
+import com.bobek.metronome.data.TickType
 
 private const val TAG = "MetronomePlayer"
 private const val MAX_STREAMS = 8

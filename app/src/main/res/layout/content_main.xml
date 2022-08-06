@@ -346,11 +346,11 @@
 
         <import type="android.view.View" />
 
-        <import type="com.bobek.metronome.domain.Beats" />
+        <import type="com.bobek.metronome.data.Beats" />
 
-        <import type="com.bobek.metronome.domain.Subdivisions" />
+        <import type="com.bobek.metronome.data.Subdivisions" />
 
-        <import type="com.bobek.metronome.domain.Tempo" />
+        <import type="com.bobek.metronome.data.Tempo" />
 
         <variable
                 name="metronome"

@@ -39,9 +39,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.ActivityMainBinding
-import com.bobek.metronome.domain.Tempo
-import com.bobek.metronome.domain.Tick
-import com.bobek.metronome.domain.TickType
+import com.bobek.metronome.data.Tempo
+import com.bobek.metronome.data.Tick
+import com.bobek.metronome.data.TickType
 import com.bobek.metronome.view.model.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 

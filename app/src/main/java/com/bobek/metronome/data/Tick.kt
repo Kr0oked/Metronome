@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.domain
+package com.bobek.metronome.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

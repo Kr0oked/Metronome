@@ -33,55 +33,57 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bobek.metronome.domain.*
+import com.bobek.metronome.audio.MetronomePlayer
+import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Subdivisions
+import com.bobek.metronome.data.Tempo
+import com.bobek.metronome.data.Tick
+import com.bobek.metronome.domain.Metronome
+import com.bobek.metronome.domain.MetronomeTickListener
 import java.util.*
 
 private const val TAG = "MetronomeService"
-private const val MINUTE_IN_MILLIS = 60_000L
 private const val NOTIFICATION_CHANNEL_PLAYBACK_ID = "metronome-playback"
 private const val NOTIFICATION_ID = 1
 private const val NO_REQUEST_CODE = 0
 
 class MetronomeService : Service() {
 
+    private val metronome = Metronome(TickListener()) { Timer() }
     private val stopReceiver = StopReceiver()
 
     private lateinit var metronomePlayer: MetronomePlayer
 
-    private var timer = Timer()
-    private var counter = 0L
-    private var lastTickTime = 0L
-
-    var beats: Beats = Beats()
+    var beats: Beats
+        get() {
+            return metronome.beats
+        }
         set(beats) {
-            if (field != beats) {
-                field = beats
-                metronomeParametersChanged()
-            }
+            metronome.beats = beats
         }
 
-    var subdivisions: Subdivisions = Subdivisions()
+    var subdivisions: Subdivisions
+        get() {
+            return metronome.subdivisions
+        }
         set(subdivisions) {
-            if (field != subdivisions) {
-                field = subdivisions
-                metronomeParametersChanged()
-            }
+            metronome.subdivisions = subdivisions
         }
 
-    var tempo: Tempo = Tempo()
+    var tempo: Tempo
+        get() {
+            return metronome.tempo
+        }
         set(tempo) {
-            if (field != tempo) {
-                field = tempo
-                metronomeParametersChanged()
-            }
+            metronome.tempo = tempo
         }
 
-    var playing = false
+    var playing: Boolean
+        get() {
+            return metronome.playing
+        }
         set(playing) {
-            if (field != playing) {
-                field = playing
-                if (playing) startMetronome() else stopMetronome()
-            }
+            if (playing) startMetronome() else stopMetronome()
         }
 
     override fun onCreate() {
@@ -126,14 +128,9 @@ class MetronomeService : Service() {
 
     private fun startMetronome() {
         Log.i(TAG, "Start metronome")
+        metronome.playing = true
         startForegroundNotification()
-        resetTimer()
-        counter = 0L
-        lastTickTime = System.currentTimeMillis()
-        timer.scheduleAtFixedRate(getTickerTask(), Date(lastTickTime), calculateTickerPeriod())
     }
-
-    private fun calculateTickerPeriod() = MINUTE_IN_MILLIS / tempo.value / subdivisions.value
 
     private fun startForegroundNotification() {
         val mainActivityPendingIntent =
@@ -160,76 +157,29 @@ class MetronomeService : Service() {
     }
 
     private fun getPendingIntentFlags() =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.FLAG_IMMUTABLE
-        } else {
-            0
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
 
     private fun stopMetronome() {
         Log.i(TAG, "Stop metronome")
+        metronome.playing = false
         stopForeground(true)
-        resetTimer()
     }
 
-    private fun metronomeParametersChanged() {
-        if (playing) {
-            adjustMetronome()
+    inner class LocalBinder : Binder() {
+        fun getService(): MetronomeService = this@MetronomeService
+    }
+
+    inner class TickListener : MetronomeTickListener {
+        override fun onTick(tick: Tick) {
+            metronomePlayer.play(tick.type)
+            publishTick(tick)
         }
-    }
-
-    private fun adjustMetronome() {
-        resetTimer()
-        val tickerPeriod = calculateTickerPeriod()
-        val startTime = lastTickTime + tickerPeriod
-        timer.scheduleAtFixedRate(getTickerTask(), Date(startTime), tickerPeriod)
-        Log.i(TAG, "Adjusted metronome")
-    }
-
-    private fun resetTimer() {
-        timer.cancel()
-        timer = Timer()
-    }
-
-    private fun getTickerTask() = object : TimerTask() {
-        override fun run() {
-            lastTickTime = System.currentTimeMillis()
-            val currentBeat = getCurrentBeat()
-            val currentTickType = getCurrentTickType()
-            val tick = Tick(currentBeat, currentTickType)
-            onTick(tick)
-            counter++
-        }
-    }
-
-    private fun getCurrentBeat() = (((counter / subdivisions.value) % beats.value) + 1).toInt()
-
-    private fun getCurrentTickType(): TickType {
-        return when {
-            isStrongTick() -> TickType.STRONG
-            isWeakTick() -> TickType.WEAK
-            else -> TickType.SUB
-        }
-    }
-
-    private fun isStrongTick() = counter % (beats.value * subdivisions.value) == 0L
-
-    private fun isWeakTick() = counter % subdivisions.value == 0L
-
-    private fun onTick(tick: Tick) {
-        Log.d(TAG, "Playing tick $counter $tick")
-        metronomePlayer.play(tick.type)
-        publishTick(tick)
     }
 
     private fun publishTick(tick: Tick) {
         Intent(ACTION_TICK)
             .apply { putExtra(EXTRA_TICK, tick) }
             .let { LocalBroadcastManager.getInstance(this).sendBroadcast(it) }
-    }
-
-    inner class LocalBinder : Binder() {
-        fun getService(): MetronomeService = this@MetronomeService
     }
 
     inner class StopReceiver : BroadcastReceiver() {

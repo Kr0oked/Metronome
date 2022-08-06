@@ -18,25 +18,9 @@
 
 package com.bobek.metronome.domain
 
-import androidx.databinding.InverseMethod
+import com.bobek.metronome.data.Tick
 
-data class Beats(val value: Int = DEFAULT) {
+fun interface MetronomeTickListener {
 
-    init {
-        require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
-    }
-
-    companion object {
-        const val MIN = 1
-        const val MAX = 8
-        const val DEFAULT = 4
-
-        @InverseMethod("floatToBeats")
-        @JvmStatic
-        fun beatsToFloat(beats: Beats): Float = beats.value.toFloat()
-
-        @JvmStatic
-        fun floatToBeats(float: Float): Beats = Beats(float.toInt())
-    }
+    fun onTick(tick: Tick)
 }
-
