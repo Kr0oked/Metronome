@@ -18,10 +18,8 @@
 
 package com.bobek.metronome.domain
 
-import android.util.Log
 import com.bobek.metronome.data.*
 
-private const val TAG = "Metronome"
 private const val MINUTE_IN_MILLIS = 60_000L
 
 class Metronome(
@@ -57,26 +55,27 @@ class Metronome(
             }
         }
 
-    var playing
-        get() = timer.isRunning()
-        set(playing) = if (playing) start() else stop()
+    var playing: Boolean = false
+        set(playing) {
+            if (field != playing) {
+                field = playing
+                if (playing) start() else stop()
+            }
+        }
 
     private fun start() {
         counter = 0L
         timer.schedule(calculateTickerPeriod())
-        Log.i(TAG, "Started")
     }
 
     private fun stop() {
         timer.stop()
-        Log.i(TAG, "Stopped")
     }
 
     private fun onTick() {
         val currentBeat = getCurrentBeat()
         val currentTickType = getCurrentTickType()
         val tick = Tick(currentBeat, currentTickType)
-        Log.d(TAG, "Tick $counter $tick")
         tickListener.onTick(tick)
         counter++
     }
@@ -103,7 +102,6 @@ class Metronome(
 
     private fun adjustCurrentPlayback() {
         timer.schedule(calculateTickerPeriod())
-        Log.i(TAG, "Adjusted current playback")
     }
 
     private fun calculateTickerPeriod() = MINUTE_IN_MILLIS / tempo.value / subdivisions.value
