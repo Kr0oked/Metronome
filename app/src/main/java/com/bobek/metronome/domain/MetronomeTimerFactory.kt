@@ -18,9 +18,9 @@
 
 package com.bobek.metronome.domain
 
-import java.util.*
+import com.bobek.metronome.concurrent.AdjustableTimer
 
-fun interface TimerProvider {
+fun interface MetronomeTimerFactory {
 
-    fun createTimer() : Timer
+    fun getAdjustableTimer(command: Runnable): AdjustableTimer
 }

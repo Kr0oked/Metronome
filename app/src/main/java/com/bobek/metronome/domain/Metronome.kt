@@ -20,19 +20,18 @@ package com.bobek.metronome.domain
 
 import android.util.Log
 import com.bobek.metronome.data.*
-import java.util.*
 
 private const val TAG = "Metronome"
 private const val MINUTE_IN_MILLIS = 60_000L
 
 class Metronome(
     private val tickListener: MetronomeTickListener,
-    private val timerProvider: TimerProvider
+    timerFactory: MetronomeTimerFactory
 ) {
 
-    private var timer = timerProvider.createTimer()
+    private val timer = timerFactory.getAdjustableTimer { onTick() }
+
     private var counter = 0L
-    private var lastTickTime = 0L
 
     var beats: Beats = Beats()
         set(beats) {
@@ -58,32 +57,28 @@ class Metronome(
             }
         }
 
-    var playing = false
-        set(playing) {
-            if (field != playing) {
-                field = playing
-                if (playing) start() else stop()
-            }
-        }
+    var playing
+        get() = timer.isRunning()
+        set(playing) = if (playing) start() else stop()
 
     private fun start() {
-        Log.i(TAG, "Start")
-        resetTimer()
         counter = 0L
-        lastTickTime = System.currentTimeMillis()
-        timer.scheduleAtFixedRate(getTickerTask(), Date(lastTickTime), calculateTickerPeriod())
+        timer.schedule(calculateTickerPeriod())
+        Log.i(TAG, "Started")
     }
 
-    private fun getTickerTask() = object : TimerTask() {
-        override fun run() {
-            lastTickTime = System.currentTimeMillis()
-            val currentBeat = getCurrentBeat()
-            val currentTickType = getCurrentTickType()
-            val tick = Tick(currentBeat, currentTickType)
-            Log.d(TAG, "Tick $counter $tick")
-            tickListener.onTick(tick)
-            counter++
-        }
+    private fun stop() {
+        timer.stop()
+        Log.i(TAG, "Stopped")
+    }
+
+    private fun onTick() {
+        val currentBeat = getCurrentBeat()
+        val currentTickType = getCurrentTickType()
+        val tick = Tick(currentBeat, currentTickType)
+        Log.d(TAG, "Tick $counter $tick")
+        tickListener.onTick(tick)
+        counter++
     }
 
     private fun getCurrentBeat() = (((counter / subdivisions.value) % beats.value) + 1).toInt()
@@ -100,11 +95,6 @@ class Metronome(
 
     private fun isWeakTick() = counter % subdivisions.value == 0L
 
-    private fun stop() {
-        Log.i(TAG, "Stop")
-        resetTimer()
-    }
-
     private fun parametersChanged() {
         if (playing) {
             adjustCurrentPlayback()
@@ -112,16 +102,8 @@ class Metronome(
     }
 
     private fun adjustCurrentPlayback() {
-        resetTimer()
-        val tickerPeriod = calculateTickerPeriod()
-        val startTime = lastTickTime + tickerPeriod
-        timer.scheduleAtFixedRate(getTickerTask(), Date(startTime), tickerPeriod)
+        timer.schedule(calculateTickerPeriod())
         Log.i(TAG, "Adjusted current playback")
-    }
-
-    private fun resetTimer() {
-        timer.cancel()
-        timer = timerProvider.createTimer()
     }
 
     private fun calculateTickerPeriod() = MINUTE_IN_MILLIS / tempo.value / subdivisions.value

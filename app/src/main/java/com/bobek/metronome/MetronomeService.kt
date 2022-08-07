@@ -34,13 +34,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.audio.MetronomePlayer
+import com.bobek.metronome.concurrent.AdjustableTimer
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.domain.Metronome
-import com.bobek.metronome.domain.MetronomeTickListener
-import java.util.*
 
 private const val TAG = "MetronomeService"
 private const val NOTIFICATION_CHANNEL_PLAYBACK_ID = "metronome-playback"
@@ -49,42 +48,36 @@ private const val NO_REQUEST_CODE = 0
 
 class MetronomeService : Service() {
 
-    private val metronome = Metronome(TickListener()) { Timer() }
+    private val metronome = Metronome(
+        { onTick(it) },
+        ::AdjustableTimer
+    )
+
     private val stopReceiver = StopReceiver()
 
     private lateinit var metronomePlayer: MetronomePlayer
 
     var beats: Beats
-        get() {
-            return metronome.beats
-        }
+        get() = metronome.beats
         set(beats) {
             metronome.beats = beats
         }
 
     var subdivisions: Subdivisions
-        get() {
-            return metronome.subdivisions
-        }
+        get() = metronome.subdivisions
         set(subdivisions) {
             metronome.subdivisions = subdivisions
         }
 
     var tempo: Tempo
-        get() {
-            return metronome.tempo
-        }
+        get() = metronome.tempo
         set(tempo) {
             metronome.tempo = tempo
         }
 
     var playing: Boolean
-        get() {
-            return metronome.playing
-        }
-        set(playing) {
-            if (playing) startMetronome() else stopMetronome()
-        }
+        get() = metronome.playing
+        set(playing) = if (playing) startMetronome() else stopMetronome()
 
     override fun onCreate() {
         Log.d(TAG, "Lifecycle: onCreate")
@@ -165,15 +158,9 @@ class MetronomeService : Service() {
         stopForeground(true)
     }
 
-    inner class LocalBinder : Binder() {
-        fun getService(): MetronomeService = this@MetronomeService
-    }
-
-    inner class TickListener : MetronomeTickListener {
-        override fun onTick(tick: Tick) {
-            metronomePlayer.play(tick.type)
-            publishTick(tick)
-        }
+    private fun onTick(tick: Tick) {
+        metronomePlayer.play(tick.type)
+        publishTick(tick)
     }
 
     private fun publishTick(tick: Tick) {
@@ -193,6 +180,10 @@ class MetronomeService : Service() {
         playing = false
         Intent(ACTION_REFRESH)
             .let { LocalBroadcastManager.getInstance(this).sendBroadcast(it) }
+    }
+
+    inner class LocalBinder : Binder() {
+        fun getService(): MetronomeService = this@MetronomeService
     }
 
     companion object {
