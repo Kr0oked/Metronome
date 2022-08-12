@@ -34,13 +34,13 @@ enum class TempoMarking(@StringRes val labelResourceId: Int) {
     companion object {
         fun forTempo(tempo: Int): TempoMarking {
             return when (tempo) {
-                in 0..60 -> LARGO
-                in 60..66 -> LARGHETTO
-                in 66..76 -> ADAGIO
-                in 76..108 -> ANDANTE
-                in 108..120 -> MODERATO
-                in 120..168 -> ALLEGRO
-                in 168..200 -> PRESTO
+                in 0 until 60 -> LARGO
+                in 60 until 66 -> LARGHETTO
+                in 66 until 76 -> ADAGIO
+                in 76 until 108 -> ANDANTE
+                in 108 until 120 -> MODERATO
+                in 120 until 168 -> ALLEGRO
+                in 168 until 200 -> PRESTO
                 else -> PRESTISSIMO
             }
         }
