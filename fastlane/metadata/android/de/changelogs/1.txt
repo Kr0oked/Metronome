@@ -1,0 +1,3 @@
+- Metronom Funktionalitäten
+- Tag & Nacht Modus
+- Englische und deutsche Übersetzung

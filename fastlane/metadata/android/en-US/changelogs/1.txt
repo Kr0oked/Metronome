@@ -1,0 +1,3 @@
+- Metronome functionalities
+- Day & Night mode
+- English and German translations
