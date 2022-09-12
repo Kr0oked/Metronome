@@ -37,11 +37,11 @@ import androidx.appcompat.app.AppCompatDelegate.NightMode
 import androidx.core.content.ContextCompat.getColor
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
-import com.bobek.metronome.databinding.ActivityMainBinding
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.data.TickType
+import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
+import com.bobek.metronome.databinding.ActivityMainBinding
 import com.bobek.metronome.view.model.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -116,10 +116,10 @@ class MainActivity : AppCompatActivity() {
         val currentTime = System.currentTimeMillis()
         val tempoValue = calculateTapTempo(lastTap, currentTime)
 
-        try {
+        if (tempoValue > Tempo.MAX) {
+            viewModel.tempoData.value = Tempo(Tempo.MAX)
+        } else if (tempoValue >= Tempo.MIN) {
             viewModel.tempoData.value = Tempo(tempoValue)
-        } catch (exception: IllegalArgumentException) {
-            Log.v(TAG, "Illegal tapped tempo", exception)
         }
 
         lastTap = currentTime
