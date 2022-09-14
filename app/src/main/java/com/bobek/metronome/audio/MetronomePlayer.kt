@@ -26,7 +26,7 @@ import com.bobek.metronome.R
 import com.bobek.metronome.data.TickType
 
 private const val TAG = "MetronomePlayer"
-private const val MAX_STREAMS = 8
+private const val MAX_STREAMS = 16
 private const val DEFAULT_SOUND_PRIORITY = 1
 private const val NO_LOOP = 0
 private const val VOLUME_MAX = 1.0f
