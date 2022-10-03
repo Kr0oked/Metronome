@@ -20,7 +20,6 @@ package com.bobek.metronome
 
 import android.app.Notification
 import android.app.PendingIntent
-import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -32,9 +31,8 @@ import android.util.Log
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.LifecycleService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bobek.metronome.audio.MetronomePlayer
-import com.bobek.metronome.concurrent.AdjustableTimer
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
@@ -46,16 +44,11 @@ private const val NOTIFICATION_CHANNEL_PLAYBACK_ID = "metronome-playback"
 private const val NOTIFICATION_ID = 1
 private const val NO_REQUEST_CODE = 0
 
-class MetronomeService : Service() {
-
-    private val metronome = Metronome(
-        { onTick(it) },
-        ::AdjustableTimer
-    )
+class MetronomeService : LifecycleService() {
 
     private val stopReceiver = StopReceiver()
 
-    private lateinit var metronomePlayer: MetronomePlayer
+    private lateinit var metronome: Metronome
 
     var beats: Beats
         get() = metronome.beats
@@ -80,11 +73,12 @@ class MetronomeService : Service() {
         set(playing) = if (playing) startMetronome() else stopMetronome()
 
     override fun onCreate() {
+        super.onCreate()
         Log.d(TAG, "Lifecycle: onCreate")
         NotificationManagerCompat.from(this)
             .createNotificationChannel(buildPlaybackNotificationChannel())
         registerReceiver(stopReceiver, IntentFilter(ACTION_STOP))
-        metronomePlayer = MetronomePlayer(this)
+        metronome = Metronome(this, lifecycle) { publishTick(it) }
     }
 
     private fun buildPlaybackNotificationChannel() = NotificationChannelCompat
@@ -98,7 +92,8 @@ class MetronomeService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun onBind(intent: Intent?): IBinder {
+    override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
         Log.d(TAG, "Lifecycle: onBind")
         return LocalBinder()
     }
@@ -113,9 +108,9 @@ class MetronomeService : Service() {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         Log.d(TAG, "Lifecycle: onDestroy")
         playing = false
-        metronomePlayer.release()
         unregisterReceiver(stopReceiver)
     }
 
@@ -156,11 +151,6 @@ class MetronomeService : Service() {
         Log.i(TAG, "Stop metronome")
         metronome.playing = false
         stopForeground(true)
-    }
-
-    private fun onTick(tick: Tick) {
-        metronomePlayer.play(tick.type)
-        publishTick(tick)
     }
 
     private fun publishTick(tick: Tick) {
