@@ -32,14 +32,14 @@ object SoundLoader {
 
     @JvmStatic
     fun readDataFromWavPcmFloat(input: InputStream): FloatArray {
-        val bytes = input.readBytes()
-        val indexOfDataMarker = Bytes.indexOf(bytes, DATA_MARKER)
+        val content = input.readBytes()
+        val indexOfDataMarker = Bytes.indexOf(content, DATA_MARKER)
         check(indexOfDataMarker >= 0) { "Could not find data marker in the content" }
 
-        val startOfContent = indexOfDataMarker + DATA_CHUNK_SIZE
-        check(startOfContent <= bytes.size) { "Too short data chunk" }
+        val startOfSound = indexOfDataMarker + DATA_CHUNK_SIZE
+        check(startOfSound <= content.size) { "Too short data chunk" }
 
-        val byteBuffer = ByteBuffer.wrap(bytes, startOfContent, bytes.size - startOfContent)
+        val byteBuffer = ByteBuffer.wrap(content, startOfSound, content.size - startOfSound)
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
         val floatBuffer = byteBuffer.asFloatBuffer()
 

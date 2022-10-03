@@ -36,6 +36,7 @@ import kotlinx.coroutines.*
 
 private const val TAG = "Metronome"
 private const val SAMPLE_RATE_IN_HZ = 48_000
+private const val SILENCE_CHUNK_SIZE = 8_000
 
 class Metronome(
     private val context: Context,
@@ -46,10 +47,8 @@ class Metronome(
     private val strongTick = loadSound(R.raw.strong_tick)
     private val weakTick = loadSound(R.raw.weak_tick)
     private val subTick = loadSound(R.raw.sub_tick)
+    private val silence = FloatArray(SILENCE_CHUNK_SIZE)
 
-    private var counter = 0L
-
-    @Volatile
     private var metronomeJob: Job? = null
 
     @Volatile
@@ -71,87 +70,130 @@ class Metronome(
         get() = metronomeJob != null
 
     private fun start() {
-        counter = 0L
+        metronomeJob = lifecycleScope.launch(Dispatchers.IO) { metronomeLoop() }
+        Log.i(TAG, "Started metronome job")
+    }
 
-        metronomeJob = lifecycleScope.launch(Dispatchers.IO) {
-            val audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_MEDIA)
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
+    private suspend fun metronomeLoop() {
+        val track = getNewAudioTrack()
+        track.play()
 
-            val audioFormat = AudioFormat.Builder()
-                .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
-                .setSampleRate(SAMPLE_RATE_IN_HZ)
-                .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-                .build()
-
-            val audioTrack = AudioTrack(
-                audioAttributes,
-                audioFormat,
-                AudioTrack.getMinBufferSize(audioFormat.sampleRate, audioFormat.channelMask, audioFormat.encoding),
-                AudioTrack.MODE_STREAM,
-                AudioManager.AUDIO_SESSION_ID_GENERATE
-            )
-
-            audioTrack.play()
-
-            try {
-                while (true) {
-                    val currentBeat = getCurrentBeat()
-                    val currentTickType = getCurrentTickType()
-                    val tick = Tick(currentBeat, currentTickType)
-
-                    when (tick.type) {
-                        TickType.STRONG -> audioTrack.write(strongTick, 0, strongTick.size, AudioTrack.WRITE_BLOCKING)
-                        TickType.WEAK -> audioTrack.write(weakTick, 0, weakTick.size, AudioTrack.WRITE_BLOCKING)
-                        TickType.SUB -> audioTrack.write(subTick, 0, subTick.size, AudioTrack.WRITE_BLOCKING)
-                    }
-
-                    tickListener.onTick(tick)
-                    Log.d(TAG, "Wrote silence")
-                    yield()
-
-                    val silenceUntilNextTick = FloatArray(calculateSilenceBetweenTicks())
-                    audioTrack.write(silenceUntilNextTick, 0, silenceUntilNextTick.size, AudioTrack.WRITE_BLOCKING)
-                    Log.d(TAG, "Wrote silence")
-                    yield()
-
-                    counter++
-                }
-            } catch (exception: CancellationException) {
-                audioTrack.pause()
-                Log.d(TAG, "Cancelled")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Log.d(TAG, "Underrun count was ${audioTrack.underrunCount}")
-                }
-                audioTrack.release()
+        try {
+            var tickCount = 0L
+            while (true) {
+                writeTickPeriod(track, tickCount)
+                tickCount++
             }
+        } catch (exception: CancellationException) {
+            Log.d(TAG, "Received cancellation")
+            track.pause()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Log.d(TAG, "Underrun count was ${track.underrunCount}")
+            }
+        } finally {
+            track.release()
         }
+    }
 
-        Log.d(TAG, "Started metronome job")
+    private fun getNewAudioTrack(): AudioTrack {
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .build()
+
+        val audioFormat = AudioFormat.Builder()
+            .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
+            .setSampleRate(SAMPLE_RATE_IN_HZ)
+            .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+            .build()
+
+        return AudioTrack(
+            audioAttributes,
+            audioFormat,
+            AudioTrack.getMinBufferSize(audioFormat.sampleRate, audioFormat.channelMask, audioFormat.encoding),
+            AudioTrack.MODE_STREAM,
+            AudioManager.AUDIO_SESSION_ID_GENERATE
+        )
+    }
+
+    private suspend fun writeTickPeriod(track: AudioTrack, tickCount: Long) {
+        var sizeWritten = 0
+
+        val tick = getCurrentTick(tickCount)
+        val tickSound = getTickSound(tick.type)
+        val periodSize = calculatePeriodSize()
+
+        sizeWritten += writeNextAudioData(track, tickSound, periodSize, sizeWritten)
+        Log.v(TAG, "Wrote tick sound for $tick")
+        tickListener.onTick(tick)
+        yield()
+
+        writeSilenceUntilPeriodFinished(track, sizeWritten)
+    }
+
+    private suspend fun writeSilenceUntilPeriodFinished(track: AudioTrack, previousSizeWritten: Int) {
+        var sizeWritten = previousSizeWritten
+        while (true) {
+            val periodSize = calculatePeriodSize()
+            if (sizeWritten >= periodSize) {
+                break
+            }
+
+            sizeWritten += writeNextAudioData(track, silence, periodSize, sizeWritten)
+            Log.v(TAG, "Wrote silence")
+            yield()
+        }
+    }
+
+    private fun getCurrentTick(tickCount: Long) = Tick(getCurrentBeat(tickCount), getCurrentTickType(tickCount))
+
+    private fun getCurrentBeat(tickCount: Long) = (((tickCount / subdivisions.value) % beats.value) + 1).toInt()
+
+    private fun getCurrentTickType(tickCount: Long): TickType {
+        return when {
+            isStrongTick(tickCount) -> TickType.STRONG
+            isWeakTick(tickCount) -> TickType.WEAK
+            else -> TickType.SUB
+        }
+    }
+
+    private fun isStrongTick(tickCount: Long) = tickCount % (beats.value * subdivisions.value) == 0L
+
+    private fun isWeakTick(tickCount: Long) = tickCount % subdivisions.value == 0L
+
+    private fun calculatePeriodSize() = 60 * SAMPLE_RATE_IN_HZ / tempo.value / subdivisions.value
+
+    private fun getTickSound(tickType: TickType): FloatArray {
+        return when (tickType) {
+            TickType.STRONG -> strongTick
+            TickType.WEAK -> weakTick
+            TickType.SUB -> subTick
+        }
+    }
+
+    private fun writeNextAudioData(track: AudioTrack, data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
+        val size = calculateAudioSizeToWriteNext(data, periodSize, sizeWritten)
+        writeAudio(track, data, size)
+        return size
+    }
+
+    private fun calculateAudioSizeToWriteNext(data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
+        val sizeLeft = periodSize - sizeWritten
+        return if (data.size > sizeLeft) sizeLeft else data.size
+    }
+
+    private fun writeAudio(track: AudioTrack, data: FloatArray, size: Int) {
+        val result = track.write(data, 0, size, AudioTrack.WRITE_BLOCKING)
+        if (result < 0) {
+            throw IllegalStateException("Failed to play audio data. Error code: $result")
+        }
     }
 
     private fun stop() {
         metronomeJob?.cancel()
         metronomeJob = null
-        Log.d(TAG, "Stopped metronome job")
+        Log.i(TAG, "Stopped metronome job")
     }
-
-    private fun getCurrentBeat() = (((counter / subdivisions.value) % beats.value) + 1).toInt()
-
-    private fun getCurrentTickType(): TickType {
-        return when {
-            isStrongTick() -> TickType.STRONG
-            isWeakTick() -> TickType.WEAK
-            else -> TickType.SUB
-        }
-    }
-
-    private fun isStrongTick() = counter % (beats.value * subdivisions.value) == 0L
-
-    private fun isWeakTick() = counter % subdivisions.value == 0L
-
-    private fun calculateSilenceBetweenTicks() = 60 * SAMPLE_RATE_IN_HZ / tempo.value / subdivisions.value
 
     override fun getLifecycle(): Lifecycle = lifecycle
 
