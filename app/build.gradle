@@ -68,7 +68,10 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.lifecycle:lifecycle-service:2.5.1'
     implementation 'com.google.android.material:material:1.6.1'
+
+    implementation 'com.google.guava:guava:31.1-android'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'io.mockk:mockk:1.12.5'
