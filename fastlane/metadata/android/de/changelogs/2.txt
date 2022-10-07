@@ -1,0 +1,2 @@
+- Metronom ist nun präzise und stottert nicht mehr
+- Verbesserung des Tempo setzen durch Antippen

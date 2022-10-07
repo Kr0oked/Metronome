@@ -1,0 +1,2 @@
+- Metronome is now precise and does not stutter anymore
+- Improved tap tempo functionality

@@ -4,7 +4,7 @@ Ein einfaches und schönes Metronom mit dem du Musik üben kannst.
 Inhalt:
 * Einstellbare Schläge und Unterteilungen
 * Visualisierung der Schläge
-* Tempo setzen durch antippen
+* Tempo setzen durch Antippen
 * Automatischer Nachtmodus
 * Keine Werbung
 * Keine Belästigung
