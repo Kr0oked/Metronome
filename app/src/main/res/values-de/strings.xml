@@ -35,7 +35,7 @@
 
     <string name="start_stop_button_description">Startet oder stoppt das Metronom</string>
     <string name="tap_tempo_button_description">Mehrmals antippen um das Tempo zu setzen</string>
-    <string name="beat_visualization_image_description">Visulisierung der Schläge</string>
+    <string name="tick_visualization_image_description">Visulisierung des Schlags</string>
 
     <string name="notification_channel_playback_name">Wiederagbe</string>
     <string name="notification_channel_playback_description">Momentane Metronom Wiedergabe</string>

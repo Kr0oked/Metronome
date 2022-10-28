@@ -19,7 +19,6 @@
 package com.bobek.metronome
 
 import android.content.*
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.IBinder
 import android.text.method.LinkMovementMethod
@@ -28,13 +27,10 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-import android.widget.ImageView
-import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.NightMode
-import androidx.core.content.ContextCompat.getColor
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.data.Tempo
@@ -42,11 +38,11 @@ import com.bobek.metronome.data.Tick
 import com.bobek.metronome.data.TickType
 import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.ActivityMainBinding
+import com.bobek.metronome.view.component.TickVisualization
 import com.bobek.metronome.view.model.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 private const val TAG = "MainActivity"
-private const val TICK_VISUALIZATION_DURATION_MILLIS = 200L
 
 class MainActivity : AppCompatActivity() {
 
@@ -194,50 +190,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun visualizeTick(tick: Tick) {
-        getBeatsVisualizationImage(tick.beat)
-            ?.let { image ->
-                if (tick.type == TickType.STRONG) {
-                    visualizeStrongTick(image)
-                } else if (tick.type == TickType.WEAK) {
-                    visualizeWeakTick(image)
-                }
-            }
-    }
-
-    private fun getBeatsVisualizationImage(beat: Int): ImageView? {
-        return when (beat) {
-            1 -> binding.contentMain.beatsVisualization1Image
-            2 -> binding.contentMain.beatsVisualization2Image
-            3 -> binding.contentMain.beatsVisualization3Image
-            4 -> binding.contentMain.beatsVisualization4Image
-            5 -> binding.contentMain.beatsVisualization5Image
-            6 -> binding.contentMain.beatsVisualization6Image
-            7 -> binding.contentMain.beatsVisualization7Image
-            8 -> binding.contentMain.beatsVisualization8Image
-            else -> null
+        if (tick.type == TickType.STRONG || tick.type == TickType.WEAK) {
+            getTickVisualization(tick.beat)?.blink()
         }
     }
 
-    private fun visualizeStrongTick(image: ImageView) {
-        visualizeTick(image, R.color.beat_visualization_strong_tick, R.color.beat_visualization_strong)
-    }
-
-    private fun visualizeWeakTick(it: ImageView) {
-        visualizeTick(it, R.color.beat_visualization_weak_tick, R.color.beat_visualization_weak)
-    }
-
-    private fun visualizeTick(image: ImageView, @ColorRes flashColorId: Int, @ColorRes originalColorId: Int) {
-        runOnUiThread {
-            image
-                .animate()
-                .setDuration(TICK_VISUALIZATION_DURATION_MILLIS)
-                .withStartAction {
-                    image.imageTintList = ColorStateList.valueOf(getColor(this, flashColorId))
-                }
-                .withEndAction {
-                    image.imageTintList = ColorStateList.valueOf(getColor(this, originalColorId))
-                }
-                .start()
+    private fun getTickVisualization(beat: Int): TickVisualization? {
+        return when (beat) {
+            1 -> binding.contentMain.tickVisualization1
+            2 -> binding.contentMain.tickVisualization2
+            3 -> binding.contentMain.tickVisualization3
+            4 -> binding.contentMain.tickVisualization4
+            5 -> binding.contentMain.tickVisualization5
+            6 -> binding.contentMain.tickVisualization6
+            7 -> binding.contentMain.tickVisualization7
+            8 -> binding.contentMain.tickVisualization8
+            else -> null
         }
     }
 

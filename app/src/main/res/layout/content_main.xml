@@ -37,101 +37,77 @@
                 app:layout_constraintBottom_toTopOf="@id/beats_section"
                 app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                    android:id="@+id/beats_visualization_1_image"
+            <com.bobek.metronome.view.component.TickVisualization
+                    android:id="@+id/tick_visualization_1"
                     android:layout_width="@dimen/beat_visualization_size"
                     android:layout_height="@dimen/beat_visualization_size"
-                    android:contentDescription="@string/beat_visualization_image_description"
-                    android:src="@drawable/ic_circle"
                     android:visibility="@{metronome.beatsData.value >= 1 ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toStartOf="@id/beats_visualization_2_image"
+                    app:layout_constraintEnd_toStartOf="@id/tick_visualization_2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/beat_visualization_strong" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                    android:id="@+id/beats_visualization_2_image"
+            <com.bobek.metronome.view.component.TickVisualization
+                    android:id="@+id/tick_visualization_2"
                     android:layout_width="@dimen/beat_visualization_size"
                     android:layout_height="@dimen/beat_visualization_size"
-                    android:contentDescription="@string/beat_visualization_image_description"
-                    android:src="@drawable/ic_circle"
                     android:visibility="@{metronome.beatsData.value >= 2 ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toStartOf="@id/beats_visualization_3_image"
-                    app:layout_constraintStart_toEndOf="@+id/beats_visualization_1_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/beat_visualization_weak" />
+                    app:layout_constraintEnd_toStartOf="@id/tick_visualization_3"
+                    app:layout_constraintStart_toEndOf="@+id/tick_visualization_1"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                    android:id="@+id/beats_visualization_3_image"
+            <com.bobek.metronome.view.component.TickVisualization
+                    android:id="@+id/tick_visualization_3"
                     android:layout_width="@dimen/beat_visualization_size"
                     android:layout_height="@dimen/beat_visualization_size"
-                    android:contentDescription="@string/beat_visualization_image_description"
-                    android:src="@drawable/ic_circle"
                     android:visibility="@{metronome.beatsData.value >= 3 ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toStartOf="@id/beats_visualization_4_image"
-                    app:layout_constraintStart_toEndOf="@+id/beats_visualization_2_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/beat_visualization_weak" />
+                    app:layout_constraintEnd_toStartOf="@id/tick_visualization_4"
+                    app:layout_constraintStart_toEndOf="@+id/tick_visualization_2"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                    android:id="@+id/beats_visualization_4_image"
+            <com.bobek.metronome.view.component.TickVisualization
+                    android:id="@+id/tick_visualization_4"
                     android:layout_width="@dimen/beat_visualization_size"
                     android:layout_height="@dimen/beat_visualization_size"
-                    android:contentDescription="@string/beat_visualization_image_description"
-                    android:src="@drawable/ic_circle"
                     android:visibility="@{metronome.beatsData.value >= 4 ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toStartOf="@id/beats_visualization_5_image"
-                    app:layout_constraintStart_toEndOf="@+id/beats_visualization_3_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/beat_visualization_weak" />
+                    app:layout_constraintEnd_toStartOf="@id/tick_visualization_5"
+                    app:layout_constraintStart_toEndOf="@+id/tick_visualization_3"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                    android:id="@+id/beats_visualization_5_image"
+            <com.bobek.metronome.view.component.TickVisualization
+                    android:id="@+id/tick_visualization_5"
                     android:layout_width="@dimen/beat_visualization_size"
                     android:layout_height="@dimen/beat_visualization_size"
-                    android:contentDescription="@string/beat_visualization_image_description"
-                    android:src="@drawable/ic_circle"
                     android:visibility="@{metronome.beatsData.value >= 5 ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toStartOf="@id/beats_visualization_6_image"
-                    app:layout_constraintStart_toEndOf="@+id/beats_visualization_4_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/beat_visualization_weak" />
+                    app:layout_constraintEnd_toStartOf="@id/tick_visualization_6"
+                    app:layout_constraintStart_toEndOf="@+id/tick_visualization_4"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                    android:id="@+id/beats_visualization_6_image"
+            <com.bobek.metronome.view.component.TickVisualization
+                    android:id="@+id/tick_visualization_6"
                     android:layout_width="@dimen/beat_visualization_size"
                     android:layout_height="@dimen/beat_visualization_size"
-                    android:contentDescription="@string/beat_visualization_image_description"
-                    android:src="@drawable/ic_circle"
                     android:visibility="@{metronome.beatsData.value >= 6 ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toStartOf="@id/beats_visualization_7_image"
-                    app:layout_constraintStart_toEndOf="@+id/beats_visualization_5_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/beat_visualization_weak" />
+                    app:layout_constraintEnd_toStartOf="@id/tick_visualization_7"
+                    app:layout_constraintStart_toEndOf="@+id/tick_visualization_5"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                    android:id="@+id/beats_visualization_7_image"
+            <com.bobek.metronome.view.component.TickVisualization
+                    android:id="@+id/tick_visualization_7"
                     android:layout_width="@dimen/beat_visualization_size"
                     android:layout_height="@dimen/beat_visualization_size"
-                    android:contentDescription="@string/beat_visualization_image_description"
-                    android:src="@drawable/ic_circle"
                     android:visibility="@{metronome.beatsData.value >= 7 ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toStartOf="@id/beats_visualization_8_image"
-                    app:layout_constraintStart_toEndOf="@+id/beats_visualization_6_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/beat_visualization_weak" />
+                    app:layout_constraintEnd_toStartOf="@id/tick_visualization_8"
+                    app:layout_constraintStart_toEndOf="@+id/tick_visualization_6"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                    android:id="@+id/beats_visualization_8_image"
+            <com.bobek.metronome.view.component.TickVisualization
+                    android:id="@+id/tick_visualization_8"
                     android:layout_width="@dimen/beat_visualization_size"
                     android:layout_height="@dimen/beat_visualization_size"
-                    android:contentDescription="@string/beat_visualization_image_description"
-                    android:src="@drawable/ic_circle"
                     android:visibility="@{metronome.beatsData.value >= 8 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/beats_visualization_7_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/beat_visualization_weak" />
+                    app:layout_constraintStart_toEndOf="@+id/tick_visualization_7"
+                    app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
