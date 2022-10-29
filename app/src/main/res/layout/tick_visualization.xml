@@ -29,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@string/tick_visualization_image_description"
                 android:src="@drawable/ic_circle"
-                app:tint="?attr/colorPrimary" />
+                app:tint="?attr/colorTertiaryContainer" />
 
     </merge>
 

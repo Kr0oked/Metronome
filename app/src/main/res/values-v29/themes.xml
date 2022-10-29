@@ -19,6 +19,11 @@
   -->
 
 <resources>
-    <color name="beat_visualization_strong">@color/color_primary_light</color>
-    <color name="beat_visualization_strong_tick">@color/color_secondary_light</color>
+
+    <style name="Theme.Metronome" parent="Base.Theme.Metronome">
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+    </style>
+
 </resources>

@@ -26,8 +26,8 @@ import android.view.LayoutInflater
 import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bobek.metronome.databinding.TickVisualizationBinding
-import com.google.android.material.R.attr.colorPrimary
-import com.google.android.material.R.attr.colorSecondary
+import com.google.android.material.R.attr.colorOnTertiaryContainer
+import com.google.android.material.R.attr.colorTertiaryContainer
 
 class TickVisualization(context: Context, attributes: AttributeSet) : ConstraintLayout(context, attributes) {
 
@@ -45,8 +45,8 @@ class TickVisualization(context: Context, attributes: AttributeSet) : Constraint
         binding.tickVisualizationImage
             .animate()
             .setDuration(blinkDuration.toLong())
-            .withStartAction { setColor(colorSecondary) }
-            .withEndAction { setColor(colorPrimary) }
+            .withStartAction { setColor(colorOnTertiaryContainer) }
+            .withEndAction { setColor(colorTertiaryContainer) }
             .start()
     }
 

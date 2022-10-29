@@ -60,7 +60,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/beats_edit_layout"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         error="@{metronome.beatsTextError}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -116,7 +116,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/subdivisions_edit_layout"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         error="@{metronome.subdivisionsTextError}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -172,7 +172,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tempo_edit_layout"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         error="@{metronome.tempoTextError}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -334,7 +334,7 @@
 
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/tap_tempo_button"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/tap_tempo_button_description"

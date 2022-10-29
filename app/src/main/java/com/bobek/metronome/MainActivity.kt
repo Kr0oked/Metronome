@@ -31,6 +31,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.NightMode
+import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.data.Tempo
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "Lifecycle: onCreate")
+        WindowCompat.setDecorFitsSystemWindows(window, true)
         super.onCreate(savedInstanceState)
 
         viewModel = MetronomeViewModel()

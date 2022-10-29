@@ -23,7 +23,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-            android:allowBackup="false"
+            android:name=".MetronomeApplication"
+            android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
@@ -34,7 +35,7 @@
                 android:name=".MainActivity"
                 android:exported="true"
                 android:launchMode="singleTask"
-                android:theme="@style/Theme.Metronome.NoActionBar">
+                android:theme="@style/Theme.Metronome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
