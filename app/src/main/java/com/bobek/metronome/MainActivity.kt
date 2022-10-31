@@ -44,6 +44,7 @@ import com.bobek.metronome.view.model.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 private const val TAG = "MainActivity"
+private const val LARGE_TEMPO_CHANGE_SIZE = 10
 
 class MainActivity : AppCompatActivity() {
 
@@ -74,6 +75,19 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
         binding.metronome = viewModel
+
+        binding.contentMain.incrementTempoButton.setOnClickListener { incrementTempo() }
+        binding.contentMain.incrementTempoButton.setOnLongClickListener {
+            repeat(LARGE_TEMPO_CHANGE_SIZE) { incrementTempo() }
+            true
+        }
+
+        binding.contentMain.decrementTempoButton.setOnClickListener { decrementTempo() }
+        binding.contentMain.decrementTempoButton.setOnLongClickListener {
+            repeat(LARGE_TEMPO_CHANGE_SIZE) { decrementTempo() }
+            true
+        }
+
         binding.contentMain.tapTempoButton.setOnClickListener { tapTempo() }
 
         setSupportActionBar(binding.toolbar)
@@ -108,6 +122,22 @@ class MainActivity : AppCompatActivity() {
         metronomeService?.playing = false
         window.clearFlags(FLAG_KEEP_SCREEN_ON)
         Log.i(TAG, "Stopped metronome")
+    }
+
+    private fun incrementTempo() {
+        viewModel.tempoData.value?.value?.let {
+            if (it < Tempo.MAX) {
+                viewModel.tempoData.value = Tempo(it + 1)
+            }
+        }
+    }
+
+    private fun decrementTempo() {
+        viewModel.tempoData.value?.value?.let {
+            if (it > Tempo.MIN) {
+                viewModel.tempoData.value = Tempo(it - 1)
+            }
+        }
     }
 
     private fun tapTempo() {
