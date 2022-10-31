@@ -65,7 +65,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="@string/beats_edit_hint"
-                        app:errorEnabled="true"
+                        app:errorEnabled="false"
                         app:hintEnabled="false"
                         app:layout_constraintBottom_toBottomOf="@+id/beats_slider"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -121,7 +121,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="@string/subdivisions_edit_hint"
-                        app:errorEnabled="true"
+                        app:errorEnabled="false"
                         app:hintEnabled="false"
                         app:layout_constraintBottom_toBottomOf="@+id/subdivisions_slider"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -177,7 +177,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="@string/tempo_edit_hint"
-                        app:errorEnabled="true"
+                        app:errorEnabled="false"
                         app:hintEnabled="false"
                         app:layout_constraintBottom_toBottomOf="@+id/tempo_slider"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -347,9 +347,9 @@
                         app:iconGravity="textTop"
                         app:iconPadding="@dimen/no_padding"
                         app:iconSize="@dimen/action_button_icon_size"
-                        app:layout_constraintStart_toEndOf="@id/decrement_tempo_button"
                         app:layout_constraintBottom_toTopOf="@id/tap_tempo_button"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/decrement_tempo_button" />
 
                 <com.google.android.material.button.MaterialButton
                         android:id="@+id/start_stop_button"
