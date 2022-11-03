@@ -318,9 +318,9 @@ class MainActivity : AppCompatActivity() {
     @DrawableRes
     private fun getNightModeIcon(): Int {
         return when (AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.MODE_NIGHT_NO -> R.drawable.ic_night_mode_no
-            AppCompatDelegate.MODE_NIGHT_YES -> R.drawable.ic_night_mode_yes
-            else -> R.drawable.ic_night_mode_auto
+            AppCompatDelegate.MODE_NIGHT_NO -> R.drawable.ic_light_mode
+            AppCompatDelegate.MODE_NIGHT_YES -> R.drawable.ic_dark_mode
+            else -> R.drawable.ic_auto_mode
         }
     }
 }

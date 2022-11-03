@@ -25,7 +25,7 @@
 
     <item
             android:id="@+id/action_night_mode"
-            android:icon="@drawable/ic_night_mode_auto"
+            android:icon="@drawable/ic_auto_mode"
             android:title="@string/action_night_mode"
             app:showAsAction="ifRoom" />
 
