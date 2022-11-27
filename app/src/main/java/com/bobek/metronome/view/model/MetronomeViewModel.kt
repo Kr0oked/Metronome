@@ -20,13 +20,14 @@ package com.bobek.metronome.view.model
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 
 private const val TAG = "MetronomeViewModel"
 
-class MetronomeViewModel {
+class MetronomeViewModel : ViewModel() {
 
     val beatsData = MutableLiveData(Beats())
     val beatsText = MutableLiveData("")
@@ -40,26 +41,76 @@ class MetronomeViewModel {
     val tempoText = MutableLiveData("")
     val tempoTextError = MutableLiveData(false)
 
+    val emphasizeFirstBeat = MutableLiveData(true)
     val playing = MutableLiveData(false)
     val connected = MutableLiveData(false)
 
+    private val beatsDataObserver = getBeatsDataObserver()
+    private val beatsTextObserver = getBeatsTextObserver()
+
+    private val subdivisionsDataObserver = getSubdivisionsDataObserver()
+    private val subdivisionsTextObserver = getSubdivisionsTextObserver()
+
+    private val tempoDataObserver = getTempoDataObserver()
+    private val tempoTextObserver = getTempoTextObserver()
+
+    private val emphasizeFirstBeatObserver = getEmphasizeFirstBeatObserver()
+    private val playingObserver = getPlayingObserver()
+    private val connectedObserver = getConnectedObserver()
+
     init {
-        beatsData.observeForever { beats -> beatsText.value = beats.value.toString() }
-        beatsData.observeForever { beats -> Log.d(TAG, "Beats: $beats") }
-        beatsText.observeForever(this::processBeatsText)
+        beatsData.observeForever(beatsDataObserver)
+        beatsText.observeForever(beatsTextObserver)
 
-        subdivisionsData.observeForever { subdivisions -> subdivisionsText.value = subdivisions.value.toString() }
-        subdivisionsData.observeForever { subdivisions -> Log.d(TAG, "Subdivisions: $subdivisions") }
-        subdivisionsText.observeForever(this::processSubdivisionsText)
+        subdivisionsData.observeForever(subdivisionsDataObserver)
+        subdivisionsText.observeForever(subdivisionsTextObserver)
 
-        tempoData.observeForever { tempo -> tempoText.value = tempo.value.toString() }
-        tempoData.observeForever { tempo -> Log.d(TAG, "Tempo: $tempo") }
-        tempoText.observeForever(this::processTempoText)
+        tempoData.observeForever(tempoDataObserver)
+        tempoText.observeForever(tempoTextObserver)
+
+        emphasizeFirstBeat.observeForever(emphasizeFirstBeatObserver)
+        playing.observeForever(playingObserver)
+        connected.observeForever(connectedObserver)
     }
 
-    private fun processBeatsText(text: String) {
+    fun startStop() {
+        playing.value?.let { playing.value = it.not() }
+    }
+
+    override fun onCleared() {
+        beatsData.removeObserver(beatsDataObserver)
+        beatsText.removeObserver(beatsTextObserver)
+
+        subdivisionsData.removeObserver(subdivisionsDataObserver)
+        subdivisionsText.removeObserver(subdivisionsTextObserver)
+
+        tempoData.removeObserver(tempoDataObserver)
+        tempoText.removeObserver(tempoTextObserver)
+
+        emphasizeFirstBeat.removeObserver(emphasizeFirstBeatObserver)
+        playing.removeObserver(playingObserver)
+        connected.removeObserver(connectedObserver)
+    }
+
+    override fun toString(): String {
+        return "MetronomeViewModel(" +
+                "beats=${beatsData.value?.value}, " +
+                "subdivisions=${subdivisionsData.value?.value}, " +
+                "tempo=${tempoData.value?.value}, " +
+                "emphasizeFirstBeat=${emphasizeFirstBeat.value}," +
+                "playing=${playing.value}, " +
+                "connected=${connected.value}" +
+                ")"
+    }
+
+    private fun getBeatsDataObserver(): (t: Beats) -> Unit = {
+        beatsText.value = it.value.toString()
+        Log.d(TAG, "beats: $it")
+    }
+
+    private fun getBeatsTextObserver(): (t: String) -> Unit = {
         try {
-            val numericValue = text.toInt()
+            val numericValue = it.toInt()
             val beats = Beats(numericValue)
 
             if (beatsData.value != beats) {
@@ -74,9 +125,14 @@ class MetronomeViewModel {
         }
     }
 
-    private fun processSubdivisionsText(text: String) {
+    private fun getSubdivisionsDataObserver(): (t: Subdivisions) -> Unit = {
+        subdivisionsText.value = it.value.toString()
+        Log.d(TAG, "subdivisions: $it")
+    }
+
+    private fun getSubdivisionsTextObserver(): (t: String) -> Unit = {
         try {
-            val numericValue = text.toInt()
+            val numericValue = it.toInt()
             val subdivisions = Subdivisions(numericValue)
 
             if (subdivisionsData.value != subdivisions) {
@@ -91,9 +147,14 @@ class MetronomeViewModel {
         }
     }
 
-    private fun processTempoText(text: String) {
+    private fun getTempoDataObserver(): (t: Tempo) -> Unit = {
+        tempoText.value = it.value.toString()
+        Log.d(TAG, "tempo: $it")
+    }
+
+    private fun getTempoTextObserver(): (t: String) -> Unit = {
         try {
-            val numericValue = text.toInt()
+            val numericValue = it.toInt()
             val tempo = Tempo(numericValue)
 
             if (tempoData.value != tempo) {
@@ -108,16 +169,15 @@ class MetronomeViewModel {
         }
     }
 
-    fun startStop() {
-        playing.value = playing.value!!.not()
+    private fun getEmphasizeFirstBeatObserver(): (t: Boolean) -> Unit = {
+        Log.d(TAG, "emphasizeFirstBeat: $it")
     }
 
-    override fun toString(): String {
-        return "MetronomeViewModel(" +
-                "beats=${beatsData.value?.value}, " +
-                "subdivisions=${subdivisionsData.value?.value}, " +
-                "tempo=${tempoData.value?.value}, " +
-                "playing=${playing.value}" +
-                ")"
+    private fun getPlayingObserver(): (t: Boolean) -> Unit = {
+        Log.d(TAG, "playing: $it")
+    }
+
+    private fun getConnectedObserver(): (t: Boolean) -> Unit = {
+        Log.d(TAG, "connected: $it")
     }
 }

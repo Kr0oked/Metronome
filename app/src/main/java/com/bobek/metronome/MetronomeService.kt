@@ -68,6 +68,12 @@ class MetronomeService : LifecycleService() {
             metronome.tempo = tempo
         }
 
+    var emphasizeFirstBeat: Boolean
+        get() = metronome.emphasizeFirstBeat
+        set(emphasizeFirstBeat) {
+            metronome.emphasizeFirstBeat = emphasizeFirstBeat
+        }
+
     var playing: Boolean
         get() = metronome.playing
         set(playing) = if (playing) startMetronome() else stopMetronome()
@@ -159,7 +165,7 @@ class MetronomeService : LifecycleService() {
             .let { LocalBroadcastManager.getInstance(this).sendBroadcast(it) }
     }
 
-    inner class StopReceiver : BroadcastReceiver() {
+    private inner class StopReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             Log.d(TAG, "Received stop command")
             performStop()

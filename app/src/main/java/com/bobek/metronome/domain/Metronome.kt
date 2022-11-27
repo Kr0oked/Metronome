@@ -60,6 +60,9 @@ class Metronome(
     @Volatile
     var tempo: Tempo = Tempo()
 
+    @Volatile
+    var emphasizeFirstBeat = true
+
     var playing: Boolean = false
         set(playing) {
             if (field != playing) {
@@ -157,7 +160,8 @@ class Metronome(
         }
     }
 
-    private fun isStrongTick(tickCount: Long) = tickCount % (beats.value * subdivisions.value) == 0L
+    private fun isStrongTick(tickCount: Long) =
+        emphasizeFirstBeat && (tickCount % (beats.value * subdivisions.value) == 0L)
 
     private fun isWeakTick(tickCount: Long) = tickCount % subdivisions.value == 0L
 

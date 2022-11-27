@@ -19,8 +19,6 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:bind="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -41,30 +39,8 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/loading_indicator"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:visibility="@{metronome.connected ? View.INVISIBLE : View.VISIBLE}"
-                app:layout_anchor="@id/content_main"
-                app:layout_anchorGravity="center" />
-
-        <include
-                android:id="@+id/content_main"
-                layout="@layout/content_main"
-                android:visibility="@{metronome.connected ? View.VISIBLE : View.INVISIBLE}"
-                bind:metronome="@{metronome}" />
+        <include layout="@layout/content_main" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-                name="metronome"
-                type="com.bobek.metronome.view.model.MetronomeViewModel" />
-    </data>
 
 </layout>

@@ -19,9 +19,10 @@
   -->
 
 <resources>
-    <string name="app_name">Metronom</string>
+    <string name="metronome">Metronom</string>
 
     <string name="action_night_mode">Nachtmodus wechseln</string>
+    <string name="settings">Einstellungen</string>
     <string name="about">Über die App</string>
 
     <string name="beats_label">Schläge</string>
@@ -53,5 +54,5 @@
     <string name="source_code"><a href="https://github.com/Kr0oked/Metronome">Quelltext</a></string>
     <string name="source_code_description">Link zur Quelltext Verwaltung</string>
 
-    <string name="action_settings">Einstellungen</string>
+    <string name="preference_emphasize_first_beat_title">Ersten Schlag betonen</string>
 </resources>

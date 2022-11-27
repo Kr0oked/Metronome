@@ -18,21 +18,31 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context="com.bobek.metronome.MainActivity">
+        android:id="@+id/nav_graph"
+        app:startDestination="@id/MetronomeFragment">
 
-    <item
-            android:id="@+id/action_night_mode"
-            android:icon="@drawable/ic_auto_mode"
-            android:title="@string/action_night_mode"
-            app:showAsAction="ifRoom" />
+    <fragment
+            android:id="@+id/MetronomeFragment"
+            android:name="com.bobek.metronome.MetronomeFragment"
+            android:label="@string/metronome"
+            tools:layout="@layout/fragment_metronome">
 
-    <item
-            android:id="@+id/action_about"
-            android:icon="@drawable/ic_about"
-            android:title="@string/about"
-            app:showAsAction="ifRoom" />
+        <action
+                android:id="@+id/action_MetronomeFragment_to_SettingsFragment"
+                app:destination="@id/SettingsFragment" />
+    </fragment>
 
-</menu>
+    <fragment
+            android:id="@+id/SettingsFragment"
+            android:name="com.bobek.metronome.SettingsFragment"
+            android:label="@string/settings">
+
+        <action
+                android:id="@+id/action_SettingsFragment_to_MetronomeFragment"
+                app:destination="@id/MetronomeFragment" />
+    </fragment>
+
+</navigation>
