@@ -50,7 +50,7 @@ class InstrumentedTest {
     @Test
     fun contentVisible() {
         onView(withId(R.id.loading_indicator)).check(matches(not(isDisplayed())))
-        onView(withId(R.id.content_main)).check(matches(isDisplayed()))
+        onView(withId(R.id.content)).check(matches(isDisplayed()))
     }
 
     @Test
