@@ -233,7 +233,7 @@
                     style="?attr/materialIconButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/tap_tempo_button_description"
+                    android:contentDescription="@string/decrement_tempo_button_description"
                     app:icon="@drawable/ic_remove"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tempo_edit_layout" />
@@ -243,7 +243,7 @@
                     style="?attr/materialIconButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/tap_tempo_button_description"
+                    android:contentDescription="@string/increment_tempo_button_description"
                     app:icon="@drawable/ic_add"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tempo_edit_layout" />
