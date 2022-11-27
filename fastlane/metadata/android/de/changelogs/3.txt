@@ -1,0 +1,5 @@
+- Material 3 Design
+- Buttons zum Erhöhen und Verringern des Tempos
+- Neue Icons für die Nachtmodus Einstellungen
+- Einstellung zum Betonen des ersten Schlags
+- Speicherung der App Einstellungen

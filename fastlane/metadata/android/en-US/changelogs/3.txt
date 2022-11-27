@@ -1,0 +1,5 @@
+- Material 3 design
+- Buttons to increment and decrement tempo
+- New icons for the night mode preference
+- Option to emphasize first beat
+- Persist app preference
