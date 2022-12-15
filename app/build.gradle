@@ -25,12 +25,12 @@ plugins {
 
 android {
     namespace 'com.bobek.metronome'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId 'com.bobek.metronome'
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 3
         versionName '1.2'
 
