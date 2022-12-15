@@ -27,9 +27,9 @@ object TextInputLayoutAdapter {
     @JvmStatic
     fun setError(textInputLayout: TextInputLayout, error: Boolean) {
         if (error) {
-            textInputLayout.error = " ";
+            textInputLayout.error = " "
         } else {
-            textInputLayout.error = null;
+            textInputLayout.error = null
         }
     }
 }
