@@ -18,11 +18,15 @@
 
 package com.bobek.metronome
 
+import android.Manifest
 import android.content.*
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.NightMode
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
@@ -116,6 +120,42 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         Log.d(TAG, "Lifecycle: onResume")
         super.onResume()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            handlePostNotificationsPermission()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun handlePostNotificationsPermission() {
+        if (preferenceStore.postNotificationsPermissionRequested.value == false
+            && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED
+        ) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            processPostNotificationPermissionResult(permissions, grantResults)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun processPostNotificationPermissionResult(permissions: Array<String>, grantResults: IntArray) {
+        val permissionIndex = permissions.indexOf(Manifest.permission.POST_NOTIFICATIONS)
+        if (permissionIndex >= 0) {
+            preferenceStore.postNotificationsPermissionRequested.value = true
+            if (grantResults[permissionIndex] == PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "Permission POST_NOTIFICATIONS granted")
+            } else {
+                Log.i(TAG, "Permission POST_NOTIFICATIONS denied")
+            }
+        } else {
+            Log.i(TAG, "Permission request canceled")
+        }
     }
 
     override fun onPause() {

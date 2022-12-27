@@ -34,6 +34,7 @@ private const val SUBDIVISIONS = "subdivisions"
 private const val TEMPO = "tempo"
 private const val EMPHASIZE_FIRST_BEAT = "emphasize_first_beat"
 private const val NIGHT_MODE = "night_mode"
+private const val POST_NOTIFICATIONS_PERMISSION_REQUESTED = "post_notifications_permission_requested"
 
 class PreferenceStore(context: Context) {
 
@@ -42,6 +43,7 @@ class PreferenceStore(context: Context) {
     val tempo = MutableLiveData<Tempo>()
     val emphasizeFirstBeat = MutableLiveData<Boolean>()
     val nightMode = MutableLiveData<Int>()
+    val postNotificationsPermissionRequested = MutableLiveData<Boolean>()
 
     private val sharedPreferenceChangeListener = SharedPreferenceChangeListener()
     private val beatsObserver = getBeatsObserver()
@@ -49,6 +51,7 @@ class PreferenceStore(context: Context) {
     private val tempoObserver = getTempoObserver()
     private val emphasizeFirstBeatObserver = getEmphasizeFirstBeatObserver()
     private val nightModeObserver = getNightModeObserver()
+    private val postNotificationsPermissionRequestedObserver = getPostNotificationsPermissionRequestedObserver()
 
     private val sharedPreferences: SharedPreferences
 
@@ -60,12 +63,14 @@ class PreferenceStore(context: Context) {
         updateTempo()
         updateEmphasizeFirstBeat()
         updateNightMode()
+        updatePostNotificationsPermissionRequested()
 
         beats.observeForever(beatsObserver)
         subdivisions.observeForever(subdivisionsObserver)
         tempo.observeForever(tempoObserver)
         emphasizeFirstBeat.observeForever(emphasizeFirstBeatObserver)
         nightMode.observeForever(nightModeObserver)
+        postNotificationsPermissionRequested.observeForever(postNotificationsPermissionRequestedObserver)
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener)
     }
@@ -78,6 +83,7 @@ class PreferenceStore(context: Context) {
         tempo.removeObserver(tempoObserver)
         emphasizeFirstBeat.removeObserver(emphasizeFirstBeatObserver)
         nightMode.removeObserver(nightModeObserver)
+        postNotificationsPermissionRequested.removeObserver(postNotificationsPermissionRequestedObserver)
     }
 
     private inner class SharedPreferenceChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
@@ -88,6 +94,7 @@ class PreferenceStore(context: Context) {
                 TEMPO -> updateTempo()
                 EMPHASIZE_FIRST_BEAT -> updateEmphasizeFirstBeat()
                 NIGHT_MODE -> updateNightMode()
+                POST_NOTIFICATIONS_PERMISSION_REQUESTED -> updatePostNotificationsPermissionRequested()
             }
         }
     }
@@ -130,6 +137,13 @@ class PreferenceStore(context: Context) {
         }
     }
 
+    private fun updatePostNotificationsPermissionRequested() {
+        val storedValue = sharedPreferences.getBoolean(POST_NOTIFICATIONS_PERMISSION_REQUESTED, false)
+        if (postNotificationsPermissionRequested.value != storedValue) {
+            postNotificationsPermissionRequested.value = storedValue
+        }
+    }
+
     private fun getBeatsObserver(): (t: Beats) -> Unit = {
         val edit = sharedPreferences.edit()
         edit.putInt(BEATS, it.value)
@@ -163,5 +177,12 @@ class PreferenceStore(context: Context) {
         edit.putInt(NIGHT_MODE, it)
         edit.apply()
         Log.d(TAG, "Persisted nightMode: $it")
+    }
+
+    private fun getPostNotificationsPermissionRequestedObserver(): (t: Boolean) -> Unit = {
+        val edit = sharedPreferences.edit()
+        edit.putBoolean(POST_NOTIFICATIONS_PERMISSION_REQUESTED, it)
+        edit.apply()
+        Log.d(TAG, "Persisted postNotificationsPermissionRequested: $it")
     }
 }

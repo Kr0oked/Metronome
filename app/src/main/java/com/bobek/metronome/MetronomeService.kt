@@ -91,6 +91,7 @@ class MetronomeService : LifecycleService() {
         .Builder(NOTIFICATION_CHANNEL_PLAYBACK_ID, NotificationManagerCompat.IMPORTANCE_DEFAULT)
         .setName(getString(R.string.notification_channel_playback_name))
         .setDescription(getString(R.string.notification_channel_playback_description))
+        .setImportance(NotificationManagerCompat.IMPORTANCE_HIGH)
         .build()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -138,7 +139,10 @@ class MetronomeService : LifecycleService() {
             .setContentTitle(getString(R.string.notification_playback_title))
             .setSmallIcon(R.drawable.ic_metronome)
             .setSilent(true)
+            .setOngoing(true)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .addAction(
                 android.R.drawable.ic_media_pause,
                 getString(R.string.notification_playback_action_stop_title),
@@ -148,6 +152,7 @@ class MetronomeService : LifecycleService() {
             .build()
 
         startForeground(NOTIFICATION_ID, notification)
+        Log.d(TAG, "Foreground service started")
     }
 
     private fun getPendingIntentFlags() =
@@ -156,7 +161,16 @@ class MetronomeService : LifecycleService() {
     private fun stopMetronome() {
         Log.i(TAG, "Stop metronome")
         metronome.playing = false
-        stopForeground(true)
+        stopForegroundNotification()
+    }
+
+    private fun stopForegroundNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        } else {
+            stopForeground(true)
+        }
+        Log.d(TAG, "Foreground service stopped")
     }
 
     private fun publishTick(tick: Tick) {
