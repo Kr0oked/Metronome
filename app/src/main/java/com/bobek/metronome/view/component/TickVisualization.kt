@@ -28,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.bobek.metronome.databinding.TickVisualizationBinding
 import com.google.android.material.R.attr.colorOnTertiaryContainer
 import com.google.android.material.R.attr.colorTertiaryContainer
+import com.google.android.material.R.integer.material_motion_duration_medium_1
 
 class TickVisualization(context: Context, attributes: AttributeSet) : ConstraintLayout(context, attributes) {
 
@@ -40,7 +41,7 @@ class TickVisualization(context: Context, attributes: AttributeSet) : Constraint
 
     fun blink() {
         val blinkDuration = context.resources
-            .getInteger(com.google.android.material.R.integer.material_motion_duration_medium_1)
+            .getInteger(material_motion_duration_medium_1)
 
         binding.tickVisualizationImage
             .animate()

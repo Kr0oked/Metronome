@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.Log
@@ -254,9 +255,17 @@ class MetronomeFragment : Fragment() {
 
     private inner class TickReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            intent.getParcelableExtra<Tick>(MetronomeService.EXTRA_TICK)
+            extractTick(intent)
                 ?.also { tick -> Log.v(TAG, "Received $tick") }
                 ?.also { tick -> visualizeTick(tick) }
+        }
+    }
+
+    private fun extractTick(intent: Intent): Tick? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(MetronomeService.EXTRA_TICK, Tick::class.java)
+        } else {
+            intent.getParcelableExtra(MetronomeService.EXTRA_TICK)
         }
     }
 
