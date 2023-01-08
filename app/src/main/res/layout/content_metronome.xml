@@ -225,28 +225,8 @@
                 android:id="@+id/tempo_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/action_section"
+                app:layout_constraintBottom_toTopOf="@id/tempo_action_section"
                 app:layout_constraintTop_toBottomOf="@id/subdivisions_section">
-
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/decrement_tempo_button"
-                    style="?attr/materialIconButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/decrement_tempo_button_description"
-                    app:icon="@drawable/ic_remove"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tempo_edit_layout" />
-
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/increment_tempo_button"
-                    style="?attr/materialIconButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/increment_tempo_button_description"
-                    app:icon="@drawable/ic_add"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tempo_edit_layout" />
 
             <com.google.android.material.slider.Slider
                     android:id="@+id/tempo_slider"
@@ -307,7 +287,59 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/action_section"
+                android:id="@+id/tempo_action_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/start_stop_action_section"
+                app:layout_constraintTop_toBottomOf="@id/tempo_section">
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/decrement_tempo_button"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/decrement_tempo_button_description"
+                    app:icon="@drawable/ic_remove"
+                    app:iconGravity="textTop"
+                    app:iconPadding="@dimen/no_padding"
+                    app:iconSize="@dimen/action_button_icon_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tap_tempo_button"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/tap_tempo_button_description"
+                    app:icon="@drawable/ic_drum"
+                    app:iconGravity="textTop"
+                    app:iconPadding="@dimen/no_padding"
+                    app:iconSize="@dimen/action_button_icon_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/increment_tempo_button"
+                    app:layout_constraintStart_toEndOf="@+id/decrement_tempo_button"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/increment_tempo_button"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/increment_tempo_button_description"
+                    app:icon="@drawable/ic_add"
+                    app:iconGravity="textTop"
+                    app:iconPadding="@dimen/no_padding"
+                    app:iconSize="@dimen/action_button_icon_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/start_stop_action_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent">
@@ -326,19 +358,6 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
-
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/tap_tempo_button"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/tap_tempo_button_description"
-                    app:icon="@drawable/ic_drum"
-                    app:iconGravity="textTop"
-                    app:iconPadding="@dimen/no_padding"
-                    app:iconSize="@dimen/action_button_icon_size"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
