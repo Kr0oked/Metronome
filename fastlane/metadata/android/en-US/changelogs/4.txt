@@ -1,0 +1,4 @@
+- Monochrome icon
+- Permission for notifications
+- Improved size of the visualizations
+- Rearrangement of the buttons
