@@ -32,7 +32,8 @@
             android:label="@string/metronome"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/Theme.Metronome">
+            android:theme="@style/Theme.Metronome"
+            android:localeConfig="@xml/locales_config">
 
         <activity
                 android:name=".MainActivity"
