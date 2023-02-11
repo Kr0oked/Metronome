@@ -1,25 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of Metronome.
+  ~ Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Metronome is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="metronome">Metronom</string>
+
     <string name="action_night_mode">Změnit tmavý režim</string>
     <string name="settings">Nastavení</string>
     <string name="about">O aplikaci</string>
+
     <string name="beats_label">Doba</string>
     <string name="beats_edit_hint">Zadání doby</string>
+
     <string name="subdivisions_label">Subdivize</string>
     <string name="subdivisions_edit_hint">Zadání subdivize</string>
+
     <string name="tempo_label">Tempo v BPM</string>
     <string name="tempo_edit_hint">Zadání tempa</string>
+
     <string name="start_stop_button_description">Spustí nebo zastaví metronom</string>
     <string name="tap_tempo_button_description">Zmáčkněte několikrát pro zadání tempa</string>
     <string name="increment_tempo_button_description">Zvýší tempo</string>
     <string name="decrement_tempo_button_description">Sníží tempo</string>
     <string name="tick_visualization_image_description">Vizualizace dob</string>
+
     <string name="notification_channel_playback_name">Přehrání</string>
     <string name="notification_channel_playback_description">Aktuální přehrání</string>
     <string name="notification_playback_title">Metronom hraje</string>
     <string name="notification_playback_action_stop_title">Zastavit</string>
+
     <string name="ok">OK</string>
+
     <string name="version">Verze %s</string>
     <string name="version_description">Jméno verze</string>
     <string name="copyright">Copyright @ 2022 <a href="mailto:philipp.bobek@mailbox.org">Philipp Bobek</a></string>
@@ -28,5 +55,6 @@
     <string name="license_description">Softwarová licence</string>
     <string name="source_code"><a href="https://github.com/Kr0oked/Metronome">Zdrojový kód</a></string>
     <string name="source_code_description">Odkaz na zdrojový kód</string>
+
     <string name="preference_emphasize_first_beat_title">Zdůraznit první dobu</string>
 </resources>
