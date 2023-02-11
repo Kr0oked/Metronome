@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metronome">Metronom</string>
+    <string name="action_night_mode">Změnit tmavý režim</string>
+    <string name="settings">Nastavení</string>
+    <string name="about">O aplikaci</string>
+    <string name="beats_label">Doba</string>
+    <string name="beats_edit_hint">Zadání doby</string>
+    <string name="subdivisions_label">Subdivize</string>
+    <string name="subdivisions_edit_hint">Zadání subdivize</string>
+    <string name="tempo_label">Tempo v BPM</string>
+    <string name="tempo_edit_hint">Zadání tempa</string>
+    <string name="start_stop_button_description">Spustí nebo zastaví metronom</string>
+    <string name="tap_tempo_button_description">Zmáčkněte několikrát pro zadání tempa</string>
+    <string name="increment_tempo_button_description">Zvýší tempo</string>
+    <string name="decrement_tempo_button_description">Sníží tempo</string>
+    <string name="tick_visualization_image_description">Vizualizace dob</string>
+    <string name="notification_channel_playback_name">Přehrání</string>
+    <string name="notification_channel_playback_description">Aktuální přehrání</string>
+    <string name="notification_playback_title">Metronom hraje</string>
+    <string name="notification_playback_action_stop_title">Zastavit</string>
+    <string name="ok">OK</string>
+    <string name="version">Verze %s</string>
+    <string name="version_description">Jméno verze</string>
+    <string name="copyright">Copyright @ 2022 <a href="mailto:philipp.bobek@mailbox.org">Philipp Bobek</a></string>
+    <string name="copyright_description">Autorská práva</string>
+    <string name="license">Licence <a href="https://www.gnu.org/licenses/gpl-3.0.txt">GNU GPLv3</a></string>
+    <string name="license_description">Softwarová licence</string>
+    <string name="source_code"><a href="https://github.com/Kr0oked/Metronome">Zdrojový kód</a></string>
+    <string name="source_code_description">Odkaz na zdrojový kód</string>
+    <string name="preference_emphasize_first_beat_title">Zdůraznit první dobu</string>
+</resources>
