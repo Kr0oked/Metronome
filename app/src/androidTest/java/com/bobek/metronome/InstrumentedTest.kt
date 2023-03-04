@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ import androidx.annotation.StringRes
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -218,22 +217,6 @@ class InstrumentedTest {
 
     private fun verifyTempoMarking(@StringRes resourceId: Int) {
         onTempoMarkingText().check(matches(withText(resourceId)))
-    }
-
-    @Test
-    fun aboutDialog() {
-        onView(withId(R.id.action_about))
-            .check(matches(isDisplayed()))
-            .perform(click())
-
-        onView(withId(R.id.version_text)).check(matches(isDisplayed()))
-        onView(withId(R.id.copyright_text)).check(matches(withText(R.string.copyright)))
-        onView(withId(R.id.license_text)).check(matches(withText(R.string.license)))
-        onView(withId(R.id.source_code_text))
-            .check(matches(withText(R.string.source_code)))
-            .check(matches(hasLinks()))
-
-        onView(withText(R.string.ok)).perform(click())
     }
 
     private fun onBeatsSlider() = onView(withId(R.id.beats_slider))

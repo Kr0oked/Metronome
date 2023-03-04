@@ -16,20 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome
+package com.bobek.metronome.preference
 
-import android.os.Bundle
-import androidx.preference.Preference
-import androidx.preference.Preference.SummaryProvider
-import androidx.preference.PreferenceFragmentCompat
-import com.bobek.metronome.preference.PreferenceConstants
+object PreferenceConstants {
 
-class SettingsFragment : PreferenceFragmentCompat() {
+    const val BEATS = "beats"
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey)
+    const val SUBDIVISIONS = "subdivisions"
 
-        findPreference<Preference>(PreferenceConstants.VERSION)?.summaryProvider =
-            SummaryProvider<Preference> { BuildConfig.VERSION_NAME }
-    }
+    const val TEMPO = "tempo"
+
+    const val EMPHASIZE_FIRST_BEAT = "emphasize_first_beat"
+
+    const val NIGHT_MODE = "night_mode"
+    const val NIGHT_MODE_VALUE_FOLLOW_SYSTEM = "follow_system"
+    const val NIGHT_MODE_VALUE_NO = "no"
+    const val NIGHT_MODE_VALUE_YES = "yes"
+
+    const val POST_NOTIFICATIONS_PERMISSION_REQUESTED = "post_notifications_permission_requested"
+
+    const val VERSION = "version"
 }

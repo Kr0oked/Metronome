@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate.NightMode
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
@@ -38,6 +37,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.databinding.ActivityMainBinding
 import com.bobek.metronome.preference.PreferenceStore
 import com.bobek.metronome.view.model.MetronomeViewModel
@@ -75,18 +75,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initPreferenceStore() {
-        preferenceStore = PreferenceStore(this)
+        preferenceStore = PreferenceStore(this, lifecycle)
         preferenceStore.beats.observe(this) { viewModel.beatsData.value = it }
         preferenceStore.subdivisions.observe(this) { viewModel.subdivisionsData.value = it }
         preferenceStore.tempo.observe(this) { viewModel.tempoData.value = it }
         preferenceStore.emphasizeFirstBeat.observe(this) { viewModel.emphasizeFirstBeat.value = it }
         preferenceStore.nightMode.observe(this) { setNightMode(it) }
-        Log.d(TAG, "Initialized preference store")
     }
 
-    private fun setNightMode(@NightMode mode: Int) {
-        Log.d(TAG, "Setting night mode to value $mode")
-        setDefaultNightMode(mode)
+    private fun setNightMode(appNightMode: AppNightMode) {
+        Log.d(TAG, "Setting night mode to $appNightMode")
+        setDefaultNightMode(appNightMode.systemValue)
     }
 
     private fun initViewModel() {
@@ -95,7 +94,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.tempoData.observe(this) { metronomeService?.tempo = it }
         viewModel.emphasizeFirstBeat.observe(this) { metronomeService?.emphasizeFirstBeat = it }
         viewModel.playing.observe(this) { metronomeService?.playing = it }
-        Log.d(TAG, "Initialized view model")
     }
 
     private fun registerRefreshReceiver() {
@@ -180,14 +178,8 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         Log.d(TAG, "Lifecycle: onDestroy")
         super.onDestroy()
-        closePreferenceStore()
         unregisterRefreshReceiver()
         unbindFromMetronomeService()
-    }
-
-    private fun closePreferenceStore() {
-        preferenceStore.close()
-        Log.d(TAG, "Closed preference store")
     }
 
     private fun unregisterRefreshReceiver() {

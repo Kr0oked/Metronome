@@ -21,10 +21,6 @@
 <resources>
     <string name="metronome">Metronom</string>
 
-    <string name="action_night_mode">Změnit tmavý režim</string>
-    <string name="settings">Nastavení</string>
-    <string name="about">O aplikaci</string>
-
     <string name="beats_label">Doba</string>
     <string name="beats_edit_hint">Zadání doby</string>
 
@@ -45,16 +41,19 @@
     <string name="notification_playback_title">Metronom hraje</string>
     <string name="notification_playback_action_stop_title">Zastavit</string>
 
-    <string name="ok">OK</string>
+    <string name="settings">Nastavení</string>
 
-    <string name="version">Verze %s</string>
-    <string name="version_description">Jméno verze</string>
-    <string name="copyright">Copyright @ 2022 <a href="mailto:philipp.bobek@mailbox.org">Philipp Bobek</a></string>
-    <string name="copyright_description">Autorská práva</string>
-    <string name="license">Licence <a href="https://www.gnu.org/licenses/gpl-3.0.txt">GNU GPLv3</a></string>
-    <string name="license_description">Softwarová licence</string>
-    <string name="source_code"><a href="https://github.com/Kr0oked/Metronome">Zdrojový kód</a></string>
-    <string name="source_code_description">Odkaz na zdrojový kód</string>
+    <string name="emphasize_first_beat">Zdůraznit první dobu</string>
 
-    <string name="preference_emphasize_first_beat_title">Zdůraznit první dobu</string>
+    <string name="display">Ukázat</string>
+    <string name="night_mode">Noční režim</string>
+    <string name="night_mode_follow_system">Systém</string>
+    <string name="night_mode_no">Den</string>
+    <string name="night_mode_yes">Noc</string>
+
+    <string name="about">O aplikaci</string>
+    <string name="author">Autor</string>
+    <string name="license">Licence</string>
+    <string name="source_code">Zdrojový kód</string>
+    <string name="version">Verze</string>
 </resources>

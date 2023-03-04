@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.*
-import androidx.annotation.DrawableRes
-import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -38,12 +35,9 @@ import androidx.navigation.fragment.findNavController
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.data.TickType
-import com.bobek.metronome.databinding.AboutAlertDialogViewBinding
 import com.bobek.metronome.databinding.FragmentMetronomeBinding
-import com.bobek.metronome.preference.PreferenceStore
 import com.bobek.metronome.view.component.TickVisualization
 import com.bobek.metronome.view.model.MetronomeViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 private const val TAG = "MetronomeFragment"
 private const val LARGE_TEMPO_CHANGE_SIZE = 10
@@ -53,16 +47,10 @@ class MetronomeFragment : Fragment() {
     private val viewModel: MetronomeViewModel by activityViewModels()
     private val tickReceiver = TickReceiver()
 
-    private lateinit var preferenceStore: PreferenceStore
     private lateinit var binding: FragmentMetronomeBinding
 
     private var optionsMenu: Menu? = null
     private var lastTap: Long = 0
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        preferenceStore = PreferenceStore(context)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMetronomeBinding.inflate(inflater, container, false)
@@ -71,16 +59,10 @@ class MetronomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initPreferenceStore()
         initViewModel()
         initBinding()
         registerTickReceiver()
         setupMenu()
-    }
-
-    private fun initPreferenceStore() {
-        preferenceStore.nightMode.observe(viewLifecycleOwner) { updateNightModeIcon() }
-        Log.d(TAG, "Initialized preference store")
     }
 
     private fun initViewModel() {
@@ -164,21 +146,12 @@ class MetronomeFragment : Fragment() {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.menu_metronome, menu)
             this@MetronomeFragment.optionsMenu = menu
-            updateNightModeIcon()
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
             return when (menuItem.itemId) {
-                R.id.action_night_mode -> {
-                    toggleNightMode()
-                    true
-                }
                 R.id.action_settings -> {
                     showSettings()
-                    true
-                }
-                R.id.action_about -> {
-                    showAboutPopup()
                     true
                 }
                 else -> false
@@ -186,50 +159,8 @@ class MetronomeFragment : Fragment() {
         }
     }
 
-    private fun toggleNightMode() {
-        preferenceStore.nightMode.value?.let {
-            when (it) {
-                MODE_NIGHT_NO -> preferenceStore.nightMode.value = MODE_NIGHT_YES
-                MODE_NIGHT_YES -> preferenceStore.nightMode.value = MODE_NIGHT_FOLLOW_SYSTEM
-                else -> preferenceStore.nightMode.value = MODE_NIGHT_NO
-            }
-        }
-    }
-
     private fun showSettings() {
         findNavController().navigate(R.id.action_MetronomeFragment_to_SettingsFragment)
-    }
-
-    private fun showAboutPopup() {
-        val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
-        val dialogContextInflater = LayoutInflater.from(alertDialogBuilder.context)
-
-        val dialogBinding = AboutAlertDialogViewBinding.inflate(dialogContextInflater, null, false)
-        dialogBinding.version = BuildConfig.VERSION_NAME
-        dialogBinding.copyrightText.movementMethod = LinkMovementMethod.getInstance()
-        dialogBinding.licenseText.movementMethod = LinkMovementMethod.getInstance()
-        dialogBinding.sourceCodeText.movementMethod = LinkMovementMethod.getInstance()
-
-        alertDialogBuilder
-            .setTitle(R.string.metronome)
-            .setView(dialogBinding.root)
-            .setNeutralButton(R.string.ok) { dialog, _ -> dialog.dismiss() }
-            .show()
-    }
-
-    private fun updateNightModeIcon() {
-        optionsMenu
-            ?.findItem(R.id.action_night_mode)
-            ?.setIcon(getNightModeIcon())
-    }
-
-    @DrawableRes
-    private fun getNightModeIcon(): Int {
-        return when (preferenceStore.nightMode.value) {
-            MODE_NIGHT_NO -> R.drawable.ic_light_mode
-            MODE_NIGHT_YES -> R.drawable.ic_dark_mode
-            else -> R.drawable.ic_auto_mode
-        }
     }
 
     override fun onDestroyView() {
@@ -241,17 +172,6 @@ class MetronomeFragment : Fragment() {
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(tickReceiver)
         Log.d(TAG, "Unregistered tickReceiver")
     }
-
-    override fun onDetach() {
-        super.onDetach()
-        closePreferenceStore()
-    }
-
-    private fun closePreferenceStore() {
-        preferenceStore.close()
-        Log.d(TAG, "Closed preference store")
-    }
-
 
     private inner class TickReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
