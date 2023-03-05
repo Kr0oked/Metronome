@@ -25,6 +25,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +48,7 @@ private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MetronomeViewModel by viewModels()
+    private val postNotificationsPermissionRequest = registerPostNotificationsPermissionRequest()
     private val metronomeServiceConnection = MetronomeServiceConnection()
     private val refreshReceiver = RefreshReceiver()
 
@@ -126,35 +128,17 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun handlePostNotificationsPermission() {
-        if (preferenceStore.postNotificationsPermissionRequested.value == false
-            && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        if (neverRequestedPostNotificationsPermission() && postNotificationsPermissionNotGranted()) {
+            postNotificationsPermissionRequest.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            processPostNotificationPermissionResult(permissions, grantResults)
-        }
-    }
+    private fun neverRequestedPostNotificationsPermission() =
+        preferenceStore.postNotificationsPermissionRequested.value == false
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun processPostNotificationPermissionResult(permissions: Array<String>, grantResults: IntArray) {
-        val permissionIndex = permissions.indexOf(Manifest.permission.POST_NOTIFICATIONS)
-        if (permissionIndex >= 0) {
-            preferenceStore.postNotificationsPermissionRequested.value = true
-            if (grantResults[permissionIndex] == PackageManager.PERMISSION_GRANTED) {
-                Log.i(TAG, "Permission POST_NOTIFICATIONS granted")
-            } else {
-                Log.i(TAG, "Permission POST_NOTIFICATIONS denied")
-            }
-        } else {
-            Log.i(TAG, "Permission request canceled")
-        }
-    }
+    private fun postNotificationsPermissionNotGranted() =
+        checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED
 
     override fun onPause() {
         Log.d(TAG, "Lifecycle: onPause")
@@ -204,6 +188,17 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
         return navHostFragment.navController
     }
+
+
+    private fun registerPostNotificationsPermissionRequest() =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            preferenceStore.postNotificationsPermissionRequested.value = true
+            if (granted) {
+                Log.i(TAG, "Permission POST_NOTIFICATIONS granted")
+            } else {
+                Log.i(TAG, "Permission POST_NOTIFICATIONS denied")
+            }
+        }
 
 
     private inner class MetronomeServiceConnection : ServiceConnection {

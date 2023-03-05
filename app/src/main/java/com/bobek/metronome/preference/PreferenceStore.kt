@@ -43,7 +43,9 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     val postNotificationsPermissionRequested = MutableLiveData<Boolean>()
 
     private val preferenceStoreLifecycleObserver = PreferenceStoreLifecycleObserver()
+
     private val sharedPreferenceChangeListener = SharedPreferenceChangeListener()
+
     private val beatsObserver = getBeatsObserver()
     private val subdivisionsObserver = getSubdivisionsObserver()
     private val tempoObserver = getTempoObserver()
@@ -62,7 +64,6 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         updateEmphasizeFirstBeat()
         updateNightMode()
         updatePostNotificationsPermissionRequested()
-
 
         lifecycle.addObserver(preferenceStoreLifecycleObserver)
     }
