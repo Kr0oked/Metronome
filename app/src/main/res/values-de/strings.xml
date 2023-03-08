@@ -56,4 +56,10 @@
     <string name="license">Lizenz</string>
     <string name="source_code">Quelltext</string>
     <string name="version">Version</string>
+
+    <string name="request_notifications_permission_rationale_title">Wir brauchen Ihre Zustimmung um Benachrichtigungen anzuzeigen</string>
+    <string name="request_notifications_permission_rationale_message">Diese App möchte eine Benachrichtigung anzeigen, solange das Metronom läuft. Sie können das Metronom dann einfach stoppen, auch wenn die App im Hintergrund läuft.</string>
+
+    <string name="ok">OK</string>
+    <string name="no_thanks">Nein danke</string>
 </resources>

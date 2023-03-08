@@ -42,6 +42,7 @@ import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.databinding.ActivityMainBinding
 import com.bobek.metronome.preference.PreferenceStore
 import com.bobek.metronome.view.model.MetronomeViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 private const val TAG = "MainActivity"
 
@@ -129,7 +130,7 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun handlePostNotificationsPermission() {
         if (neverRequestedPostNotificationsPermission() && postNotificationsPermissionNotGranted()) {
-            postNotificationsPermissionRequest.launch(Manifest.permission.POST_NOTIFICATIONS)
+            startPostNotificationsPermissionRequestWorkflow()
         }
     }
 
@@ -139,6 +140,39 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun postNotificationsPermissionNotGranted() =
         checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun startPostNotificationsPermissionRequestWorkflow() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            showRequestNotificationsPermissionRationale()
+        } else {
+            launchPostNotificationsPermissionRequest()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun showRequestNotificationsPermissionRationale() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.request_notifications_permission_rationale_title)
+            .setMessage(R.string.request_notifications_permission_rationale_message)
+            .setCancelable(false)
+            .setNeutralButton(R.string.ok) { dialog, _ ->
+                launchPostNotificationsPermissionRequest()
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.no_thanks) { dialog, _ ->
+                Log.i(TAG, "Continuing without requesting POST_NOTIFICATIONS permission")
+                preferenceStore.postNotificationsPermissionRequested.value = true
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun launchPostNotificationsPermissionRequest() {
+        Log.i(TAG, "Requesting POST_NOTIFICATIONS permission")
+        postNotificationsPermissionRequest.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
 
     override fun onPause() {
         Log.d(TAG, "Lifecycle: onPause")

@@ -57,6 +57,12 @@
     <string name="source_code">Source code</string>
     <string name="version">Version</string>
 
+    <string name="request_notifications_permission_rationale_title">We need permission to post notifications</string>
+    <string name="request_notifications_permission_rationale_message">This app wants to post a notification as long as the metronome is running. You can then easily stop the metronome even if the app is running in the background.</string>
+
+    <string name="ok">OK</string>
+    <string name="no_thanks">No thanks</string>
+
     <string name="source_code_name" translatable="false">Git Hub</string>
     <string name="license_name" translatable="false">GNU GPLv3</string>
     <string name="author_name" translatable="false">Philipp Bobek</string>
