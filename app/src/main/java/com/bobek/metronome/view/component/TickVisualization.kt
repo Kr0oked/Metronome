@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,18 @@ package com.bobek.metronome.view.component
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.LayoutInflater
-import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bobek.metronome.databinding.TickVisualizationBinding
 import com.google.android.material.R.attr.colorOnTertiaryContainer
 import com.google.android.material.R.attr.colorTertiaryContainer
-import com.google.android.material.R.integer.material_motion_duration_medium_1
+import com.google.android.material.color.MaterialColors
+
+private const val BLINK_DURATION_MILLISECONDS = 200L
 
 class TickVisualization(context: Context, attributes: AttributeSet) : ConstraintLayout(context, attributes) {
 
-    private var binding: TickVisualizationBinding
+    private val binding: TickVisualizationBinding
 
     init {
         val layoutInflater = LayoutInflater.from(context)
@@ -40,31 +40,18 @@ class TickVisualization(context: Context, attributes: AttributeSet) : Constraint
     }
 
     fun blink() {
-        val blinkDuration = context.resources
-            .getInteger(material_motion_duration_medium_1)
+        binding.tickVisualizationImage.clearAnimation()
 
         binding.tickVisualizationImage
             .animate()
-            .setDuration(blinkDuration.toLong())
+            .setDuration(BLINK_DURATION_MILLISECONDS)
             .withStartAction { setColor(colorOnTertiaryContainer) }
             .withEndAction { setColor(colorTertiaryContainer) }
             .start()
     }
 
     private fun setColor(resId: Int) {
-        resolveAttribute(resId)?.let {
-            binding.tickVisualizationImage.imageTintList = ColorStateList.valueOf(it)
-        }
-    }
-
-    @ColorInt
-    private fun resolveAttribute(resId: Int): Int? {
-        val typedValue = TypedValue()
-
-        return if (context.theme.resolveAttribute(resId, typedValue, true)) {
-            typedValue.data
-        } else {
-            return null
-        }
+        val color = MaterialColors.getColor(this, resId)
+        binding.tickVisualizationImage.imageTintList = ColorStateList.valueOf(color)
     }
 }
