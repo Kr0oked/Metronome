@@ -18,17 +18,15 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <merge>
-
-        <ImageView
-                android:id="@+id/tick_visualization_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/tick_visualization_image_description"
-                android:background="@drawable/animation_tick_visualization" />
-
-    </merge>
-
-</layout>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+        android:oneshot="true">
+    <item
+            android:drawable="@drawable/ic_tick_visualization_normal"
+            android:duration="0" />
+    <item
+            android:drawable="@drawable/ic_tick_visualization_blink"
+            android:duration="200" />
+    <item
+            android:drawable="@drawable/ic_tick_visualization_normal"
+            android:duration="0" />
+</animation-list>

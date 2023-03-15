@@ -19,16 +19,11 @@
 package com.bobek.metronome.view.component
 
 import android.content.Context
-import android.content.res.ColorStateList
+import android.graphics.drawable.AnimationDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bobek.metronome.databinding.TickVisualizationBinding
-import com.google.android.material.R.attr.colorOnTertiaryContainer
-import com.google.android.material.R.attr.colorTertiaryContainer
-import com.google.android.material.color.MaterialColors
-
-private const val BLINK_DURATION_MILLISECONDS = 200L
 
 class TickVisualization(context: Context, attributes: AttributeSet) : ConstraintLayout(context, attributes) {
 
@@ -40,18 +35,8 @@ class TickVisualization(context: Context, attributes: AttributeSet) : Constraint
     }
 
     fun blink() {
-        binding.tickVisualizationImage.clearAnimation()
-
-        binding.tickVisualizationImage
-            .animate()
-            .setDuration(BLINK_DURATION_MILLISECONDS)
-            .withStartAction { setColor(colorOnTertiaryContainer) }
-            .withEndAction { setColor(colorTertiaryContainer) }
-            .start()
-    }
-
-    private fun setColor(resId: Int) {
-        val color = MaterialColors.getColor(this, resId)
-        binding.tickVisualizationImage.imageTintList = ColorStateList.valueOf(color)
+        val blinkAnimation = binding.tickVisualizationImage.background as AnimationDrawable
+        blinkAnimation.stop()
+        blinkAnimation.start()
     }
 }
