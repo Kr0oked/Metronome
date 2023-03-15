@@ -22,7 +22,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -182,7 +183,7 @@ class MetronomeFragment : Fragment() {
     }
 
     private fun extractTick(intent: Intent): Tick? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        return if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(MetronomeService.EXTRA_TICK, Tick::class.java)
         } else {
             intent.getParcelableExtra(MetronomeService.EXTRA_TICK)

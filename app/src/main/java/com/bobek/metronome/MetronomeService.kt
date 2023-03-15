@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Binder
-import android.os.Build
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationChannelCompat
@@ -156,7 +157,7 @@ class MetronomeService : LifecycleService() {
     }
 
     private fun getPendingIntentFlags() =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+        if (VERSION.SDK_INT >= VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
 
     private fun stopMetronome() {
         Log.i(TAG, "Stop metronome")
@@ -165,7 +166,7 @@ class MetronomeService : LifecycleService() {
     }
 
     private fun stopForegroundNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (VERSION.SDK_INT >= VERSION_CODES.N) {
             stopForeground(STOP_FOREGROUND_REMOVE)
         } else {
             stopForeground(true)

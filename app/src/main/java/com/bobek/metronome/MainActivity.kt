@@ -18,10 +18,10 @@
 
 package com.bobek.metronome
 
-import android.Manifest
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.*
-import android.content.pm.PackageManager
-import android.os.Build
+import android.content.pm.PackageManager.PERMISSION_DENIED
+import android.os.Build.*
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -122,12 +122,12 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "Lifecycle: onResume")
         super.onResume()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
             handlePostNotificationsPermission()
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun handlePostNotificationsPermission() {
         if (neverRequestedPostNotificationsPermission() && postNotificationsPermissionNotGranted()) {
             startPostNotificationsPermissionRequestWorkflow()
@@ -137,20 +137,20 @@ class MainActivity : AppCompatActivity() {
     private fun neverRequestedPostNotificationsPermission() =
         preferenceStore.postNotificationsPermissionRequested.value == false
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun postNotificationsPermissionNotGranted() =
-        checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED
+        checkSelfPermission(POST_NOTIFICATIONS) == PERMISSION_DENIED
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun startPostNotificationsPermissionRequestWorkflow() {
-        if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+        if (shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)) {
             showRequestNotificationsPermissionRationale()
         } else {
             launchPostNotificationsPermissionRequest()
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun showRequestNotificationsPermissionRationale() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.request_notifications_permission_rationale_title)
@@ -168,10 +168,10 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun launchPostNotificationsPermissionRequest() {
         Log.i(TAG, "Requesting POST_NOTIFICATIONS permission")
-        postNotificationsPermissionRequest.launch(Manifest.permission.POST_NOTIFICATIONS)
+        postNotificationsPermissionRequest.launch(POST_NOTIFICATIONS)
     }
 
     override fun onPause() {
