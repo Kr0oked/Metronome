@@ -226,11 +226,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun registerPostNotificationsPermissionRequest() =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            preferenceStore.postNotificationsPermissionRequested.value = true
             if (granted) {
                 Log.i(TAG, "Permission POST_NOTIFICATIONS granted")
             } else {
                 Log.i(TAG, "Permission POST_NOTIFICATIONS denied")
+                preferenceStore.postNotificationsPermissionRequested.value = true
             }
         }
 
