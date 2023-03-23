@@ -66,6 +66,9 @@ android {
     buildFeatures {
         dataBinding true
     }
+    lintOptions {
+        warning 'MissingTranslation'
+    }
 }
 
 dependencies {
