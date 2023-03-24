@@ -2,7 +2,7 @@
 
 <!--
   ~ This file is part of Metronome.
-  ~ Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~ Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@
                         android:id="@+id/beats_slider"
                         android:layout_width="@dimen/slider_auto_size"
                         android:layout_height="wrap_content"
+                        android:contentDescription="@string/beats_slider_description"
                         android:stepSize="1"
                         android:value="@={Beats.beatsToFloat(metronome.beatsData)}"
                         android:valueFrom="@{Beats.MIN}"
@@ -62,9 +63,7 @@
                         error="@{metronome.beatsTextError}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="@string/beats_edit_hint"
                         app:errorEnabled="false"
-                        app:hintEnabled="false"
                         app:layout_constraintBottom_toBottomOf="@+id/beats_slider"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/beats_slider"
@@ -86,7 +85,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/slider_label_margin"
-                        android:labelFor="@id/beats_slider"
+                        android:labelFor="@id/beats_edit"
                         android:text="@string/beats_label"
                         app:layout_constraintBottom_toTopOf="@+id/beats_slider"
                         app:layout_constraintStart_toStartOf="@id/beats_slider" />
@@ -104,6 +103,7 @@
                         android:id="@+id/subdivisions_slider"
                         android:layout_width="@dimen/slider_auto_size"
                         android:layout_height="wrap_content"
+                        android:contentDescription="@string/subdivisions_slider_description"
                         android:stepSize="1"
                         android:value="@={Subdivisions.subdivisionsToFloat(metronome.subdivisionsData)}"
                         android:valueFrom="@{Subdivisions.MIN}"
@@ -118,9 +118,7 @@
                         error="@{metronome.subdivisionsTextError}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="@string/subdivisions_edit_hint"
                         app:errorEnabled="false"
-                        app:hintEnabled="false"
                         app:layout_constraintBottom_toBottomOf="@+id/subdivisions_slider"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/subdivisions_slider"
@@ -142,7 +140,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/slider_label_margin"
-                        android:labelFor="@id/subdivisions_slider"
+                        android:labelFor="@id/subdivisions_edit"
                         android:text="@string/subdivisions_label"
                         app:layout_constraintBottom_toTopOf="@+id/subdivisions_slider"
                         app:layout_constraintStart_toStartOf="@id/subdivisions_slider" />
@@ -160,6 +158,7 @@
                         android:id="@+id/tempo_slider"
                         android:layout_width="@dimen/slider_auto_size"
                         android:layout_height="wrap_content"
+                        android:contentDescription="@string/tempo_slider_description"
                         android:stepSize="1"
                         android:value="@={Tempo.tempoToFloat(metronome.tempoData)}"
                         android:valueFrom="@{Tempo.MIN}"
@@ -174,9 +173,7 @@
                         error="@{metronome.tempoTextError}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="@string/tempo_edit_hint"
                         app:errorEnabled="false"
-                        app:hintEnabled="false"
                         app:layout_constraintBottom_toBottomOf="@+id/tempo_slider"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tempo_slider"
@@ -198,7 +195,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/slider_label_margin"
-                        android:labelFor="@id/tempo_slider"
+                        android:labelFor="@id/tempo_edit"
                         android:text="@string/tempo_label"
                         app:layout_constraintBottom_toTopOf="@+id/tempo_slider"
                         app:layout_constraintStart_toStartOf="@id/tempo_slider" />
