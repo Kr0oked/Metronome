@@ -1,0 +1,4 @@
+- Tschechische Übersetzung
+- Verbesserte Einstellungen
+- Begründung für Berechtigungen
+- Verbesserte Barrierefreiheit

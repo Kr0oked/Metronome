@@ -1,0 +1,4 @@
+- Czech translation
+- Improved settings
+- Permission rationale
+- Improved accessibility
