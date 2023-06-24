@@ -18,6 +18,7 @@
 
 package com.bobek.metronome
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -60,10 +61,32 @@ class MetronomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViews()
         initViewModel()
         initBinding()
         registerTickReceiver()
         setupMenu()
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initViews() {
+        binding.content.tapTempoButton.setOnTouchListener { view, event -> tapTempoOnTouchListener(view, event) }
+    }
+
+    private fun tapTempoOnTouchListener(view: View, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                view.isPressed = true
+                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                view.performClick()
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                view.isPressed = false
+            }
+        }
+
+        return true
     }
 
     private fun initViewModel() {
@@ -155,6 +178,7 @@ class MetronomeFragment : Fragment() {
                     showSettings()
                     true
                 }
+
                 else -> false
             }
         }
