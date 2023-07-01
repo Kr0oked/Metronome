@@ -1,0 +1,2 @@
+- Tempo setzen beim Button drücken
+- Problem mit der russischen Übersetzung behoben
