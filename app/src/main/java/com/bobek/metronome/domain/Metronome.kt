@@ -32,8 +32,16 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.bobek.metronome.R
 import com.bobek.metronome.audio.SoundLoader
-import com.bobek.metronome.data.*
-import kotlinx.coroutines.*
+import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Subdivisions
+import com.bobek.metronome.data.Tempo
+import com.bobek.metronome.data.Tick
+import com.bobek.metronome.data.TickType
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 
 private const val TAG = "Metronome"
 private const val SAMPLE_RATE_IN_HZ = 48_000
@@ -41,7 +49,7 @@ private const val SILENCE_CHUNK_SIZE = 8_000
 
 class Metronome(
     private val context: Context,
-    private val lifecycle: Lifecycle,
+    override val lifecycle: Lifecycle,
     private val tickListener: MetronomeTickListener
 ) : LifecycleOwner {
 
@@ -199,8 +207,6 @@ class Metronome(
         metronomeJob = null
         Log.i(TAG, "Stopped metronome job")
     }
-
-    override fun getLifecycle(): Lifecycle = lifecycle
 
     private fun loadSound(@RawRes id: Int): FloatArray = context.resources
         .openRawResource(id)
