@@ -210,6 +210,7 @@ class MetronomeFragment : Fragment() {
         return if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(MetronomeService.EXTRA_TICK, Tick::class.java)
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableExtra(MetronomeService.EXTRA_TICK)
         }
     }
