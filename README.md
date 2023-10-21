@@ -3,11 +3,11 @@
 This project is intended to offer a simple and good looking metronome for Android.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/com.bobek.metronome/)
+alt="Get it on F-Droid"
+height="80">](https://f-droid.org/packages/com.bobek.metronome/)
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
-     alt="Get it on Google Play"
-     height="80">](https://play.google.com/store/apps/details?id=com.bobek.metronome)
+alt="Get it on Google Play"
+height="80">](https://play.google.com/store/apps/details?id=com.bobek.metronome)
 
 ## Screenshots
 
@@ -22,6 +22,15 @@ This project is intended to offer a simple and good looking metronome for Androi
 * Automatic night mode
 * No advertisements
 * No annoyance
+
+## Translations
+
+| Code      | Language | App                | Metadata           | Complete           |
+|-----------|----------|--------------------|--------------------|--------------------|
+| *default* | English  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| cs        | Czech    | :white_check_mark: | :white_check_mark: | :x:                |
+| de        | German   | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| ru        | Russian  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 ## License
 
