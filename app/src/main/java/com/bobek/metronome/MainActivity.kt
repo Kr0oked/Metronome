@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle(R.string.request_notifications_permission_rationale_title)
             .setMessage(R.string.request_notifications_permission_rationale_message)
             .setCancelable(false)
-            .setNeutralButton(R.string.ok) { dialog, _ ->
+            .setPositiveButton(R.string.ok) { dialog, _ ->
                 launchPostNotificationsPermissionRequest()
                 dialog.dismiss()
             }
