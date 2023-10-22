@@ -65,7 +65,7 @@
     <string name="ok">OK</string>
     <string name="no_thanks">No thanks</string>
 
-    <string name="source_code_name" translatable="false">Git Hub</string>
+    <string name="source_code_name" translatable="false">GitHub</string>
     <string name="license_name" translatable="false">GNU GPLv3</string>
     <string name="author_name" translatable="false">Philipp Bobek</string>
 
