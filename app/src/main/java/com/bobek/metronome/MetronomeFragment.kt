@@ -61,32 +61,10 @@ class MetronomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
         initViewModel()
         initBinding()
         registerTickReceiver()
         setupMenu()
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun initViews() {
-        binding.content.tapTempoButton.setOnTouchListener { view, event -> tapTempoOnTouchListener(view, event) }
-    }
-
-    private fun tapTempoOnTouchListener(view: View, event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                view.isPressed = true
-                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                view.performClick()
-            }
-
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                view.isPressed = false
-            }
-        }
-
-        return true
     }
 
     private fun initViewModel() {
@@ -105,6 +83,7 @@ class MetronomeFragment : Fragment() {
 
     private fun getKeepScreenOnView() = binding.content.startStopButton
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initBinding() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.metronome = viewModel
@@ -122,12 +101,7 @@ class MetronomeFragment : Fragment() {
         }
 
         binding.content.tapTempoButton.setOnClickListener { tapTempo() }
-    }
-
-    private fun registerTickReceiver() {
-        LocalBroadcastManager.getInstance(requireContext())
-            .registerReceiver(tickReceiver, IntentFilter(MetronomeService.ACTION_TICK))
-        Log.d(TAG, "Registered tickReceiver")
+        binding.content.tapTempoButton.setOnTouchListener { view, event -> tapTempoOnTouchListener(view, event) }
     }
 
     private fun incrementTempo() {
@@ -160,6 +134,28 @@ class MetronomeFragment : Fragment() {
     }
 
     private fun calculateTapTempo(firstTap: Long, secondTap: Long): Int = (60_000 / (secondTap - firstTap)).toInt()
+
+    private fun tapTempoOnTouchListener(view: View, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                view.isPressed = true
+                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                view.performClick()
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                view.isPressed = false
+            }
+        }
+
+        return true
+    }
+
+    private fun registerTickReceiver() {
+        LocalBroadcastManager.getInstance(requireContext())
+            .registerReceiver(tickReceiver, IntentFilter(MetronomeService.ACTION_TICK))
+        Log.d(TAG, "Registered tickReceiver")
+    }
 
     private fun setupMenu() {
         requireActivity().addMenuProvider(getMenuProvider(), viewLifecycleOwner, Lifecycle.State.RESUMED)
