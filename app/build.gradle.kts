@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.bobek.metronome"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.bobek.metronome"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 7
         versionName = "1.4.2"
 
@@ -20,7 +20,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        resourceConfigurations += listOf("cs", "de", "en", "ru")
     }
 
     buildTypes {
@@ -45,6 +44,9 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
+    }
+    androidResources {
+        generateLocaleConfig = true
     }
     testOptions {
         managedDevices {
