@@ -1,0 +1,3 @@
+- Upgraded to Android 14
+- Improved theme naming
+- Fixed typos
