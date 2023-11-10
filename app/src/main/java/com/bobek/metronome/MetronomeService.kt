@@ -25,6 +25,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -158,7 +159,11 @@ class MetronomeService : LifecycleService() {
             .setContentIntent(mainActivityPendingIntent)
             .build()
 
-        startForeground(NOTIFICATION_ID, notification)
+        if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
         Log.d(TAG, "Foreground service started")
     }
 
