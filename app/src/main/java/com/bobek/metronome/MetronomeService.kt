@@ -18,7 +18,6 @@
 
 package com.bobek.metronome
 
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -34,6 +33,8 @@ import android.util.Log
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.data.Beats
@@ -81,17 +82,17 @@ class MetronomeService : LifecycleService() {
         get() = metronome.playing
         set(playing) = if (playing) startMetronome() else stopMetronome()
 
-    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "Lifecycle: onCreate")
         NotificationManagerCompat.from(this)
             .createNotificationChannel(buildPlaybackNotificationChannel())
-        if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-            registerReceiver(stopReceiver, IntentFilter(ACTION_STOP), Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(stopReceiver, IntentFilter(ACTION_STOP))
-        }
+        ContextCompat.registerReceiver(
+            this,
+            stopReceiver,
+            IntentFilter(ACTION_STOP),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
         metronome = Metronome(this, lifecycle) { publishTick(it) }
     }
 
@@ -136,9 +137,8 @@ class MetronomeService : LifecycleService() {
     }
 
     private fun startForegroundNotification() {
-        val mainActivityPendingIntent =
-            Intent(this, MainActivity::class.java)
-                .let { intent -> PendingIntent.getActivity(this, NO_REQUEST_CODE, intent, getPendingIntentFlags()) }
+        val mainActivityPendingIntent = Intent(this, MainActivity::class.java)
+            .let { intent -> PendingIntent.getActivity(this, NO_REQUEST_CODE, intent, getPendingIntentFlags()) }
 
         val stopPendingIntent = Intent(ACTION_STOP)
             .let { intent -> PendingIntent.getBroadcast(this, NO_REQUEST_CODE, intent, getPendingIntentFlags()) }
@@ -177,12 +177,7 @@ class MetronomeService : LifecycleService() {
     }
 
     private fun stopForegroundNotification() {
-        if (VERSION.SDK_INT >= VERSION_CODES.N) {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-        } else {
-            @Suppress("DEPRECATION")
-            stopForeground(true)
-        }
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         Log.d(TAG, "Foreground service stopped")
     }
 
