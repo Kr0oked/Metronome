@@ -1,0 +1,2 @@
+- App Crash in Android 14 behoben
+- Stopp Button in de Benachrichtigung in Android 14 behoben

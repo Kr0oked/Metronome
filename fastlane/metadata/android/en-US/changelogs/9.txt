@@ -1,0 +1,2 @@
+- Fixed app crash on Android 14
+- Fixed stop button in notification on Android 14
