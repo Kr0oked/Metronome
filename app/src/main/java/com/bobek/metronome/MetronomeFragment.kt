@@ -194,7 +194,7 @@ class MetronomeFragment : Fragment() {
         Log.d(TAG, "Unregistered tickReceiver")
     }
 
-    private inner class TickReceiver : BroadcastReceiver() {
+    inner class TickReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             extractTick(intent)
                 ?.also { tick -> Log.v(TAG, "Received $tick") }

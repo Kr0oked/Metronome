@@ -252,7 +252,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private inner class RefreshReceiver : BroadcastReceiver() {
+    inner class RefreshReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             Log.d(TAG, "Received refresh command")
             synchronizeViewModelWithService()

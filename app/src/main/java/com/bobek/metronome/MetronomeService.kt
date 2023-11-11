@@ -20,10 +20,7 @@ package com.bobek.metronome
 
 import android.app.Notification
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build.VERSION
@@ -34,7 +31,6 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.data.Beats
@@ -49,8 +45,6 @@ private const val NOTIFICATION_ID = 1
 private const val NO_REQUEST_CODE = 0
 
 class MetronomeService : LifecycleService() {
-
-    private val stopReceiver = StopReceiver()
 
     private lateinit var metronome: Metronome
 
@@ -87,12 +81,6 @@ class MetronomeService : LifecycleService() {
         Log.d(TAG, "Lifecycle: onCreate")
         NotificationManagerCompat.from(this)
             .createNotificationChannel(buildPlaybackNotificationChannel())
-        ContextCompat.registerReceiver(
-            this,
-            stopReceiver,
-            IntentFilter(ACTION_STOP),
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
         metronome = Metronome(this, lifecycle) { publishTick(it) }
     }
 
@@ -105,6 +93,9 @@ class MetronomeService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "Lifecycle: onStartCommand")
+        if (intent?.action == ACTION_STOP) {
+            performStop()
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -127,7 +118,6 @@ class MetronomeService : LifecycleService() {
         super.onDestroy()
         Log.d(TAG, "Lifecycle: onDestroy")
         playing = false
-        unregisterReceiver(stopReceiver)
     }
 
     private fun startMetronome() {
@@ -138,10 +128,11 @@ class MetronomeService : LifecycleService() {
 
     private fun startForegroundNotification() {
         val mainActivityPendingIntent = Intent(this, MainActivity::class.java)
-            .let { intent -> PendingIntent.getActivity(this, NO_REQUEST_CODE, intent, getPendingIntentFlags()) }
+            .let { PendingIntent.getActivity(this, NO_REQUEST_CODE, it, PendingIntent.FLAG_IMMUTABLE) }
 
-        val stopPendingIntent = Intent(ACTION_STOP)
-            .let { intent -> PendingIntent.getBroadcast(this, NO_REQUEST_CODE, intent, getPendingIntentFlags()) }
+        val stopMetronomePendingIntent = Intent(this, MetronomeService::class.java)
+            .apply { action = ACTION_STOP }
+            .let { PendingIntent.getService(this, NO_REQUEST_CODE, it, PendingIntent.FLAG_IMMUTABLE) }
 
         val notification: Notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_PLAYBACK_ID)
             .setContentTitle(getString(R.string.notification_playback_title))
@@ -154,7 +145,7 @@ class MetronomeService : LifecycleService() {
             .addAction(
                 android.R.drawable.ic_media_pause,
                 getString(R.string.notification_playback_action_stop_title),
-                stopPendingIntent
+                stopMetronomePendingIntent
             )
             .setContentIntent(mainActivityPendingIntent)
             .build()
@@ -166,9 +157,6 @@ class MetronomeService : LifecycleService() {
         }
         Log.d(TAG, "Foreground service started")
     }
-
-    private fun getPendingIntentFlags() =
-        if (VERSION.SDK_INT >= VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
 
     private fun stopMetronome() {
         Log.i(TAG, "Stop metronome")
@@ -182,21 +170,17 @@ class MetronomeService : LifecycleService() {
     }
 
     private fun publishTick(tick: Tick) {
-        Intent(ACTION_TICK)
+        Intent(this, MetronomeFragment.TickReceiver::class.java)
+            .apply { action = ACTION_TICK }
             .apply { putExtra(EXTRA_TICK, tick) }
             .let { LocalBroadcastManager.getInstance(this).sendBroadcast(it) }
     }
 
-    private inner class StopReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            Log.d(TAG, "Received stop command")
-            performStop()
-        }
-    }
-
     private fun performStop() {
+        Log.d(TAG, "Received stop command")
         playing = false
-        Intent(ACTION_REFRESH)
+        Intent(this, MainActivity.RefreshReceiver::class.java)
+            .apply { action = ACTION_REFRESH }
             .let { LocalBroadcastManager.getInstance(this).sendBroadcast(it) }
     }
 
@@ -205,7 +189,7 @@ class MetronomeService : LifecycleService() {
     }
 
     companion object {
-        private const val ACTION_STOP = "com.bobek.metronome.intent.action.STOP"
+        const val ACTION_STOP = "com.bobek.metronome.intent.action.STOP"
         const val ACTION_REFRESH = "com.bobek.metronome.intent.action.REFRESH"
         const val ACTION_TICK = "com.bobek.metronome.intent.action.TICK"
         const val EXTRA_TICK = "com.bobek.metronome.intent.extra.TICK"
