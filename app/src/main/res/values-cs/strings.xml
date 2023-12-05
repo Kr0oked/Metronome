@@ -64,4 +64,13 @@
 
     <!--TODO<string name="ok">OK</string>-->
     <!--TODO<string name="no_thanks">No thanks</string>-->
+
+    <string name="tempo_marking_largo">Largo</string>
+    <string name="tempo_marking_larghetto">Larghetto</string>
+    <string name="tempo_marking_adagio">Adagio</string>
+    <string name="tempo_marking_andante">Andante</string>
+    <string name="tempo_marking_moderato">Moderato</string>
+    <string name="tempo_marking_allegro">Allegro</string>
+    <string name="tempo_marking_presto">Presto</string>
+    <string name="tempo_marking_prestissimo">Prestissimo</string>
 </resources>

@@ -64,4 +64,13 @@
 
     <string name="ok">OK</string>
     <string name="no_thanks">Nein danke</string>
+
+    <string name="tempo_marking_largo">Largo</string>
+    <string name="tempo_marking_larghetto">Larghetto</string>
+    <string name="tempo_marking_adagio">Adagio</string>
+    <string name="tempo_marking_andante">Andante</string>
+    <string name="tempo_marking_moderato">Moderato</string>
+    <string name="tempo_marking_allegro">Allegro</string>
+    <string name="tempo_marking_presto">Presto</string>
+    <string name="tempo_marking_prestissimo">Prestissimo</string>
 </resources>
