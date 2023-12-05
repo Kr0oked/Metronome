@@ -72,7 +72,7 @@ dependencies {
 
     implementation("com.google.android.material:material:1.10.0")
 
-    implementation("com.google.guava:guava:31.1-android")
+    implementation("com.google.guava:guava:32.1.3-android")
 
     testImplementation("junit:junit:4.13.2")
 
