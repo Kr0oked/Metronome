@@ -1,0 +1,1 @@
+- Extended tempo range to 30-252 bpm
