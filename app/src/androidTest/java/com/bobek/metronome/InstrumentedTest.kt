@@ -18,6 +18,8 @@
 
 package com.bobek.metronome
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Intent
 import androidx.annotation.StringRes
 import androidx.test.core.app.ApplicationProvider
@@ -28,6 +30,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.GrantPermissionRule
 import com.bobek.metronome.SliderUtils.setValue
 import com.bobek.metronome.SliderUtils.withValue
 import com.bobek.metronome.TextInputLayoutUtils.displaysError
@@ -45,6 +48,9 @@ class InstrumentedTest {
 
     @get:Rule
     var activityRule = ActivityScenarioRule<MainActivity>(intent)
+
+    @get:Rule
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(POST_NOTIFICATIONS)
 
     @Test
     fun contentVisible() {
@@ -87,11 +93,11 @@ class InstrumentedTest {
 
     @Test
     fun tempoSliderAndEditReflectEachOther() {
-        onTempoSlider().perform(setValue(40.0f))
-        onTempoEdit().check(matches(withText("40")))
+        onTempoSlider().perform(setValue(30.0f))
+        onTempoEdit().check(matches(withText("30")))
 
-        onTempoEdit().perform(ViewActions.replaceText("50"))
-        onTempoSlider().check(matches(withValue(50.0f)))
+        onTempoEdit().perform(ViewActions.replaceText("40"))
+        onTempoSlider().check(matches(withValue(40.0f)))
     }
 
     @Test
@@ -140,29 +146,29 @@ class InstrumentedTest {
 
     @Test
     fun tempoErrorWhenValueTooBig() {
-        onTempoSlider().perform(setValue(40.0f))
+        onTempoSlider().perform(setValue(30.0f))
         onTempoEditLayout().check(matches(doesNotDisplayError()))
 
-        onTempoEdit().perform(ViewActions.replaceText("209"))
+        onTempoEdit().perform(ViewActions.replaceText("253"))
 
         onTempoEditLayout().check(matches(displaysError()))
-        onTempoSlider().check(matches(withValue(40.0f)))
+        onTempoSlider().check(matches(withValue(30.0f)))
     }
 
     @Test
     fun tempoErrorWhenValueNotANumber() {
-        onTempoSlider().perform(setValue(40.0f))
+        onTempoSlider().perform(setValue(30.0f))
         onTempoEditLayout().check(matches(doesNotDisplayError()))
 
         onTempoEdit().perform(ViewActions.replaceText("."))
 
         onTempoEditLayout().check(matches(displaysError()))
-        onTempoSlider().check(matches(withValue(40.0f)))
+        onTempoSlider().check(matches(withValue(30.0f)))
     }
 
     @Test
     fun tempoMarkings() {
-        applyTempo(40)
+        applyTempo(30)
         verifyTempoMarking(R.string.tempo_marking_largo)
 
         applyTempo(59)
@@ -207,7 +213,7 @@ class InstrumentedTest {
         applyTempo(200)
         verifyTempoMarking(R.string.tempo_marking_prestissimo)
 
-        applyTempo(208)
+        applyTempo(252)
         verifyTempoMarking(R.string.tempo_marking_prestissimo)
     }
 
