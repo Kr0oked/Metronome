@@ -5,8 +5,9 @@ Features:
 * Adjustable beats and subdivisions
 * Beat visualization
 * Tap tempo
-* Automatic night mode
+* Light and Dark theme
 * No advertisements
+* No trackers
 * No annoyance
 
 Have fun!

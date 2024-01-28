@@ -5,8 +5,9 @@ Inhalt:
 * Einstellbare Schläge und Unterteilungen
 * Visualisierung der Schläge
 * Tempo setzen durch Antippen
-* Automatischer Nachtmodus
+* Light und Dark Theme
 * Keine Werbung
+* Keine Tracker
 * Keine Belästigung
 
 Viel Spaß!
