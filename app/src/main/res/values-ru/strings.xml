@@ -54,6 +54,8 @@
     <string name="about">О программе</string>
     <string name="author">Автор</string>
     <string name="license">Лицензии</string>
+    <!--TODO<string name="third_party_licenses">Third-party licenses</string>-->
+    <!--TODO<string name="third_party_licenses_summary">Licenses of included open source libraries</string>-->
     <string name="source_code">Исходный код</string>
     <string name="version">Версия приложения</string>
 

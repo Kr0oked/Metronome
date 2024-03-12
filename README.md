@@ -42,8 +42,8 @@ height="80">](https://github.com/Kr0oked/Metronome/releases/latest)
 | *default* | English              | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | cs        | Czech                | :white_check_mark: | :white_check_mark: | :x:                |
 | de        | German               | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| pt-BR     | Brazilian Portuguese | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| ru        | Russian              | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| pt-BR     | Brazilian Portuguese | :white_check_mark: | :white_check_mark: | :x:                |
+| ru        | Russian              | :white_check_mark: | :white_check_mark: | :x:                |
 
 ## License
 

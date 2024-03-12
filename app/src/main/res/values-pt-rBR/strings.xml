@@ -54,6 +54,8 @@
     <string name="about">Sobre</string>
     <string name="author">Autor</string>
     <string name="license">Licença</string>
+    <!--TODO<string name="third_party_licenses">Third-party licenses</string>-->
+    <!--TODO<string name="third_party_licenses_summary">Licenses of included open source libraries</string>-->
     <string name="source_code">Código fonte</string>
     <string name="version">Versão</string>
 

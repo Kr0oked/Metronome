@@ -19,6 +19,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.android.gms.oss-licenses-plugin")
     id("kotlin-kapt")
     id("kotlin-parcelize")
 }
@@ -94,6 +95,8 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
 
     implementation(libs.material)
+
+    implementation(libs.oss.licenses.parser)
 
     implementation(libs.guava)
 

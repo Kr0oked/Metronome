@@ -16,26 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.preference
+package com.bobek.metronome
 
-object PreferenceConstants {
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.bobek.metronome.databinding.FragmentThirdPartyLicenseBinding
 
-    const val BEATS = "beats"
+class ThirdPartyLicenseFragment : Fragment() {
 
-    const val SUBDIVISIONS = "subdivisions"
+    private lateinit var binding: FragmentThirdPartyLicenseBinding
 
-    const val TEMPO = "tempo"
-
-    const val EMPHASIZE_FIRST_BEAT = "emphasize_first_beat"
-
-    const val NIGHT_MODE = "night_mode"
-    const val NIGHT_MODE_VALUE_FOLLOW_SYSTEM = "follow_system"
-    const val NIGHT_MODE_VALUE_NO = "no"
-    const val NIGHT_MODE_VALUE_YES = "yes"
-
-    const val POST_NOTIFICATIONS_PERMISSION_REQUESTED = "post_notifications_permission_requested"
-
-    const val THIRD_PARTY_LICENSES = "third_party_licenses"
-
-    const val VERSION = "version"
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentThirdPartyLicenseBinding.inflate(inflater, container, false)
+        binding.licenseContent = arguments?.getString("licenseContent")
+        return binding.root
+    }
 }
