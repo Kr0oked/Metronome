@@ -1,0 +1,2 @@
+- Added view to display third-party licenses
+- Added Brazilian Portuguese translation
