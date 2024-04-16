@@ -1,0 +1,14 @@
+Lo que siempre has estado querido.
+Un metrónomo simple y bello que puedes usar para practicar música.
+
+Características:
+
+* Ritmos y subdivisiones ajustables
+* Visualización del ritmo
+* Tempo mediante toque
+* Temas claro y oscuro
+* Sin anuncios
+* Sin rastreadores
+* Sin molestias
+
+¡Diviértete!"
