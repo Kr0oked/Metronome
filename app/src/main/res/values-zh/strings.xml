@@ -18,7 +18,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+<resources>
     <string name="metronome">节拍器</string>
 
     <string name="beats_label">拍子</string>
@@ -75,8 +75,4 @@
     <string name="tempo_marking_allegro">Allegro</string>
     <string name="tempo_marking_presto">Presto</string>
     <string name="tempo_marking_prestissimo">Prestissimo</string>
-
-    <string name="source_code_name" translatable="false">GitHub</string>
-    <string name="license_name" translatable="false">GNU GPLv3</string>
-    <string name="author_name" translatable="false">Philipp Bobek</string>
 </resources>
