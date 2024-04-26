@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +28,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
+import java.util.SortedSet
 
 private const val TAG = "PreferenceStore"
+private const val NUMBERS_DELIMITER = ","
 
 class PreferenceStore(context: Context, lifecycle: Lifecycle) {
 
     val beats = MutableLiveData<Beats>()
     val subdivisions = MutableLiveData<Subdivisions>()
+    val gaps = MutableLiveData<Gaps>()
     val tempo = MutableLiveData<Tempo>()
     val emphasizeFirstBeat = MutableLiveData<Boolean>()
     val nightMode = MutableLiveData<AppNightMode>()
@@ -48,6 +52,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
 
     private val beatsObserver = getBeatsObserver()
     private val subdivisionsObserver = getSubdivisionsObserver()
+    private val gapsObserver = getGapsObserver()
     private val tempoObserver = getTempoObserver()
     private val emphasizeFirstBeatObserver = getEmphasizeFirstBeatObserver()
     private val nightModeObserver = getNightModeObserver()
@@ -61,6 +66,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         updateBeats()
         updateSubdivisions()
         updateTempo()
+        updateGaps()
         updateEmphasizeFirstBeat()
         updateNightMode()
         updatePostNotificationsPermissionRequested()
@@ -74,6 +80,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             beats.observeForever(beatsObserver)
             subdivisions.observeForever(subdivisionsObserver)
             tempo.observeForever(tempoObserver)
+            gaps.observeForever(gapsObserver)
             emphasizeFirstBeat.observeForever(emphasizeFirstBeatObserver)
             nightMode.observeForever(nightModeObserver)
             postNotificationsPermissionRequested.observeForever(postNotificationsPermissionRequestedObserver)
@@ -87,6 +94,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             beats.removeObserver(beatsObserver)
             subdivisions.removeObserver(subdivisionsObserver)
             tempo.removeObserver(tempoObserver)
+            gaps.removeObserver(gapsObserver)
             emphasizeFirstBeat.removeObserver(emphasizeFirstBeatObserver)
             nightMode.removeObserver(nightModeObserver)
             postNotificationsPermissionRequested.removeObserver(postNotificationsPermissionRequestedObserver)
@@ -98,6 +106,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             when (key) {
                 PreferenceConstants.BEATS -> updateBeats()
                 PreferenceConstants.SUBDIVISIONS -> updateSubdivisions()
+                PreferenceConstants.GAPS -> updateGaps()
                 PreferenceConstants.TEMPO -> updateTempo()
                 PreferenceConstants.EMPHASIZE_FIRST_BEAT -> updateEmphasizeFirstBeat()
                 PreferenceConstants.NIGHT_MODE -> updateNightMode()
@@ -121,6 +130,21 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             subdivisions.value = storedSubdivisions
         }
     }
+
+    private fun updateGaps() {
+        val storedValue = (sharedPreferences.getString(PreferenceConstants.GAPS, "") ?: "")
+        val storedGapsValue = restoreGapsValue(storedValue)
+        val storedGaps = Gaps(storedGapsValue)
+        if (gaps.value != storedGaps) {
+            gaps.value = storedGaps
+        }
+    }
+
+    private fun restoreGapsValue(value: String?): SortedSet<Int> = (value ?: "")
+        .split(NUMBERS_DELIMITER)
+        .filter(String::isNotEmpty)
+        .map(String::toInt)
+        .toSortedSet()
 
     private fun updateTempo() {
         val storedValue = sharedPreferences.getInt(PreferenceConstants.TEMPO, Tempo.DEFAULT)
@@ -170,6 +194,14 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         Log.d(TAG, "Persisted subdivisions: ${it.value}")
     }
 
+    private fun getGapsObserver(): (t: Gaps) -> Unit = {
+        val edit = sharedPreferences.edit()
+        val gapsString = it.value.joinToString(NUMBERS_DELIMITER)
+        edit.putString(PreferenceConstants.GAPS, gapsString)
+        edit.apply()
+        Log.d(TAG, "Persisted gaps: $gapsString")
+    }
+
     private fun getTempoObserver(): (t: Tempo) -> Unit = {
         val edit = sharedPreferences.edit()
         edit.putInt(PreferenceConstants.TEMPO, it.value)
@@ -188,7 +220,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         val edit = sharedPreferences.edit()
         edit.putString(PreferenceConstants.NIGHT_MODE, it.preferenceValue)
         edit.apply()
-        Log.d(TAG, "Persisted nightMode: $it")
+        Log.d(TAG, "Persisted nightMode: ${it.preferenceValue}")
     }
 
     private fun getPostNotificationsPermissionRequestedObserver(): (t: Boolean) -> Unit = {

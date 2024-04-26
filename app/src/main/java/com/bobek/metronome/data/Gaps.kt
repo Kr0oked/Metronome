@@ -18,13 +18,10 @@
 
 package com.bobek.metronome.data
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import java.util.SortedSet
 
-@Parcelize
-data class Tick(val beat: Int, val type: TickType, val gap: Boolean) : Parcelable {
+data class Gaps(val value: SortedSet<Int> = sortedSetOf()) {
 
-    init {
-        require(beat in Beats.MIN..Beats.MAX) { "beat must be between ${Beats.MIN} and ${Beats.MAX} but was $beat" }
-    }
+    operator fun plus(gap: Int): Gaps = Gaps(value.plus(gap).toSortedSet())
+    operator fun minus(gap: Int): Gaps = Gaps(value.minus(gap).toSortedSet())
 }

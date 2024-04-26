@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import androidx.core.app.ServiceCompat
 import androidx.lifecycle.LifecycleService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
@@ -58,6 +59,12 @@ class MetronomeService : LifecycleService() {
         get() = metronome.subdivisions
         set(subdivisions) {
             metronome.subdivisions = subdivisions
+        }
+
+    var gaps: Gaps
+        get() = metronome.gaps
+        set(gaps) {
+            metronome.gaps = gaps
         }
 
     var tempo: Tempo

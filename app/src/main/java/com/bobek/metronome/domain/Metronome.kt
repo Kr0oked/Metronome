@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bobek.metronome.R
 import com.bobek.metronome.audio.SoundLoader
 import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
@@ -65,6 +66,9 @@ class Metronome(
 
     @Volatile
     var subdivisions: Subdivisions = Subdivisions()
+
+    @Volatile
+    var gaps: Gaps = Gaps()
 
     @Volatile
     var tempo: Tempo = Tempo()
@@ -132,11 +136,17 @@ class Metronome(
         var sizeWritten = 0
 
         val tick = getCurrentTick(tickCount)
-        val tickSound = getTickSound(tick.type)
-        val periodSize = calculatePeriodSize()
 
-        sizeWritten += writeNextAudioData(track, tickSound, periodSize, sizeWritten)
-        Log.v(TAG, "Wrote tick sound for $tick")
+        if (tick.gap) {
+            Log.v(TAG, "Skipped gap for $tick")
+        } else {
+            val tickSound = getTickSound(tick.type)
+            val periodSize = calculatePeriodSize()
+
+            sizeWritten += writeNextAudioData(track, tickSound, periodSize, sizeWritten)
+            Log.v(TAG, "Wrote tick sound for $tick")
+        }
+
         tickListener.onTick(tick)
         yield()
 
@@ -157,7 +167,8 @@ class Metronome(
         }
     }
 
-    private fun getCurrentTick(tickCount: Long) = Tick(getCurrentBeat(tickCount), getCurrentTickType(tickCount))
+    private fun getCurrentTick(tickCount: Long) =
+        Tick(getCurrentBeat(tickCount), getCurrentTickType(tickCount), isCurrentTickGap(tickCount))
 
     private fun getCurrentBeat(tickCount: Long) = (((tickCount / subdivisions.value) % beats.value) + 1).toInt()
 
@@ -173,6 +184,8 @@ class Metronome(
         emphasizeFirstBeat && (tickCount % (beats.value * subdivisions.value) == 0L)
 
     private fun isWeakTick(tickCount: Long) = tickCount % subdivisions.value == 0L
+
+    private fun isCurrentTickGap(tickCount: Long) = gaps.value.contains(getCurrentBeat(tickCount))
 
     private fun calculatePeriodSize() = 60 * SAMPLE_RATE_IN_HZ / tempo.value / subdivisions.value
 

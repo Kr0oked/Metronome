@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 
@@ -37,6 +38,16 @@ class MetronomeViewModel : ViewModel() {
     val subdivisionsText = MutableLiveData("")
     val subdivisionsTextError = MutableLiveData(false)
 
+    val gapsData = MutableLiveData(Gaps())
+    val gap1 = MutableLiveData(false)
+    val gap2 = MutableLiveData(false)
+    val gap3 = MutableLiveData(false)
+    val gap4 = MutableLiveData(false)
+    val gap5 = MutableLiveData(false)
+    val gap6 = MutableLiveData(false)
+    val gap7 = MutableLiveData(false)
+    val gap8 = MutableLiveData(false)
+
     val tempoData = MutableLiveData(Tempo())
     val tempoText = MutableLiveData("")
     val tempoTextError = MutableLiveData(false)
@@ -51,6 +62,16 @@ class MetronomeViewModel : ViewModel() {
     private val subdivisionsDataObserver = getSubdivisionsDataObserver()
     private val subdivisionsTextObserver = getSubdivisionsTextObserver()
 
+    private val gapsDataObserver = getGapsDataObserver()
+    private val gap1Observer = getGap1Observer()
+    private val gap2Observer = getGap2Observer()
+    private val gap3Observer = getGap3Observer()
+    private val gap4Observer = getGap4Observer()
+    private val gap5Observer = getGap5Observer()
+    private val gap6Observer = getGap6Observer()
+    private val gap7Observer = getGap7Observer()
+    private val gap8Observer = getGap8Observer()
+
     private val tempoDataObserver = getTempoDataObserver()
     private val tempoTextObserver = getTempoTextObserver()
 
@@ -64,6 +85,16 @@ class MetronomeViewModel : ViewModel() {
 
         subdivisionsData.observeForever(subdivisionsDataObserver)
         subdivisionsText.observeForever(subdivisionsTextObserver)
+
+        gapsData.observeForever(gapsDataObserver)
+        gap1.observeForever(gap1Observer)
+        gap2.observeForever(gap2Observer)
+        gap3.observeForever(gap3Observer)
+        gap4.observeForever(gap4Observer)
+        gap5.observeForever(gap5Observer)
+        gap6.observeForever(gap6Observer)
+        gap7.observeForever(gap7Observer)
+        gap8.observeForever(gap8Observer)
 
         tempoData.observeForever(tempoDataObserver)
         tempoText.observeForever(tempoTextObserver)
@@ -84,6 +115,16 @@ class MetronomeViewModel : ViewModel() {
         subdivisionsData.removeObserver(subdivisionsDataObserver)
         subdivisionsText.removeObserver(subdivisionsTextObserver)
 
+        gapsData.removeObserver(gapsDataObserver)
+        gap1.removeObserver(gap1Observer)
+        gap2.removeObserver(gap2Observer)
+        gap3.removeObserver(gap3Observer)
+        gap4.removeObserver(gap4Observer)
+        gap5.removeObserver(gap5Observer)
+        gap6.removeObserver(gap6Observer)
+        gap7.removeObserver(gap7Observer)
+        gap8.removeObserver(gap8Observer)
+
         tempoData.removeObserver(tempoDataObserver)
         tempoText.removeObserver(tempoTextObserver)
 
@@ -96,6 +137,7 @@ class MetronomeViewModel : ViewModel() {
         return "MetronomeViewModel(" +
                 "beats=${beatsData.value?.value}, " +
                 "subdivisions=${subdivisionsData.value?.value}, " +
+                "gaps=${gapsData.value?.value?.joinToString()}, " +
                 "tempo=${tempoData.value?.value}, " +
                 "emphasizeFirstBeat=${emphasizeFirstBeat.value}," +
                 "playing=${playing.value}, " +
@@ -144,6 +186,47 @@ class MetronomeViewModel : ViewModel() {
             subdivisionsTextError.value = true
         } catch (exception: IllegalArgumentException) {
             subdivisionsTextError.value = true
+        }
+    }
+
+    private fun getGapsDataObserver(): (t: Gaps) -> Unit = {
+        gap1.value = it.value.contains(1)
+        gap2.value = it.value.contains(2)
+        gap3.value = it.value.contains(3)
+        gap4.value = it.value.contains(4)
+        gap5.value = it.value.contains(5)
+        gap6.value = it.value.contains(6)
+        gap7.value = it.value.contains(7)
+        gap8.value = it.value.contains(8)
+        Log.d(TAG, "gaps: $it")
+    }
+
+    private fun getGap1Observer(): (t: Boolean) -> Unit = { updateGaps(it, 1) }
+
+    private fun getGap2Observer(): (t: Boolean) -> Unit = { updateGaps(it, 2) }
+
+    private fun getGap3Observer(): (t: Boolean) -> Unit = { updateGaps(it, 3) }
+
+    private fun getGap4Observer(): (t: Boolean) -> Unit = { updateGaps(it, 4) }
+
+    private fun getGap5Observer(): (t: Boolean) -> Unit = { updateGaps(it, 5) }
+
+    private fun getGap6Observer(): (t: Boolean) -> Unit = { updateGaps(it, 6) }
+
+    private fun getGap7Observer(): (t: Boolean) -> Unit = { updateGaps(it, 7) }
+
+    private fun getGap8Observer(): (t: Boolean) -> Unit = { updateGaps(it, 8) }
+
+    private fun updateGaps(gap: Boolean, position: Int) {
+        val currentGaps = gapsData.value ?: Gaps()
+
+        val gaps = when (gap) {
+            true -> currentGaps + position
+            false -> currentGaps - position
+        }
+
+        if (gapsData.value != gaps) {
+            gapsData.value = gaps
         }
     }
 

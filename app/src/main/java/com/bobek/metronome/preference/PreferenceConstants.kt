@@ -24,6 +24,8 @@ object PreferenceConstants {
 
     const val SUBDIVISIONS = "subdivisions"
 
+    const val GAPS = "gaps"
+
     const val TEMPO = "tempo"
 
     const val EMPHASIZE_FIRST_BEAT = "emphasize_first_beat"

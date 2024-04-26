@@ -2,7 +2,7 @@
 
 <!--
   ~ This file is part of Metronome.
-  ~ Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~ Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -233,6 +233,7 @@
                         android:id="@+id/tick_visualization_1"
                         android:layout_width="@dimen/beat_visualization_size"
                         android:layout_height="@dimen/beat_visualization_size"
+                        android:gap="@={metronome.gap1}"
                         android:visibility="@{metronome.beatsData.value >= 1 ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toStartOf="@id/tick_visualization_2"
                         app:layout_constraintStart_toStartOf="parent"
@@ -242,6 +243,7 @@
                         android:id="@+id/tick_visualization_2"
                         android:layout_width="@dimen/beat_visualization_size"
                         android:layout_height="@dimen/beat_visualization_size"
+                        android:gap="@={metronome.gap2}"
                         android:visibility="@{metronome.beatsData.value >= 2 ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toStartOf="@id/tick_visualization_3"
                         app:layout_constraintStart_toEndOf="@+id/tick_visualization_1"
@@ -251,6 +253,7 @@
                         android:id="@+id/tick_visualization_3"
                         android:layout_width="@dimen/beat_visualization_size"
                         android:layout_height="@dimen/beat_visualization_size"
+                        android:gap="@={metronome.gap3}"
                         android:visibility="@{metronome.beatsData.value >= 3 ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toStartOf="@id/tick_visualization_4"
                         app:layout_constraintStart_toEndOf="@+id/tick_visualization_2"
@@ -260,6 +263,7 @@
                         android:id="@+id/tick_visualization_4"
                         android:layout_width="@dimen/beat_visualization_size"
                         android:layout_height="@dimen/beat_visualization_size"
+                        android:gap="@={metronome.gap4}"
                         android:visibility="@{metronome.beatsData.value >= 4 ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tick_visualization_3"
@@ -278,6 +282,7 @@
                         android:id="@+id/tick_visualization_5"
                         android:layout_width="@dimen/beat_visualization_size"
                         android:layout_height="@dimen/beat_visualization_size"
+                        android:gap="@={metronome.gap5}"
                         android:visibility="@{metronome.beatsData.value >= 5 ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toStartOf="@id/tick_visualization_6"
                         app:layout_constraintStart_toStartOf="parent"
@@ -287,6 +292,7 @@
                         android:id="@+id/tick_visualization_6"
                         android:layout_width="@dimen/beat_visualization_size"
                         android:layout_height="@dimen/beat_visualization_size"
+                        android:gap="@={metronome.gap6}"
                         android:visibility="@{metronome.beatsData.value >= 6 ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toStartOf="@id/tick_visualization_7"
                         app:layout_constraintStart_toEndOf="@+id/tick_visualization_5"
@@ -296,6 +302,7 @@
                         android:id="@+id/tick_visualization_7"
                         android:layout_width="@dimen/beat_visualization_size"
                         android:layout_height="@dimen/beat_visualization_size"
+                        android:gap="@={metronome.gap7}"
                         android:visibility="@{metronome.beatsData.value >= 7 ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toStartOf="@id/tick_visualization_8"
                         app:layout_constraintStart_toEndOf="@+id/tick_visualization_6"
@@ -305,6 +312,7 @@
                         android:id="@+id/tick_visualization_8"
                         android:layout_width="@dimen/beat_visualization_size"
                         android:layout_height="@dimen/beat_visualization_size"
+                        android:gap="@={metronome.gap8}"
                         android:visibility="@{metronome.beatsData.value >= 8 ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tick_visualization_7"

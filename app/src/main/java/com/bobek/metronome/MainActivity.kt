@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,15 @@
 package com.bobek.metronome
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.ServiceConnection
 import android.content.pm.PackageManager.PERMISSION_DENIED
-import android.os.Build.*
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -81,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         preferenceStore = PreferenceStore(this, lifecycle)
         preferenceStore.beats.observe(this) { viewModel.beatsData.value = it }
         preferenceStore.subdivisions.observe(this) { viewModel.subdivisionsData.value = it }
+        preferenceStore.gaps.observe(this) { viewModel.gapsData.value = it }
         preferenceStore.tempo.observe(this) { viewModel.tempoData.value = it }
         preferenceStore.emphasizeFirstBeat.observe(this) { viewModel.emphasizeFirstBeat.value = it }
         preferenceStore.nightMode.observe(this) { setNightMode(it) }
@@ -94,6 +101,7 @@ class MainActivity : AppCompatActivity() {
     private fun initViewModel() {
         viewModel.beatsData.observe(this) { metronomeService?.beats = it }
         viewModel.subdivisionsData.observe(this) { metronomeService?.subdivisions = it }
+        viewModel.gapsData.observe(this) { metronomeService?.gaps = it }
         viewModel.tempoData.observe(this) { metronomeService?.tempo = it }
         viewModel.emphasizeFirstBeat.observe(this) { metronomeService?.emphasizeFirstBeat = it }
         viewModel.playing.observe(this) { metronomeService?.playing = it }
@@ -188,6 +196,7 @@ class MainActivity : AppCompatActivity() {
     private fun updatePreferenceStore() {
         preferenceStore.beats.value = viewModel.beatsData.value
         preferenceStore.subdivisions.value = viewModel.subdivisionsData.value
+        preferenceStore.gaps.value = viewModel.gapsData.value
         preferenceStore.tempo.value = viewModel.tempoData.value
         preferenceStore.emphasizeFirstBeat.value = viewModel.emphasizeFirstBeat.value
         Log.d(TAG, "Updated preference store")
@@ -270,6 +279,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateViewModel(service: MetronomeService) {
         viewModel.beatsData.value = service.beats
         viewModel.subdivisionsData.value = service.subdivisions
+        viewModel.gapsData.value = service.gaps
         viewModel.tempoData.value = service.tempo
         viewModel.emphasizeFirstBeat.value = service.emphasizeFirstBeat
     }
@@ -277,6 +287,7 @@ class MainActivity : AppCompatActivity() {
     private fun initServiceValues(service: MetronomeService) {
         viewModel.beatsData.value?.let { service.beats = it }
         viewModel.subdivisionsData.value?.let { service.subdivisions = it }
+        viewModel.gapsData.value?.let { service.gaps = it }
         viewModel.tempoData.value?.let { service.tempo = it }
         viewModel.emphasizeFirstBeat.value?.let { service.emphasizeFirstBeat = it }
     }

@@ -21,24 +21,23 @@ package com.bobek.metronome.view.adapter
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import com.google.android.material.slider.Slider
+import com.bobek.metronome.view.component.TickVisualization
 
-object SliderAdapter {
+object TickVisualizationAdapter {
 
-    @BindingAdapter("android:value")
+    @BindingAdapter("android:gap")
     @JvmStatic
-    fun setValue(slider: Slider, value: Float) {
-        if (slider.value != value) {
-            slider.value = value
-        }
+    fun setGap(tickVisualization: TickVisualization, gap: Boolean) {
+        tickVisualization.gap = gap
     }
 
-    @InverseBindingAdapter(attribute = "android:value")
+    @InverseBindingAdapter(attribute = "android:gap")
     @JvmStatic
-    fun getValue(slider: Slider): Float = slider.value
+    fun getGap(tickVisualization: TickVisualization): Boolean = tickVisualization.gap
 
-    @BindingAdapter("android:valueAttrChanged")
+    @BindingAdapter("android:gapAttrChanged")
     @JvmStatic
-    fun setValueChangedListener(slider: Slider, attrChange: InverseBindingListener) =
-        slider.addOnChangeListener { _, _, _ -> attrChange.onChange() }
+    fun setGapChangedListener(tickVisualization: TickVisualization, attrChange: InverseBindingListener) {
+        tickVisualization.gapChangedListener = attrChange
+    }
 }

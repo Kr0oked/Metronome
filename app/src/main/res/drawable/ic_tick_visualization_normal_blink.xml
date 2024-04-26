@@ -18,24 +18,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <merge>
-
-        <ImageView
-                android:id="@+id/tick_visualization_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/tick_visualization_image_description"
-                android:background="@{ gap ? @drawable/animation_tick_visualization_gap : @drawable/animation_tick_visualization_normal}" />
-
-    </merge>
-
-    <data>
-
-        <variable
-                name="gap"
-                type="boolean" />
-    </data>
-
-</layout>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+        android:shape="oval">
+    <solid android:color="?attr/colorOnTertiaryContainer" />
+</shape>
