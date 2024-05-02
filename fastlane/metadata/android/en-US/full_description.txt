@@ -4,6 +4,7 @@ A simple and beautiful metronome that you can use to practice music.
 Features:
 * Adjustable beats and subdivisions
 * Beat visualization
+* Gap ticks
 * Tap tempo
 * Light and Dark theme
 * No advertisements

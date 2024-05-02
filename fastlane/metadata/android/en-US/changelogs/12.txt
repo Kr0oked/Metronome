@@ -1,0 +1,3 @@
+- Implemented gap ticks
+- Added Chinese translation
+- Added Spanish translation

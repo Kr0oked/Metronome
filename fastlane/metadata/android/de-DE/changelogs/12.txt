@@ -1,0 +1,3 @@
+- Lücken spielen
+- Übersetzung für Chinesisch wurde hinzugefügt
+- Übersetzung für Spanisch wurde hinzugefügt
