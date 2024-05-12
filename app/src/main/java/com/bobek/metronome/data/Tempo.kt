@@ -29,8 +29,8 @@ data class Tempo(val value: Int = DEFAULT) {
     }
 
     companion object {
-        const val MIN = 30
-        const val MAX = 252
+        const val MIN = 1
+        const val MAX = 400
         const val DEFAULT = 80
 
         @InverseMethod("floatToTempo")
