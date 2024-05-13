@@ -58,11 +58,9 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     private val nightModeObserver = getNightModeObserver()
     private val postNotificationsPermissionRequestedObserver = getPostNotificationsPermissionRequestedObserver()
 
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     init {
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-
         updateBeats()
         updateSubdivisions()
         updateTempo()
