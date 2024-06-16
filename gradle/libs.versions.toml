@@ -12,6 +12,7 @@ espressoCore = "3.5.1"
 agp = "8.5.0"
 kotlin = "1.9.24"
 rules = "1.5.0"
+screengrab = "2.1.1"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -19,13 +20,14 @@ androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fr
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationKtx" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
-oss-licenses-parser = { module = "de.philipp-bobek:oss-licenses-parser", version.ref = "ossLicensesParser"}
+oss-licenses-parser = { module = "de.philipp-bobek:oss-licenses-parser", version.ref = "ossLicensesParser" }
 oss-licenses-plugin = { module = "com.google.android.gms:oss-licenses-plugin", version.ref = "ossLicensesPlugin" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
+screengrab = { group = "tools.fastlane", name = "screengrab", version.ref = "screengrab" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

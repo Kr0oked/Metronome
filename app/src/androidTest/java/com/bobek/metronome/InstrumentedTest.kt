@@ -18,38 +18,22 @@
 
 package com.bobek.metronome
 
-import android.Manifest.permission.POST_NOTIFICATIONS
-import android.content.Intent
-import androidx.annotation.StringRes
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.LargeTest
-import androidx.test.rule.GrantPermissionRule
 import com.bobek.metronome.SliderUtils.setValue
 import com.bobek.metronome.SliderUtils.withValue
 import com.bobek.metronome.TextInputLayoutUtils.displaysError
 import com.bobek.metronome.TextInputLayoutUtils.doesNotDisplayError
 import org.hamcrest.Matchers.not
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 @LargeTest
-class InstrumentedTest {
-
-    private val intent: Intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java)
-
-    @get:Rule
-    var activityRule = ActivityScenarioRule<MainActivity>(intent)
-
-    @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(POST_NOTIFICATIONS)
+class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun contentVisible() {
@@ -215,23 +199,4 @@ class InstrumentedTest {
         applyTempo(252)
         verifyTempoMarking(R.string.tempo_marking_prestissimo)
     }
-
-    private fun applyTempo(tempo: Int) {
-        onTempoSlider().perform(setValue(tempo.toFloat()))
-    }
-
-    private fun verifyTempoMarking(@StringRes resourceId: Int) {
-        onTempoMarkingText().check(matches(withText(resourceId)))
-    }
-
-    private fun onBeatsSlider() = onView(withId(R.id.beats_slider))
-    private fun onBeatsEdit() = onView(withId(R.id.beats_edit))
-    private fun onBeatsEditLayout() = onView(withId(R.id.beats_edit_layout))
-    private fun onSubdivisionsSlider() = onView(withId(R.id.subdivisions_slider))
-    private fun onSubdivisionsEdit() = onView(withId(R.id.subdivisions_edit))
-    private fun onSubdivisionsEditLayout() = onView(withId(R.id.subdivisions_edit_layout))
-    private fun onTempoSlider() = onView(withId(R.id.tempo_slider))
-    private fun onTempoEdit() = onView(withId(R.id.tempo_edit))
-    private fun onTempoEditLayout() = onView(withId(R.id.tempo_edit_layout))
-    private fun onTempoMarkingText() = onView(withId(R.id.tempo_marking_text))
 }

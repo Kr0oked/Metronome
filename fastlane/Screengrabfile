@@ -1,0 +1,17 @@
+app_package_name('com.bobek.metronome')
+use_tests_in_packages(['com.bobek.metronome.screengrab'])
+
+app_apk_path('app/build/outputs/apk/debug/app-debug.apk')
+tests_apk_path('app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk')
+
+locales([
+  'cs-CZ',
+  'de-DE',
+  'en-US',
+  'es-ES',
+  'pt-BR',
+  'ru-RU',
+  'zh-CN'
+])
+
+use_timestamp_suffix(false)
