@@ -47,40 +47,40 @@ private const val NO_REQUEST_CODE = 0
 
 class MetronomeService : LifecycleService() {
 
-    private lateinit var metronome: Metronome
+    private var metronome: Metronome? = null
 
     var beats: Beats
-        get() = metronome.beats
+        get() = requireMetronome().beats
         set(beats) {
-            metronome.beats = beats
+            requireMetronome().beats = beats
         }
 
     var subdivisions: Subdivisions
-        get() = metronome.subdivisions
+        get() = requireMetronome().subdivisions
         set(subdivisions) {
-            metronome.subdivisions = subdivisions
+            requireMetronome().subdivisions = subdivisions
         }
 
     var gaps: Gaps
-        get() = metronome.gaps
+        get() = requireMetronome().gaps
         set(gaps) {
-            metronome.gaps = gaps
+            requireMetronome().gaps = gaps
         }
 
     var tempo: Tempo
-        get() = metronome.tempo
+        get() = requireMetronome().tempo
         set(tempo) {
-            metronome.tempo = tempo
+            requireMetronome().tempo = tempo
         }
 
     var emphasizeFirstBeat: Boolean
-        get() = metronome.emphasizeFirstBeat
+        get() = requireMetronome().emphasizeFirstBeat
         set(emphasizeFirstBeat) {
-            metronome.emphasizeFirstBeat = emphasizeFirstBeat
+            requireMetronome().emphasizeFirstBeat = emphasizeFirstBeat
         }
 
     var playing: Boolean
-        get() = metronome.playing
+        get() = requireMetronome().playing
         set(playing) = if (playing) startMetronome() else stopMetronome()
 
     override fun onCreate() {
@@ -125,11 +125,12 @@ class MetronomeService : LifecycleService() {
         super.onDestroy()
         Log.d(TAG, "Lifecycle: onDestroy")
         playing = false
+        metronome = null
     }
 
     private fun startMetronome() {
         Log.i(TAG, "Start metronome")
-        metronome.playing = true
+        requireMetronome().playing = true
         startForegroundNotification()
     }
 
@@ -167,7 +168,7 @@ class MetronomeService : LifecycleService() {
 
     private fun stopMetronome() {
         Log.i(TAG, "Stop metronome")
-        metronome.playing = false
+        requireMetronome().playing = false
         stopForegroundNotification()
     }
 
@@ -191,9 +192,13 @@ class MetronomeService : LifecycleService() {
             .let { LocalBroadcastManager.getInstance(this).sendBroadcast(it) }
     }
 
+    private fun requireMetronome(): Metronome = metronome!!
+
+
     inner class LocalBinder : Binder() {
         fun getService(): MetronomeService = this@MetronomeService
     }
+
 
     companion object {
         const val ACTION_STOP = "com.bobek.metronome.intent.action.STOP"

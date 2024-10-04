@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,14 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.HapticFeedbackConstants
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -49,14 +56,13 @@ class MetronomeFragment : Fragment() {
     private val viewModel: MetronomeViewModel by activityViewModels()
     private val tickReceiver = TickReceiver()
 
-    private lateinit var binding: FragmentMetronomeBinding
-
+    private var binding: FragmentMetronomeBinding? = null
     private var optionsMenu: Menu? = null
     private var lastTap: Long = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMetronomeBinding.inflate(inflater, container, false)
-        return binding.root
+        return requireBinding().root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,10 +87,11 @@ class MetronomeFragment : Fragment() {
         getKeepScreenOnView().keepScreenOn = false
     }
 
-    private fun getKeepScreenOnView() = binding.content.startStopButton
+    private fun getKeepScreenOnView() = requireBinding().content.startStopButton
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initBinding() {
+        val binding = requireBinding()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.metronome = viewModel
 
@@ -186,6 +193,7 @@ class MetronomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding = null
         unregisterTickReceiver()
     }
 
@@ -217,17 +225,17 @@ class MetronomeFragment : Fragment() {
         }
     }
 
-    private fun getTickVisualization(beat: Int): TickVisualization? {
-        return when (beat) {
-            1 -> binding.content.tickVisualization1
-            2 -> binding.content.tickVisualization2
-            3 -> binding.content.tickVisualization3
-            4 -> binding.content.tickVisualization4
-            5 -> binding.content.tickVisualization5
-            6 -> binding.content.tickVisualization6
-            7 -> binding.content.tickVisualization7
-            8 -> binding.content.tickVisualization8
-            else -> null
-        }
+    private fun getTickVisualization(beat: Int): TickVisualization? = when (beat) {
+        1 -> requireBinding().content.tickVisualization1
+        2 -> requireBinding().content.tickVisualization2
+        3 -> requireBinding().content.tickVisualization3
+        4 -> requireBinding().content.tickVisualization4
+        5 -> requireBinding().content.tickVisualization5
+        6 -> requireBinding().content.tickVisualization6
+        7 -> requireBinding().content.tickVisualization7
+        8 -> requireBinding().content.tickVisualization8
+        else -> null
     }
+
+    private fun requireBinding(): FragmentMetronomeBinding = binding!!
 }
