@@ -30,12 +30,12 @@ kotlin {
 
 android {
     namespace = "com.bobek.metronome"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.bobek.metronome"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 13
         versionName = "1.6.1"
 
