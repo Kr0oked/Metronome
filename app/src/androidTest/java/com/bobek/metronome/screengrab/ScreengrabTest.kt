@@ -40,7 +40,7 @@ class ScreengrabTest : AbstractAndroidTest() {
     @Test
     fun grabScreenshot() {
         val screenshotName = InstrumentationRegistry.getArguments()
-            .getString("screenshotName", " default")
+            .getString("screenshotName", "default")
 
         Screengrab.setDefaultScreenshotStrategy(UiAutomatorScreenshotStrategy())
         Screengrab.screenshot(screenshotName)
