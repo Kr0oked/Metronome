@@ -19,14 +19,5 @@
   -->
 
 <resources>
-    <dimen name="root_layout_padding">16dp</dimen>
-
-    <dimen name="slider_auto_size">0dp</dimen>
-    <dimen name="slider_label_margin">6dp</dimen>
-
-    <dimen name="beat_visualization_size">40dp</dimen>
-
-    <dimen name="action_button_icon_size">32dp</dimen>
-
-    <dimen name="no_padding">0dp</dimen>
+    <dimen name="root_layout_padding">32dp</dimen>
 </resources>
