@@ -1,0 +1,3 @@
+- Funciones de metrónomo
+- Modo Día y Noche
+- Traducciones al inglés y al alemán

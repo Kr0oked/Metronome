@@ -1,0 +1,5 @@
+- Material design 3
+- Botones para aumentar y disminuir el tempo
+- Nuevos iconos para la preferencia de modo nocturno
+- Opción para enfatizar el primer tiempo
+- Preferencia de persistencia de la aplicación

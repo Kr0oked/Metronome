@@ -1,0 +1,4 @@
+- Traducción al checo
+- Ajustes mejorados
+- Fundamento de los permisos
+- Accesibilidad mejorada

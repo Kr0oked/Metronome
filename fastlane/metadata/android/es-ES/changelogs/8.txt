@@ -1,0 +1,3 @@
+- Actualizado a Android 14
+- Nombres de temas mejorados
+- Errores tipográficos corregidos

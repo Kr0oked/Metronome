@@ -1,0 +1,3 @@
+- Se implementaron marcas de espacio
+- Añadida traducción al chino
+- Añadida traducción al español
