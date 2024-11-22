@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   ~ This file is part of Metronome.
   ~ Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
@@ -16,41 +15,30 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
-<resources>
+  --><resources>
     <string name="metronome">节拍器</string>
-
     <string name="beats_label">拍子</string>
     <string name="beats_slider_description">设置拍子的滑块</string>
-
     <string name="subdivisions_label">小节</string>
     <string name="subdivisions_slider_description">设置小节的滑块</string>
-
     <string name="tempo_label">每分钟节奏</string>
     <string name="tempo_slider_description">设置每分钟节奏的滑块</string>
-
     <string name="start_stop_button_description">开始或停止节拍器</string>
     <string name="tap_tempo_button_description">轻点多次以设置节奏</string>
     <string name="increment_tempo_button_description">增加节奏</string>
     <string name="decrement_tempo_button_description">减少节奏</string>
     <string name="tick_visualization_image_description">可见滴答</string>
-
     <string name="notification_channel_playback_name">播放</string>
     <string name="notification_channel_playback_description">当前节拍器播放</string>
     <string name="notification_playback_title">节拍器正在播放</string>
     <string name="notification_playback_action_stop_title">停止</string>
-
     <string name="settings">设置</string>
-
     <string name="emphasize_first_beat">强调第一个拍子</string>
-
     <string name="display">显示</string>
     <string name="night_mode">主题</string>
     <string name="night_mode_follow_system">跟随系统</string>
     <string name="night_mode_no">浅色</string>
     <string name="night_mode_yes">深色</string>
-
     <string name="about">关于</string>
     <string name="author">作者</string>
     <string name="license">许可证</string>
@@ -58,15 +46,11 @@
     <string name="third_party_licenses_summary">包含的开源库的许可</string>
     <string name="source_code">源代码</string>
     <string name="version">版本</string>
-
     <string name="request_notifications_permission_rationale_title">我们需要权限以发送通知</string>
     <string name="request_notifications_permission_rationale_message">此应用程序希望在节拍器运行时发送通知。即使应用程序在后台运行，您也可以轻松地停止节拍器。</string>
-
     <string name="loading_indicator_description">显示应用程序正在加载内容</string>
-
     <string name="ok">确定</string>
     <string name="no_thanks">不需要</string>
-
     <string name="tempo_marking_largo">Largo</string>
     <string name="tempo_marking_larghetto">Larghetto</string>
     <string name="tempo_marking_adagio">Adagio</string>
