@@ -37,7 +37,7 @@ height="80">](https://github.com/Kr0oked/Metronome/releases/latest)
 
 ## Translations
 
-If you want to provide a new translation or update an existing one you can find some instructions
+If you want to provide a new translation or update an existing one you can use our [Weblate](https://hosted.weblate.org/projects/metronome/) or find some instructions
 [here](doc/translations.md).
 
 | Code      | Language             | App                | Metadata           | Complete           |
