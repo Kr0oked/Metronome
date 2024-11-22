@@ -40,7 +40,7 @@ If you want to provide a new translation or update an existing one you can use o
 [here](doc/translations.md).
 
 | Code      | Language             | App                | Metadata           | Complete           |
-|-----------|----------------------|--------------------|--------------------|--------------------|
+|-----------|----------------------|:------------------:|:------------------:|:------------------:|
 | *default* | English              | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | cs        | Czech                | :white_check_mark: | :white_check_mark: | :x:                |
 | de        | German               | :white_check_mark: | :white_check_mark: | :white_check_mark: |
