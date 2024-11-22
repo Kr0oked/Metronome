@@ -32,8 +32,7 @@ height="80">](https://github.com/Kr0oked/Metronome/releases/latest)
 
 ## Screenshots
 
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Screenshot Night" height="500"/>
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="Screenshot Day" height="500"/>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Screenshot Night" height="500"/><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="Screenshot Day" height="500"/>
 
 ## Translations
 
