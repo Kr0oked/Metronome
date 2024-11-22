@@ -26,6 +26,7 @@ height="80">](https://github.com/Kr0oked/Metronome/releases/latest)
 * Beat visualization
 * Tap tempo
 * Light and Dark theme
+* Material 3 design
 * No advertisements
 * No trackers
 * No annoyance
