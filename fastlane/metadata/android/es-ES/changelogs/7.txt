@@ -1,0 +1,2 @@
+- Marca el ritmo al presionar un botón
+- Se solucionó el problema con la traducción al ruso

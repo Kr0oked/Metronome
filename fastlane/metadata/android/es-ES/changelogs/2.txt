@@ -1,0 +1,2 @@
+- El metrónomo es ahora preciso y ya no tartamudea
+- Mejora de la funcionalidad de tap tempo

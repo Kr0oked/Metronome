@@ -1,0 +1,4 @@
+- Icono monocromo
+- Permiso para las notificaciones
+- Mejora del tamaño de las visualizaciones
+- Reorganización de los botones

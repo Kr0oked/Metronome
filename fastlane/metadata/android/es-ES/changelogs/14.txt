@@ -1,0 +1,1 @@
+- Mayor compatibilidad con distintos tamaños de pantalla

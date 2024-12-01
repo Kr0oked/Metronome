@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   ~ This file is part of Metronome.
   ~ Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
@@ -16,41 +15,30 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
-<resources>
+  --><resources>
     <string name="metronome">Metronom</string>
-
     <string name="beats_label">Schläge</string>
     <string name="beats_slider_description">Slider zur Eingabe der Schläge</string>
-
     <string name="subdivisions_label">Unterteilungen</string>
     <string name="subdivisions_slider_description">Slider zur Eingabe der Unterteilungen</string>
-
     <string name="tempo_label">Tempo in BPM</string>
     <string name="tempo_slider_description">Slider zur Eingabe des Tempo in BPM</string>
-
     <string name="start_stop_button_description">Startet oder stoppt das Metronom</string>
     <string name="tap_tempo_button_description">Mehrmals antippen um das Tempo zu setzen</string>
     <string name="increment_tempo_button_description">Erhöht das Tempo</string>
     <string name="decrement_tempo_button_description">Verringert das Tempo</string>
     <string name="tick_visualization_image_description">Visulisierung des Schlags</string>
-
     <string name="notification_channel_playback_name">Wiederagbe</string>
     <string name="notification_channel_playback_description">Momentane Metronom Wiedergabe</string>
     <string name="notification_playback_title">Metronom läuft</string>
     <string name="notification_playback_action_stop_title">Stopp</string>
-
     <string name="settings">Einstellungen</string>
-
     <string name="emphasize_first_beat">Ersten Schlag betonen</string>
-
     <string name="display">Anzeige</string>
     <string name="night_mode">Design</string>
     <string name="night_mode_follow_system">System folgen</string>
     <string name="night_mode_no">Hell</string>
     <string name="night_mode_yes">Dunkel</string>
-
     <string name="about">Über die App</string>
     <string name="author">Author</string>
     <string name="license">Lizenz</string>
@@ -58,15 +46,11 @@
     <string name="third_party_licenses_summary">Lizenzen von enthaltenen Open-Source-Bibliotheken</string>
     <string name="source_code">Quelltext</string>
     <string name="version">Version</string>
-
     <string name="request_notifications_permission_rationale_title">Wir brauchen Ihre Zustimmung um Benachrichtigungen anzuzeigen</string>
     <string name="request_notifications_permission_rationale_message">Diese App möchte eine Benachrichtigung anzeigen, solange das Metronom läuft. Sie können das Metronom dann einfach stoppen, auch wenn die App im Hintergrund läuft.</string>
-
     <string name="loading_indicator_description">Visueller Indikator dafür dass die App momentan Inhalt lädt</string>
-
     <string name="ok">OK</string>
     <string name="no_thanks">Nein danke</string>
-
     <string name="tempo_marking_largo">Largo</string>
     <string name="tempo_marking_larghetto">Larghetto</string>
     <string name="tempo_marking_adagio">Adagio</string>

@@ -1,0 +1,2 @@
+- Añadida vista para mostrar licencias de terceros
+- Añadida traducción al portugués de Brasil

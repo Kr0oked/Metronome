@@ -1,0 +1,2 @@
+- Se solucionó el fallo de la aplicación en Android 14
+- Se corrigió el botón de detención en la notificación en Android 14
