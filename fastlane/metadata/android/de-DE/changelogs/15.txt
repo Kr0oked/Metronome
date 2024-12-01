@@ -1,0 +1,2 @@
+- Layout Abstände bei Randloser Anzeige wurden behoben
+- Verbesserte Chinesische Übersetzung

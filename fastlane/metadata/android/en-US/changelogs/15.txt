@@ -1,0 +1,2 @@
+- Fixed layout margin in edge-to-edge mode
+- Improved Chinese translation
