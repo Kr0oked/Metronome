@@ -47,7 +47,7 @@
     <string name="source_code">Código fuente</string>
     <string name="version">Versión</string>
     <string name="request_notifications_permission_rationale_title">Necesitamos permisos para enviar notificaciones</string>
-    <string name="request_notifications_permission_rationale_message">Esta aplicacion quiere poder enviar notficaciones mientras el metrónomo aún esta en funcionamiento. Así puedes detenerlo fácilmente incluso si la aplicación se está ejecutando en segundo plano</string>
+    <string name="request_notifications_permission_rationale_message">Esta aplicacion quiere poder enviar notficaciones mientras el metrónomo aún esta en funcionamiento. Así puedes detenerlo fácilmente incluso si la aplicación se está ejecutando en segundo plano.</string>
     <string name="loading_indicator_description">Indicador visual de que la aplicación está cargando contenido</string>
     <string name="ok">Aceptar</string>
     <string name="no_thanks">No gracias</string>
