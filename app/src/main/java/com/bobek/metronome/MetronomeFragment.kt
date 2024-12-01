@@ -36,6 +36,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.MenuProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -69,6 +72,7 @@ class MetronomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         initBinding()
+        adjustLayoutToSystemBars()
         registerTickReceiver()
         setupMenu()
     }
@@ -156,6 +160,18 @@ class MetronomeFragment : Fragment() {
         }
 
         return true
+    }
+
+    private fun adjustLayoutToSystemBars() {
+        ViewCompat.setOnApplyWindowInsetsListener(requireBinding().content.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                leftMargin = insets.left
+                rightMargin = insets.right
+                bottomMargin = insets.bottom
+            }
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     private fun registerTickReceiver() {
