@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   ~ This file is part of Metronome.
   ~ Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
@@ -16,11 +15,8 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
-<resources>
+  --><resources>
     <string name="metronome">Metronom</string>
-
     <string name="beats_label">Doba</string>
     <!--TODO<string name="beats_slider_description">Slider to set the beats</string>-->
 
@@ -35,22 +31,17 @@
     <string name="increment_tempo_button_description">Zvýší tempo</string>
     <string name="decrement_tempo_button_description">Sníží tempo</string>
     <string name="tick_visualization_image_description">Vizualizace dob</string>
-
     <string name="notification_channel_playback_name">Přehrání</string>
     <string name="notification_channel_playback_description">Aktuální přehrání</string>
     <string name="notification_playback_title">Metronom hraje</string>
     <string name="notification_playback_action_stop_title">Zastavit</string>
-
     <string name="settings">Nastavení</string>
-
     <string name="emphasize_first_beat">Zdůraznit první dobu</string>
-
     <string name="display">Ukázat</string>
     <string name="night_mode">Noční režim</string>
     <string name="night_mode_follow_system">Systém</string>
     <string name="night_mode_no">Den</string>
     <string name="night_mode_yes">Noc</string>
-
     <string name="about">O aplikaci</string>
     <string name="author">Autor</string>
     <string name="license">Licence</string>
@@ -58,7 +49,6 @@
     <!--TODO<string name="third_party_licenses_summary">Licenses of included open source libraries</string>-->
     <string name="source_code">Zdrojový kód</string>
     <string name="version">Verze</string>
-
     <!--TODO<string name="request_notifications_permission_rationale_title">We need permission to post notifications</string>-->
     <!--TODO<string name="request_notifications_permission_rationale_message">This app wants to post a notification as long as the metronome is running. You can then easily stop the metronome even if the app is running in the background.</string>-->
 
