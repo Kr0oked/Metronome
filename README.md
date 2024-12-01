@@ -37,18 +37,9 @@ height="80">](https://github.com/Kr0oked/Metronome/releases/latest)
 
 ## Translations
 
-If you want to provide a new translation or update an existing one you can find some instructions
-[here](doc/translations.md).
+Translations can be added on [Weblate](https://hosted.weblate.org/engage/metronome/).
 
-| Code      | Language             | App                | Metadata           | Complete           |
-|-----------|----------------------|--------------------|--------------------|--------------------|
-| *default* | English              | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| cs        | Czech                | :white_check_mark: | :white_check_mark: | :x:                |
-| de        | German               | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| es        | Spanish              | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| pt-BR     | Brazilian Portuguese | :white_check_mark: | :white_check_mark: | :x:                |
-| ru        | Russian              | :white_check_mark: | :white_check_mark: | :x:                |
-| zh        | Chinese              | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+[![Translation status](https://hosted.weblate.org/widget/metronome/multi-auto.svg)](https://hosted.weblate.org/engage/metronome/)
 
 ## License
 
