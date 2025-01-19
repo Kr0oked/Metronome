@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tempo_marking_adagio">Adagio</string>
+    <string name="tempo_marking_andante">ஆண்டன்டே</string>
+    <string name="tempo_marking_moderato">மிதமான</string>
+    <string name="tempo_marking_allegro">அலெக்ரோ</string>
+    <string name="tempo_marking_presto">பிரச்டோ</string>
+    <string name="tempo_marking_prestissimo">மிக விரைவில்</string>
+    <string name="metronome">மெட்ரோனோம்</string>
+    <string name="beats_label">துடிப்புகள்</string>
+    <string name="beats_slider_description">துடிப்புகளை அமைக்க ச்லைடர்</string>
+    <string name="subdivisions_label">துணைப்பிரிவுகள்</string>
+    <string name="subdivisions_slider_description">துணைப்பிரிவுகளை அமைக்க ச்லைடர்</string>
+    <string name="tempo_label">பிபிஎம்மில் டெம்போ</string>
+    <string name="tempo_slider_description">பிபிஎம்மில் டெம்போவை அமைக்க ச்லைடர்</string>
+    <string name="start_stop_button_description">மெட்ரோனோம் தொடங்குகிறது அல்லது நிறுத்துகிறது</string>
+    <string name="tap_tempo_button_description">டெம்போவை அமைக்க பல முறை தட்டவும்</string>
+    <string name="increment_tempo_button_description">டெம்போவை அதிகரிக்கிறது</string>
+    <string name="decrement_tempo_button_description">டெம்போவைக் குறைக்கிறது</string>
+    <string name="tick_visualization_image_description">காட்சிப்படுத்தல் டிக்</string>
+    <string name="notification_channel_playback_name">பின்னணி</string>
+    <string name="notification_channel_playback_description">தற்போதைய மெட்ரோனோம் பிளேபேக்</string>
+    <string name="notification_playback_title">மெட்ரோனோம் விளையாடுகிறது</string>
+    <string name="notification_playback_action_stop_title">நிறுத்து</string>
+    <string name="settings">அமைப்புகள்</string>
+    <string name="emphasize_first_beat">முதல் துடிப்பை வலியுறுத்துங்கள்</string>
+    <string name="display">காட்சி</string>
+    <string name="night_mode">கருப்பொருள்</string>
+    <string name="night_mode_follow_system">அமைப்பைப் பின்தொடரவும்</string>
+    <string name="night_mode_no">ஒளி</string>
+    <string name="night_mode_yes">இருண்ட</string>
+    <string name="about">பற்றி</string>
+    <string name="author">நூலாசிரியர்</string>
+    <string name="license">உரிமம்</string>
+    <string name="third_party_licenses">மூன்றாம் தரப்பு உரிமங்கள்</string>
+    <string name="third_party_licenses_summary">சேர்க்கப்பட்ட திறந்த மூல நூலகங்களின் உரிமங்கள்</string>
+    <string name="source_code">மூலக் குறியீடு</string>
+    <string name="version">பதிப்பு</string>
+    <string name="request_notifications_permission_rationale_title">அறிவிப்புகளை இடுகையிட எங்களுக்கு இசைவு தேவை</string>
+    <string name="request_notifications_permission_rationale_message">இந்த பயன்பாடு மெட்ரோனோம் இயங்கும் வரை அறிவிப்பை இடுகையிட விரும்புகிறது. பயன்பாடு பின்னணியில் இயங்கினாலும் நீங்கள் எளிதாக மெட்ரோனோமை நிறுத்தலாம்.</string>
+    <string name="loading_indicator_description">பயன்பாடு தற்போது உள்ளடக்கத்தை ஏற்றுகிறது என்பதற்கான காட்சி காட்டி</string>
+    <string name="ok">சரி</string>
+    <string name="no_thanks">நன்றி இல்லை</string>
+    <string name="tempo_marking_largo">லார்கோ</string>
+    <string name="tempo_marking_larghetto">லார்எட்டோ</string>
+</resources>

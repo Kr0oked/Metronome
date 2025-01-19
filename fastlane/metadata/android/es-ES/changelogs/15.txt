@@ -1,0 +1,2 @@
+- Se ha corregido el espaciado del diseño para pantallas sin bordes.
+- Traducción al chino mejorada
