@@ -11,6 +11,7 @@ locales([
   'es-ES',
   'pt-BR',
   'ru-RU',
+  'ta-IN',
   'zh-CN'
 ])
 
