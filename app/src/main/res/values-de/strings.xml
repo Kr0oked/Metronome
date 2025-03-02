@@ -43,4 +43,7 @@
     <string name="tempo_marking_allegro">Allegro</string>
     <string name="tempo_marking_presto">Presto</string>
     <string name="tempo_marking_prestissimo">Prestissimo</string>
+    <string name="author_name" translatable="false"></string>
+    <string name="source_code_name" translatable="false"></string>
+    <string name="license_name" translatable="false"></string>
 </resources>
