@@ -33,17 +33,4 @@
     <string name="tempo_marking_allegro">Allegro</string>
     <string name="tempo_marking_presto">Presto</string>
     <string name="tempo_marking_prestissimo">Prestissimo</string>
-    <string name="source_code_name" translatable="false"></string>
-    <string name="ok"></string>
-    <string name="subdivisions_slider_description"></string>
-    <string name="tempo_slider_description"></string>
-    <string name="third_party_licenses"></string>
-    <string name="author_name" translatable="false"></string>
-    <string name="no_thanks"></string>
-    <string name="request_notifications_permission_rationale_title"></string>
-    <string name="third_party_licenses_summary"></string>
-    <string name="loading_indicator_description"></string>
-    <string name="license_name" translatable="false"></string>
-    <string name="beats_slider_description"></string>
-    <string name="request_notifications_permission_rationale_message"></string>
 </resources>

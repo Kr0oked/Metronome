@@ -43,7 +43,4 @@
     <string name="no_thanks">நன்றி இல்லை</string>
     <string name="tempo_marking_largo">லார்கோ</string>
     <string name="tempo_marking_larghetto">லார்எட்டோ</string>
-    <string name="author_name" translatable="false"></string>
-    <string name="source_code_name" translatable="false"></string>
-    <string name="license_name" translatable="false"></string>
 </resources>
