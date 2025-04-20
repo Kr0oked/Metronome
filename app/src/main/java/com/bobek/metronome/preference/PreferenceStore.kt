@@ -32,6 +32,7 @@ import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import java.util.SortedSet
+import androidx.core.content.edit
 
 private const val TAG = "PreferenceStore"
 private const val NUMBERS_DELIMITER = ","
@@ -179,52 +180,52 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     }
 
     private fun getBeatsObserver(): (t: Beats) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putInt(PreferenceConstants.BEATS, it.value)
-        edit.apply()
+        sharedPreferences.edit {
+            putInt(PreferenceConstants.BEATS, it.value)
+        }
         Log.d(TAG, "Persisted beats: ${it.value}")
     }
 
     private fun getSubdivisionsObserver(): (t: Subdivisions) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putInt(PreferenceConstants.SUBDIVISIONS, it.value)
-        edit.apply()
+        sharedPreferences.edit {
+            putInt(PreferenceConstants.SUBDIVISIONS, it.value)
+        }
         Log.d(TAG, "Persisted subdivisions: ${it.value}")
     }
 
     private fun getGapsObserver(): (t: Gaps) -> Unit = {
-        val edit = sharedPreferences.edit()
         val gapsString = it.value.joinToString(NUMBERS_DELIMITER)
-        edit.putString(PreferenceConstants.GAPS, gapsString)
-        edit.apply()
+        sharedPreferences.edit {
+            putString(PreferenceConstants.GAPS, gapsString)
+        }
         Log.d(TAG, "Persisted gaps: $gapsString")
     }
 
     private fun getTempoObserver(): (t: Tempo) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putInt(PreferenceConstants.TEMPO, it.value)
-        edit.apply()
+        sharedPreferences.edit {
+            putInt(PreferenceConstants.TEMPO, it.value)
+        }
         Log.d(TAG, "Persisted tempo: ${it.value}")
     }
 
     private fun getEmphasizeFirstBeatObserver(): (t: Boolean) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putBoolean(PreferenceConstants.EMPHASIZE_FIRST_BEAT, it)
-        edit.apply()
+        sharedPreferences.edit {
+            putBoolean(PreferenceConstants.EMPHASIZE_FIRST_BEAT, it)
+        }
         Log.d(TAG, "Persisted emphasizeFirstBeat: $it")
     }
 
     private fun getNightModeObserver(): (t: AppNightMode) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putString(PreferenceConstants.NIGHT_MODE, it.preferenceValue)
-        edit.apply()
+        sharedPreferences.edit {
+            putString(PreferenceConstants.NIGHT_MODE, it.preferenceValue)
+        }
         Log.d(TAG, "Persisted nightMode: ${it.preferenceValue}")
     }
 
     private fun getPostNotificationsPermissionRequestedObserver(): (t: Boolean) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putBoolean(PreferenceConstants.POST_NOTIFICATIONS_PERMISSION_REQUESTED, it)
-        edit.apply()
+        sharedPreferences.edit {
+            putBoolean(PreferenceConstants.POST_NOTIFICATIONS_PERMISSION_REQUESTED, it)
+        }
         Log.d(TAG, "Persisted postNotificationsPermissionRequested: $it")
     }
 }
