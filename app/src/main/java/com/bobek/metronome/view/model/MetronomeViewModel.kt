@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,9 +160,9 @@ class MetronomeViewModel : ViewModel() {
             }
 
             beatsTextError.value = false
-        } catch (exception: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             beatsTextError.value = true
-        } catch (exception: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             beatsTextError.value = true
         }
     }
@@ -182,9 +182,9 @@ class MetronomeViewModel : ViewModel() {
             }
 
             subdivisionsTextError.value = false
-        } catch (exception: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             subdivisionsTextError.value = true
-        } catch (exception: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             subdivisionsTextError.value = true
         }
     }
@@ -245,9 +245,9 @@ class MetronomeViewModel : ViewModel() {
             }
 
             tempoTextError.value = false
-        } catch (exception: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             tempoTextError.value = true
-        } catch (exception: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             tempoTextError.value = true
         }
     }

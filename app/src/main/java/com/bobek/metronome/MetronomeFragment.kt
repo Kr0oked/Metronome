@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,6 @@ class MetronomeFragment : Fragment() {
     private val tickReceiver = TickReceiver()
 
     private var binding: FragmentMetronomeBinding? = null
-    private var optionsMenu: Menu? = null
     private var lastTap: Long = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -188,7 +187,6 @@ class MetronomeFragment : Fragment() {
 
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.menu_metronome, menu)
-            this@MetronomeFragment.optionsMenu = menu
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
