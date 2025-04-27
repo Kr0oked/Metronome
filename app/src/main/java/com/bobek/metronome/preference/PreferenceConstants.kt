@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,12 @@ object PreferenceConstants {
     const val TEMPO = "tempo"
 
     const val EMPHASIZE_FIRST_BEAT = "emphasize_first_beat"
+
+    const val SOUND = "sound"
+    const val SOUND_VALUE_SQUARE_WAVE = "square_wave"
+    const val SOUND_VALUE_SINE_WAVE = "sine_wave"
+    const val SOUND_VALUE_RISSET_DRUM = "risset_drum"
+    const val SOUND_VALUE_PLUCK = "pluck"
 
     const val NIGHT_MODE = "night_mode"
     const val NIGHT_MODE_VALUE_FOLLOW_SYSTEM = "follow_system"

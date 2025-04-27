@@ -23,6 +23,10 @@
     <string name="night_mode_follow_system">System folgen</string>
     <string name="night_mode_no">Hell</string>
     <string name="night_mode_yes">Dunkel</string>
+    <string name="sound_square_wave">Harter Piepston</string>
+    <string name="sound_sine_wave">Weicher Piepston</string>
+    <string name="sound_risset_drum">Synth Trommel</string>
+    <string name="sound_pluck">Zupfen</string>
     <string name="about">Über die App</string>
     <string name="author">Author</string>
     <string name="license">Lizenz</string>

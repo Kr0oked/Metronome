@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ package com.bobek.metronome.preference
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -29,10 +30,10 @@ import androidx.preference.PreferenceManager
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
+import com.bobek.metronome.data.Sound
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import java.util.SortedSet
-import androidx.core.content.edit
 
 private const val TAG = "PreferenceStore"
 private const val NUMBERS_DELIMITER = ","
@@ -44,6 +45,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     val gaps = MutableLiveData<Gaps>()
     val tempo = MutableLiveData<Tempo>()
     val emphasizeFirstBeat = MutableLiveData<Boolean>()
+    val sound = MutableLiveData<Sound>()
     val nightMode = MutableLiveData<AppNightMode>()
     val postNotificationsPermissionRequested = MutableLiveData<Boolean>()
 
@@ -56,6 +58,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     private val gapsObserver = getGapsObserver()
     private val tempoObserver = getTempoObserver()
     private val emphasizeFirstBeatObserver = getEmphasizeFirstBeatObserver()
+    private val soundObserver = getSoundObserver()
     private val nightModeObserver = getNightModeObserver()
     private val postNotificationsPermissionRequestedObserver = getPostNotificationsPermissionRequestedObserver()
 
@@ -67,6 +70,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         updateTempo()
         updateGaps()
         updateEmphasizeFirstBeat()
+        updateSound()
         updateNightMode()
         updatePostNotificationsPermissionRequested()
 
@@ -81,6 +85,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             tempo.observeForever(tempoObserver)
             gaps.observeForever(gapsObserver)
             emphasizeFirstBeat.observeForever(emphasizeFirstBeatObserver)
+            sound.observeForever(soundObserver)
             nightMode.observeForever(nightModeObserver)
             postNotificationsPermissionRequested.observeForever(postNotificationsPermissionRequestedObserver)
 
@@ -95,6 +100,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             tempo.removeObserver(tempoObserver)
             gaps.removeObserver(gapsObserver)
             emphasizeFirstBeat.removeObserver(emphasizeFirstBeatObserver)
+            sound.removeObserver(soundObserver)
             nightMode.removeObserver(nightModeObserver)
             postNotificationsPermissionRequested.removeObserver(postNotificationsPermissionRequestedObserver)
         }
@@ -108,6 +114,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
                 PreferenceConstants.GAPS -> updateGaps()
                 PreferenceConstants.TEMPO -> updateTempo()
                 PreferenceConstants.EMPHASIZE_FIRST_BEAT -> updateEmphasizeFirstBeat()
+                PreferenceConstants.SOUND -> updateSound()
                 PreferenceConstants.NIGHT_MODE -> updateNightMode()
                 PreferenceConstants.POST_NOTIFICATIONS_PERMISSION_REQUESTED -> updatePostNotificationsPermissionRequested()
             }
@@ -157,6 +164,17 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         val storedValue = sharedPreferences.getBoolean(PreferenceConstants.EMPHASIZE_FIRST_BEAT, true)
         if (emphasizeFirstBeat.value != storedValue) {
             emphasizeFirstBeat.value = storedValue
+        }
+    }
+
+    private fun updateSound() {
+        val storedSound = sharedPreferences
+            .getString(PreferenceConstants.SOUND, Sound.SQUARE_WAVE.preferenceValue)
+            ?.let { Sound.forPreferenceValue(it) }
+            ?: run { Sound.SQUARE_WAVE }
+
+        if (sound.value != storedSound) {
+            sound.value = storedSound
         }
     }
 
@@ -213,6 +231,13 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             putBoolean(PreferenceConstants.EMPHASIZE_FIRST_BEAT, it)
         }
         Log.d(TAG, "Persisted emphasizeFirstBeat: $it")
+    }
+
+    private fun getSoundObserver(): (t: Sound) -> Unit = {
+        sharedPreferences.edit {
+            putString(PreferenceConstants.SOUND, it.preferenceValue)
+        }
+        Log.d(TAG, "Persisted sound: ${it.preferenceValue}")
     }
 
     private fun getNightModeObserver(): (t: AppNightMode) -> Unit = {

@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         preferenceStore.gaps.observe(this) { viewModel.gapsData.value = it }
         preferenceStore.tempo.observe(this) { viewModel.tempoData.value = it }
         preferenceStore.emphasizeFirstBeat.observe(this) { viewModel.emphasizeFirstBeat.value = it }
+        preferenceStore.sound.observe(this) { viewModel.sound.value = it }
         preferenceStore.nightMode.observe(this) { setNightMode(it) }
     }
 
@@ -102,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.gapsData.observe(this) { metronomeService?.gaps = it }
         viewModel.tempoData.observe(this) { metronomeService?.tempo = it }
         viewModel.emphasizeFirstBeat.observe(this) { metronomeService?.emphasizeFirstBeat = it }
+        viewModel.sound.observe(this) { metronomeService?.sound = it }
         viewModel.playing.observe(this) { metronomeService?.playing = it }
     }
 
@@ -197,6 +199,7 @@ class MainActivity : AppCompatActivity() {
         preferenceStore.gaps.value = viewModel.gapsData.value
         preferenceStore.tempo.value = viewModel.tempoData.value
         preferenceStore.emphasizeFirstBeat.value = viewModel.emphasizeFirstBeat.value
+        preferenceStore.sound.value = viewModel.sound.value
         Log.d(TAG, "Updated preference store")
     }
 
@@ -280,6 +283,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.gapsData.value = service.gaps
         viewModel.tempoData.value = service.tempo
         viewModel.emphasizeFirstBeat.value = service.emphasizeFirstBeat
+        viewModel.sound.value = service.sound
     }
 
     private fun initServiceValues(service: MetronomeService) {
@@ -288,5 +292,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.gapsData.value?.let { service.gaps = it }
         viewModel.tempoData.value?.let { service.tempo = it }
         viewModel.emphasizeFirstBeat.value?.let { service.emphasizeFirstBeat = it }
+        viewModel.sound.value?.let { service.sound = it }
     }
 }

@@ -23,6 +23,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
+import com.bobek.metronome.data.Sound
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 
@@ -53,6 +54,7 @@ class MetronomeViewModel : ViewModel() {
     val tempoTextError = MutableLiveData(false)
 
     val emphasizeFirstBeat = MutableLiveData(true)
+    val sound = MutableLiveData(Sound.SQUARE_WAVE)
     val playing = MutableLiveData(false)
     val connected = MutableLiveData(false)
 
@@ -76,6 +78,7 @@ class MetronomeViewModel : ViewModel() {
     private val tempoTextObserver = getTempoTextObserver()
 
     private val emphasizeFirstBeatObserver = getEmphasizeFirstBeatObserver()
+    private val soundObserver = getSoundObserver()
     private val playingObserver = getPlayingObserver()
     private val connectedObserver = getConnectedObserver()
 
@@ -100,6 +103,7 @@ class MetronomeViewModel : ViewModel() {
         tempoText.observeForever(tempoTextObserver)
 
         emphasizeFirstBeat.observeForever(emphasizeFirstBeatObserver)
+        sound.observeForever(soundObserver)
         playing.observeForever(playingObserver)
         connected.observeForever(connectedObserver)
     }
@@ -129,6 +133,7 @@ class MetronomeViewModel : ViewModel() {
         tempoText.removeObserver(tempoTextObserver)
 
         emphasizeFirstBeat.removeObserver(emphasizeFirstBeatObserver)
+        sound.removeObserver(soundObserver)
         playing.removeObserver(playingObserver)
         connected.removeObserver(connectedObserver)
     }
@@ -140,6 +145,7 @@ class MetronomeViewModel : ViewModel() {
                 "gaps=${gapsData.value?.value?.joinToString()}, " +
                 "tempo=${tempoData.value?.value}, " +
                 "emphasizeFirstBeat=${emphasizeFirstBeat.value}," +
+                "sound=${sound.value}," +
                 "playing=${playing.value}, " +
                 "connected=${connected.value}" +
                 ")"
@@ -254,6 +260,10 @@ class MetronomeViewModel : ViewModel() {
 
     private fun getEmphasizeFirstBeatObserver(): (t: Boolean) -> Unit = {
         Log.d(TAG, "emphasizeFirstBeat: $it")
+    }
+
+    private fun getSoundObserver(): (t: Sound) -> Unit = {
+        Log.d(TAG, "sound: $it")
     }
 
     private fun getPlayingObserver(): (t: Boolean) -> Unit = {
