@@ -78,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         initPreferenceStore()
         initViewModel()
         registerRefreshReceiver()
-        startAndBindToMetronomeService()
     }
 
     private fun initPreferenceStore() {
@@ -113,14 +112,6 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "Registered refreshReceiver")
     }
 
-    private fun startAndBindToMetronomeService() {
-        Intent(this, MetronomeService::class.java)
-            .also { service -> startService(service) }
-            .also { Log.d(TAG, "MetronomeService started") }
-            .also { service -> bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT) }
-            .also { Log.d(TAG, "MetronomeService binding") }
-    }
-
     override fun onStart() {
         Log.d(TAG, "Lifecycle: onStart")
         super.onStart()
@@ -133,6 +124,8 @@ class MainActivity : AppCompatActivity() {
         if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
             handlePostNotificationsPermission()
         }
+
+        startAndBindToMetronomeService()
     }
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
@@ -182,9 +175,23 @@ class MainActivity : AppCompatActivity() {
         postNotificationsPermissionRequest.launch(POST_NOTIFICATIONS)
     }
 
+    private fun startAndBindToMetronomeService() {
+        Intent(this, MetronomeService::class.java)
+            .also { service -> startService(service) }
+            .also { Log.d(TAG, "MetronomeService started") }
+            .also { service -> bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT) }
+            .also { Log.d(TAG, "MetronomeService binding") }
+    }
+
     override fun onPause() {
         Log.d(TAG, "Lifecycle: onPause")
         super.onPause()
+        unbindFromMetronomeService()
+    }
+
+    private fun unbindFromMetronomeService() {
+        Intent(this, MetronomeService::class.java).also { unbindService(metronomeServiceConnection) }
+        Log.d(TAG, "MetronomeService unbound")
     }
 
     override fun onStop() {
@@ -207,18 +214,12 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "Lifecycle: onDestroy")
         super.onDestroy()
         unregisterRefreshReceiver()
-        unbindFromMetronomeService()
     }
 
     private fun unregisterRefreshReceiver() {
         LocalBroadcastManager.getInstance(this)
             .unregisterReceiver(refreshReceiver)
         Log.d(TAG, "Unregistered refreshReceiver")
-    }
-
-    private fun unbindFromMetronomeService() {
-        Intent(this, MetronomeService::class.java).also { unbindService(metronomeServiceConnection) }
-        Log.d(TAG, "MetronomeService unbound")
     }
 
     override fun onSupportNavigateUp(): Boolean {
