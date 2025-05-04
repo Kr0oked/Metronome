@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,13 @@ import android.media.AudioTrack
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.util.Log
-import androidx.annotation.RawRes
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.bobek.metronome.R
-import com.bobek.metronome.audio.SoundLoader
+import com.bobek.metronome.audio.SoundProvider
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
+import com.bobek.metronome.data.Sound
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
@@ -49,14 +48,12 @@ private const val SAMPLE_RATE_IN_HZ = 48_000
 private const val SILENCE_CHUNK_SIZE = 8_000
 
 class Metronome(
-    private val context: Context,
+    context: Context,
     override val lifecycle: Lifecycle,
     private val tickListener: MetronomeTickListener
 ) : LifecycleOwner {
 
-    private val strongTick = loadSound(R.raw.strong_tick)
-    private val weakTick = loadSound(R.raw.weak_tick)
-    private val subTick = loadSound(R.raw.sub_tick)
+    private val soundProvider = SoundProvider(context)
     private val silence = FloatArray(SILENCE_CHUNK_SIZE)
 
     private var metronomeJob: Job? = null
@@ -75,6 +72,9 @@ class Metronome(
 
     @Volatile
     var emphasizeFirstBeat = true
+
+    @Volatile
+    var sound = Sound.SQUARE_WAVE
 
     var playing: Boolean = false
         set(playing) {
@@ -100,7 +100,7 @@ class Metronome(
                 writeTickPeriod(track, tickCount)
                 tickCount++
             }
-        } catch (exception: CancellationException) {
+        } catch (_: CancellationException) {
             Log.d(TAG, "Received cancellation")
             track.pause()
             if (VERSION.SDK_INT >= VERSION_CODES.N) {
@@ -140,7 +140,7 @@ class Metronome(
         if (tick.gap) {
             Log.v(TAG, "Skipped gap for $tick")
         } else {
-            val tickSound = getTickSound(tick.type)
+            val tickSound = soundProvider.getTickSound(tick.type, sound)
             val periodSize = calculatePeriodSize()
 
             sizeWritten += writeNextAudioData(track, tickSound, periodSize, sizeWritten)
@@ -189,14 +189,6 @@ class Metronome(
 
     private fun calculatePeriodSize() = 60 * SAMPLE_RATE_IN_HZ / tempo.value / subdivisions.value
 
-    private fun getTickSound(tickType: TickType): FloatArray {
-        return when (tickType) {
-            TickType.STRONG -> strongTick
-            TickType.WEAK -> weakTick
-            TickType.SUB -> subTick
-        }
-    }
-
     private fun writeNextAudioData(track: AudioTrack, data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
         val size = calculateAudioSizeToWriteNext(data, periodSize, sizeWritten)
         writeAudio(track, data, size)
@@ -220,8 +212,4 @@ class Metronome(
         metronomeJob = null
         Log.i(TAG, "Stopped metronome job")
     }
-
-    private fun loadSound(@RawRes id: Int): FloatArray = context.resources
-        .openRawResource(id)
-        .use(SoundLoader::readDataFromWavPcmFloat)
 }

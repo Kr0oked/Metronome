@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         initPreferenceStore()
         initViewModel()
         registerRefreshReceiver()
-        startAndBindToMetronomeService()
     }
 
     private fun initPreferenceStore() {
@@ -88,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         preferenceStore.gaps.observe(this) { viewModel.gapsData.value = it }
         preferenceStore.tempo.observe(this) { viewModel.tempoData.value = it }
         preferenceStore.emphasizeFirstBeat.observe(this) { viewModel.emphasizeFirstBeat.value = it }
+        preferenceStore.sound.observe(this) { viewModel.sound.value = it }
         preferenceStore.nightMode.observe(this) { setNightMode(it) }
     }
 
@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.gapsData.observe(this) { metronomeService?.gaps = it }
         viewModel.tempoData.observe(this) { metronomeService?.tempo = it }
         viewModel.emphasizeFirstBeat.observe(this) { metronomeService?.emphasizeFirstBeat = it }
+        viewModel.sound.observe(this) { metronomeService?.sound = it }
         viewModel.playing.observe(this) { metronomeService?.playing = it }
     }
 
@@ -109,14 +110,6 @@ class MainActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(refreshReceiver, IntentFilter(MetronomeService.ACTION_REFRESH))
         Log.d(TAG, "Registered refreshReceiver")
-    }
-
-    private fun startAndBindToMetronomeService() {
-        Intent(this, MetronomeService::class.java)
-            .also { service -> startService(service) }
-            .also { Log.d(TAG, "MetronomeService started") }
-            .also { service -> bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT) }
-            .also { Log.d(TAG, "MetronomeService binding") }
     }
 
     override fun onStart() {
@@ -131,6 +124,8 @@ class MainActivity : AppCompatActivity() {
         if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
             handlePostNotificationsPermission()
         }
+
+        startAndBindToMetronomeService()
     }
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
@@ -180,9 +175,23 @@ class MainActivity : AppCompatActivity() {
         postNotificationsPermissionRequest.launch(POST_NOTIFICATIONS)
     }
 
+    private fun startAndBindToMetronomeService() {
+        Intent(this, MetronomeService::class.java)
+            .also { service -> startService(service) }
+            .also { Log.d(TAG, "MetronomeService started") }
+            .also { service -> bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT) }
+            .also { Log.d(TAG, "MetronomeService binding") }
+    }
+
     override fun onPause() {
         Log.d(TAG, "Lifecycle: onPause")
         super.onPause()
+        unbindFromMetronomeService()
+    }
+
+    private fun unbindFromMetronomeService() {
+        Intent(this, MetronomeService::class.java).also { unbindService(metronomeServiceConnection) }
+        Log.d(TAG, "MetronomeService unbound")
     }
 
     override fun onStop() {
@@ -197,6 +206,7 @@ class MainActivity : AppCompatActivity() {
         preferenceStore.gaps.value = viewModel.gapsData.value
         preferenceStore.tempo.value = viewModel.tempoData.value
         preferenceStore.emphasizeFirstBeat.value = viewModel.emphasizeFirstBeat.value
+        preferenceStore.sound.value = viewModel.sound.value
         Log.d(TAG, "Updated preference store")
     }
 
@@ -204,18 +214,12 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "Lifecycle: onDestroy")
         super.onDestroy()
         unregisterRefreshReceiver()
-        unbindFromMetronomeService()
     }
 
     private fun unregisterRefreshReceiver() {
         LocalBroadcastManager.getInstance(this)
             .unregisterReceiver(refreshReceiver)
         Log.d(TAG, "Unregistered refreshReceiver")
-    }
-
-    private fun unbindFromMetronomeService() {
-        Intent(this, MetronomeService::class.java).also { unbindService(metronomeServiceConnection) }
-        Log.d(TAG, "MetronomeService unbound")
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -280,6 +284,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.gapsData.value = service.gaps
         viewModel.tempoData.value = service.tempo
         viewModel.emphasizeFirstBeat.value = service.emphasizeFirstBeat
+        viewModel.sound.value = service.sound
     }
 
     private fun initServiceValues(service: MetronomeService) {
@@ -288,5 +293,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.gapsData.value?.let { service.gaps = it }
         viewModel.tempoData.value?.let { service.tempo = it }
         viewModel.emphasizeFirstBeat.value?.let { service.emphasizeFirstBeat = it }
+        viewModel.sound.value?.let { service.sound = it }
     }
 }

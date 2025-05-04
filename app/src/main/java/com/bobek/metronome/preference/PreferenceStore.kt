@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ package com.bobek.metronome.preference
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -29,6 +30,7 @@ import androidx.preference.PreferenceManager
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
+import com.bobek.metronome.data.Sound
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import java.util.SortedSet
@@ -43,6 +45,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     val gaps = MutableLiveData<Gaps>()
     val tempo = MutableLiveData<Tempo>()
     val emphasizeFirstBeat = MutableLiveData<Boolean>()
+    val sound = MutableLiveData<Sound>()
     val nightMode = MutableLiveData<AppNightMode>()
     val postNotificationsPermissionRequested = MutableLiveData<Boolean>()
 
@@ -55,6 +58,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     private val gapsObserver = getGapsObserver()
     private val tempoObserver = getTempoObserver()
     private val emphasizeFirstBeatObserver = getEmphasizeFirstBeatObserver()
+    private val soundObserver = getSoundObserver()
     private val nightModeObserver = getNightModeObserver()
     private val postNotificationsPermissionRequestedObserver = getPostNotificationsPermissionRequestedObserver()
 
@@ -66,6 +70,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         updateTempo()
         updateGaps()
         updateEmphasizeFirstBeat()
+        updateSound()
         updateNightMode()
         updatePostNotificationsPermissionRequested()
 
@@ -80,6 +85,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             tempo.observeForever(tempoObserver)
             gaps.observeForever(gapsObserver)
             emphasizeFirstBeat.observeForever(emphasizeFirstBeatObserver)
+            sound.observeForever(soundObserver)
             nightMode.observeForever(nightModeObserver)
             postNotificationsPermissionRequested.observeForever(postNotificationsPermissionRequestedObserver)
 
@@ -94,6 +100,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             tempo.removeObserver(tempoObserver)
             gaps.removeObserver(gapsObserver)
             emphasizeFirstBeat.removeObserver(emphasizeFirstBeatObserver)
+            sound.removeObserver(soundObserver)
             nightMode.removeObserver(nightModeObserver)
             postNotificationsPermissionRequested.removeObserver(postNotificationsPermissionRequestedObserver)
         }
@@ -107,6 +114,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
                 PreferenceConstants.GAPS -> updateGaps()
                 PreferenceConstants.TEMPO -> updateTempo()
                 PreferenceConstants.EMPHASIZE_FIRST_BEAT -> updateEmphasizeFirstBeat()
+                PreferenceConstants.SOUND -> updateSound()
                 PreferenceConstants.NIGHT_MODE -> updateNightMode()
                 PreferenceConstants.POST_NOTIFICATIONS_PERMISSION_REQUESTED -> updatePostNotificationsPermissionRequested()
             }
@@ -159,6 +167,17 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         }
     }
 
+    private fun updateSound() {
+        val storedSound = sharedPreferences
+            .getString(PreferenceConstants.SOUND, Sound.SQUARE_WAVE.preferenceValue)
+            ?.let { Sound.forPreferenceValue(it) }
+            ?: run { Sound.SQUARE_WAVE }
+
+        if (sound.value != storedSound) {
+            sound.value = storedSound
+        }
+    }
+
     private fun updateNightMode() {
         val storedNightMode = sharedPreferences
             .getString(PreferenceConstants.NIGHT_MODE, AppNightMode.FOLLOW_SYSTEM.preferenceValue)
@@ -179,52 +198,59 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     }
 
     private fun getBeatsObserver(): (t: Beats) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putInt(PreferenceConstants.BEATS, it.value)
-        edit.apply()
+        sharedPreferences.edit {
+            putInt(PreferenceConstants.BEATS, it.value)
+        }
         Log.d(TAG, "Persisted beats: ${it.value}")
     }
 
     private fun getSubdivisionsObserver(): (t: Subdivisions) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putInt(PreferenceConstants.SUBDIVISIONS, it.value)
-        edit.apply()
+        sharedPreferences.edit {
+            putInt(PreferenceConstants.SUBDIVISIONS, it.value)
+        }
         Log.d(TAG, "Persisted subdivisions: ${it.value}")
     }
 
     private fun getGapsObserver(): (t: Gaps) -> Unit = {
-        val edit = sharedPreferences.edit()
         val gapsString = it.value.joinToString(NUMBERS_DELIMITER)
-        edit.putString(PreferenceConstants.GAPS, gapsString)
-        edit.apply()
+        sharedPreferences.edit {
+            putString(PreferenceConstants.GAPS, gapsString)
+        }
         Log.d(TAG, "Persisted gaps: $gapsString")
     }
 
     private fun getTempoObserver(): (t: Tempo) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putInt(PreferenceConstants.TEMPO, it.value)
-        edit.apply()
+        sharedPreferences.edit {
+            putInt(PreferenceConstants.TEMPO, it.value)
+        }
         Log.d(TAG, "Persisted tempo: ${it.value}")
     }
 
     private fun getEmphasizeFirstBeatObserver(): (t: Boolean) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putBoolean(PreferenceConstants.EMPHASIZE_FIRST_BEAT, it)
-        edit.apply()
+        sharedPreferences.edit {
+            putBoolean(PreferenceConstants.EMPHASIZE_FIRST_BEAT, it)
+        }
         Log.d(TAG, "Persisted emphasizeFirstBeat: $it")
     }
 
+    private fun getSoundObserver(): (t: Sound) -> Unit = {
+        sharedPreferences.edit {
+            putString(PreferenceConstants.SOUND, it.preferenceValue)
+        }
+        Log.d(TAG, "Persisted sound: ${it.preferenceValue}")
+    }
+
     private fun getNightModeObserver(): (t: AppNightMode) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putString(PreferenceConstants.NIGHT_MODE, it.preferenceValue)
-        edit.apply()
+        sharedPreferences.edit {
+            putString(PreferenceConstants.NIGHT_MODE, it.preferenceValue)
+        }
         Log.d(TAG, "Persisted nightMode: ${it.preferenceValue}")
     }
 
     private fun getPostNotificationsPermissionRequestedObserver(): (t: Boolean) -> Unit = {
-        val edit = sharedPreferences.edit()
-        edit.putBoolean(PreferenceConstants.POST_NOTIFICATIONS_PERMISSION_REQUESTED, it)
-        edit.apply()
+        sharedPreferences.edit {
+            putBoolean(PreferenceConstants.POST_NOTIFICATIONS_PERMISSION_REQUESTED, it)
+        }
         Log.d(TAG, "Persisted postNotificationsPermissionRequested: $it")
     }
 }

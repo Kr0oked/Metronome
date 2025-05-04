@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
+import com.bobek.metronome.data.Sound
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
@@ -77,6 +78,12 @@ class MetronomeService : LifecycleService() {
         get() = requireMetronome().emphasizeFirstBeat
         set(emphasizeFirstBeat) {
             requireMetronome().emphasizeFirstBeat = emphasizeFirstBeat
+        }
+
+    var sound: Sound
+        get() = requireMetronome().sound
+        set(sound) {
+            requireMetronome().sound = sound
         }
 
     var playing: Boolean
