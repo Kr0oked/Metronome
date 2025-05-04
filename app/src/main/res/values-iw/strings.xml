@@ -1,2 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="metronome">מטרונום</string>
+    <string name="beats_label">פעימות</string>
+    <string name="beats_slider_description">מחוון להגדרת הקצב</string>
+    <string name="subdivisions_label">חלוקות משנה</string>
+    <string name="subdivisions_slider_description">מחוון להגדרת חלוקות המשנה</string>
+    <string name="tempo_label">קצב פעמיות לדקה</string>
+    <string name="tempo_slider_description">מחוון לקביעת הקצב ב-BPM</string>
+    <string name="start_stop_button_description">מפעיל או עוצר את המטרונום</string>
+    <string name="tap_tempo_button_description">הקש מספר פעמים כדי לקבוע את הקצב</string>
+    <string name="decrement_tempo_button_description">מוריד את הקצב</string>
+    <string name="notification_channel_playback_name">השמעה</string>
+    <string name="notification_channel_playback_description">השמעת המטרונום הנוכחית</string>
+    <string name="notification_playback_title">המטרונום מתנגן</string>
+    <string name="settings">הגדרות</string>
+    <string name="emphasize_first_beat">הדגש את הפעימה הראשונה</string>
+    <string name="display">תצוגה</string>
+    <string name="night_mode">עיצוב</string>
+    <string name="night_mode_follow_system">מערכת</string>
+    <string name="night_mode_no">מואר</string>
+    <string name="night_mode_yes">כהה</string>
+    <string name="about">אודות</string>
+    <string name="author">יוצר</string>
+    <string name="third_party_licenses">רשיונות צדדים שלישים</string>
+    <string name="third_party_licenses_summary">רישיונות של ספריות קוד פתוח בשימוש</string>
+    <string name="version">גירסא</string>
+    <string name="request_notifications_permission_rationale_title">אנחנו צריכים אישור לשלוח התראות</string>
+    <string name="loading_indicator_description">אינדיקציה חזותית לכך שהאפליקציה טוענת כעת תוכן</string>
+    <string name="ok">בסדר</string>
+    <string name="no_thanks">לא תודה</string>
+    <string name="tempo_marking_larghetto">ניגון איטי</string>
+    <string name="tempo_marking_largo">איטי</string>
+    <string name="tempo_marking_adagio">נינוח</string>
+    <string name="tempo_marking_andante">מתון</string>
+    <string name="tempo_marking_moderato">ממוצע</string>
+    <string name="tempo_marking_allegro">מהיר</string>
+    <string name="tempo_marking_presto">מהיר</string>
+    <string name="tempo_marking_prestissimo">מהיר מאוד</string>
+    <string name="notification_playback_action_stop_title">עצור</string>
+    <string name="license">רשיון</string>
+    <string name="source_code">קוד מקור</string>
+    <string name="request_notifications_permission_rationale_message">אפליקציה זו רוצה לשלוח התראה כל עוד המטרונום פועל. כדי שלאחר מכן תוכל בקלות לעצור את המטרונום גם אם האפליקציה פועלת ברקע.</string>
+    <string name="increment_tempo_button_description">מגביר את הקצב</string>
+</resources>
