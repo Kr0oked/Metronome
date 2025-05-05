@@ -1,0 +1,6 @@
+- Upgrade Android to 16
+- Added three new sounds
+- Added Hebrew translation
+- Fixed error in blink function
+- Fixed error that prevented the background service to start
+- Fixed error when opening open source licenses

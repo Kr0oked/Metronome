@@ -1,0 +1,6 @@
+- Upgrade zu Android 16
+- Drei neue Töne wurden hinzugefügt
+- Übersetzung für Hebräisch wurde hinzugefügt
+- Fehler in der Blinken Funktion behoben
+- Fehler behoben der den Start des Hintergrunddienstes verhindert hat
+- Fehler behoben wenn die Open-Source-Bibliotheken geöffnet werden sollen
