@@ -42,4 +42,9 @@
     <string name="source_code">קוד מקור</string>
     <string name="request_notifications_permission_rationale_message">אפליקציה זו רוצה לשלוח התראה כל עוד המטרונום פועל. כדי שלאחר מכן תוכל בקלות לעצור את המטרונום גם אם האפליקציה פועלת ברקע.</string>
     <string name="increment_tempo_button_description">מגביר את הקצב</string>
+    <string name="tick_visualization_image_description">הצגת טיקים</string>
+    <string name="sound_square_wave">צפצוף חזק</string>
+    <string name="sound_sine_wave">צפצוף חלש</string>
+    <string name="sound_risset_drum">תוף סינתיסייזר</string>
+    <string name="sound_pluck">למשוך</string>
 </resources>
