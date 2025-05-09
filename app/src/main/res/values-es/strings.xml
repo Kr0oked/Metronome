@@ -43,4 +43,8 @@
     <string name="tempo_marking_allegro">Allegro</string>
     <string name="tempo_marking_presto">Presto</string>
     <string name="tempo_marking_prestissimo">Prestissimo</string>
+    <string name="sound_square_wave">Pitido fuerte</string>
+    <string name="sound_sine_wave">Pitido suave</string>
+    <string name="sound_risset_drum">Tambor sintético</string>
+    <string name="sound_pluck">Puntear</string>
 </resources>
