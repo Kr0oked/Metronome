@@ -109,7 +109,7 @@ class MetronomeViewModel : ViewModel() {
     }
 
     fun startStop() {
-        playing.value?.let { playing.value = it.not() }
+        playing.value = playing.value?.not()
     }
 
     override fun onCleared() {

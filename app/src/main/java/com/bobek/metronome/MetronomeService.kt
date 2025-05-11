@@ -50,44 +50,50 @@ class MetronomeService : LifecycleService() {
 
     private var metronome: Metronome? = null
 
-    var beats: Beats
-        get() = requireMetronome().beats
+    var beats: Beats = Beats()
+        get() = metronome?.beats ?: field
         set(beats) {
-            requireMetronome().beats = beats
+            field = beats
+            metronome?.beats = beats
         }
 
-    var subdivisions: Subdivisions
-        get() = requireMetronome().subdivisions
+    var subdivisions: Subdivisions = Subdivisions()
+        get() = metronome?.subdivisions ?: field
         set(subdivisions) {
-            requireMetronome().subdivisions = subdivisions
+            field = subdivisions
+            metronome?.subdivisions = subdivisions
         }
 
-    var gaps: Gaps
-        get() = requireMetronome().gaps
+    var gaps: Gaps = Gaps()
+        get() = metronome?.gaps ?: field
         set(gaps) {
-            requireMetronome().gaps = gaps
+            field = gaps
+            metronome?.gaps = gaps
         }
 
-    var tempo: Tempo
-        get() = requireMetronome().tempo
+    var tempo: Tempo = Tempo()
+        get() = metronome?.tempo ?: field
         set(tempo) {
-            requireMetronome().tempo = tempo
+            field = tempo
+            metronome?.tempo = tempo
         }
 
-    var emphasizeFirstBeat: Boolean
-        get() = requireMetronome().emphasizeFirstBeat
+    var emphasizeFirstBeat: Boolean = true
+        get() = metronome?.emphasizeFirstBeat ?: field
         set(emphasizeFirstBeat) {
-            requireMetronome().emphasizeFirstBeat = emphasizeFirstBeat
+            field = emphasizeFirstBeat
+            metronome?.emphasizeFirstBeat = emphasizeFirstBeat
         }
 
-    var sound: Sound
-        get() = requireMetronome().sound
+    var sound: Sound = Sound.SQUARE_WAVE
+        get() = metronome?.sound ?: field
         set(sound) {
-            requireMetronome().sound = sound
+            field = sound
+            metronome?.sound = sound
         }
 
     var playing: Boolean
-        get() = requireMetronome().playing
+        get() = metronome?.playing == true
         set(playing) = if (playing) startMetronome() else stopMetronome()
 
     override fun onCreate() {
@@ -95,7 +101,14 @@ class MetronomeService : LifecycleService() {
         Log.d(TAG, "Lifecycle: onCreate")
         NotificationManagerCompat.from(this)
             .createNotificationChannel(buildPlaybackNotificationChannel())
+
         metronome = Metronome(this, lifecycle) { publishTick(it) }
+        metronome?.beats = beats
+        metronome?.subdivisions = subdivisions
+        metronome?.gaps = gaps
+        metronome?.tempo = tempo
+        metronome?.emphasizeFirstBeat = emphasizeFirstBeat
+        metronome?.sound = sound
     }
 
     private fun buildPlaybackNotificationChannel() = NotificationChannelCompat
@@ -137,7 +150,7 @@ class MetronomeService : LifecycleService() {
 
     private fun startMetronome() {
         Log.i(TAG, "Start metronome")
-        requireMetronome().playing = true
+        metronome?.playing = true
         startForegroundNotification()
     }
 
@@ -175,7 +188,7 @@ class MetronomeService : LifecycleService() {
 
     private fun stopMetronome() {
         Log.i(TAG, "Stop metronome")
-        requireMetronome().playing = false
+        metronome?.playing = false
         stopForegroundNotification()
     }
 
@@ -198,8 +211,6 @@ class MetronomeService : LifecycleService() {
             .apply { action = ACTION_REFRESH }
             .let { LocalBroadcastManager.getInstance(this).sendBroadcast(it) }
     }
-
-    private fun requireMetronome(): Metronome = metronome!!
 
 
     inner class LocalBinder : Binder() {
