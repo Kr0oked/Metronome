@@ -1,0 +1,3 @@
+- Fixed error in the background service initialization
+- Improved Hebrew translation
+- Improved Spanish translation
