@@ -1,0 +1,14 @@
+Vous aurez exactement ce à quoi vous vous attendez.
+Un beau et simple métronome que vous pouvez utiliser pour votre entraînement musical.
+
+Fonctionnalités :
+* Rythmes ajustables et sous-divisions
+* Visualisation rythmique
+* Mise en valeur des intervalles
+* Tapez le rythme au doigt
+* Thème clair ou sombre
+* Aucune pub
+* Aucun traqueur
+* Aucune nuisance
+
+Amusez-vous bien !

@@ -1,0 +1,3 @@
+- Correction d'une erreur dans le service d'initialisation en arrière-plan
+- Amélioration de la traduction Hébreuse
+- Amélioration de la traduction Espagnole
