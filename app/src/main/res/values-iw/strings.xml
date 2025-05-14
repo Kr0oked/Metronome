@@ -46,5 +46,5 @@
     <string name="sound_square_wave">צפצוף חזק</string>
     <string name="sound_sine_wave">צפצוף חלש</string>
     <string name="sound_risset_drum">תוף סינתיסייזר</string>
-    <string name="sound_pluck">למשוך</string>
+    <string name="sound_pluck">משיכה</string>
 </resources>
