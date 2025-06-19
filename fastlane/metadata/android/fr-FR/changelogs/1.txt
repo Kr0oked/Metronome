@@ -1,0 +1,3 @@
+- Fonctionnalités de Métronome
+- Mode Jour & Nuit
+- Traduction allemande et anglaise
