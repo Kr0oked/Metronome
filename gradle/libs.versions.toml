@@ -11,7 +11,7 @@ navigationKtx = "2.9.3"
 ossLicensesParser = "1.1.0"
 ossLicensesPlugin = "0.10.6"
 preferenceKtx = "1.2.1"
-rules = "1.6.1"
+rules = "1.7.0"
 screengrab = "2.1.1"
 
 [libraries]
