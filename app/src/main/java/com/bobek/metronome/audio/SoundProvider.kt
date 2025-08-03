@@ -28,7 +28,7 @@ class SoundProvider(private val context: Context) {
     private val loadedSounds = Sound.entries
         .map { listOf(it.strongSoundResourceId, it.weakSoundResourceId, it.subSoundResourceId) }
         .flatten()
-        .associate { it to loadSound(it) }
+        .associateWith { loadSound(it) }
 
     private fun loadSound(@RawRes id: Int): FloatArray = context.resources
         .openRawResource(id)
