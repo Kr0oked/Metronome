@@ -10,6 +10,7 @@ locales([
   'en-US',
   'es-ES',
   'fr-FR',
+  'iw-IL'
   'pt-BR',
   'ru-RU',
   'ta-IN',
