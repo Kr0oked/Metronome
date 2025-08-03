@@ -50,6 +50,8 @@ class MetronomeService : LifecycleService() {
 
     private var metronome: Metronome? = null
 
+    private var bound = false
+
     var beats: Beats = Beats()
         get() = metronome?.beats ?: field
         set(beats) {
@@ -129,16 +131,19 @@ class MetronomeService : LifecycleService() {
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)
         Log.d(TAG, "Lifecycle: onBind")
+        bound = true
         return LocalBinder()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         Log.d(TAG, "Lifecycle: onUnbind")
-        return super.onUnbind(intent)
+        bound = false
+        return true
     }
 
     override fun onRebind(intent: Intent?) {
         Log.d(TAG, "Lifecycle: onRebind")
+        bound = true
     }
 
     override fun onDestroy() {
@@ -190,11 +195,19 @@ class MetronomeService : LifecycleService() {
         Log.i(TAG, "Stop metronome")
         metronome?.playing = false
         stopForegroundNotification()
+        stopNoLongerNeededService()
     }
 
     private fun stopForegroundNotification() {
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         Log.d(TAG, "Foreground service stopped")
+    }
+
+    private fun stopNoLongerNeededService() {
+        if (!bound) {
+            Log.d(TAG, "Stop no longer needed service")
+            stopSelf()
+        }
     }
 
     private fun publishTick(tick: Tick) {

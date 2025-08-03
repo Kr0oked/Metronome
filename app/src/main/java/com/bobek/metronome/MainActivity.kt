@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun unbindFromMetronomeService() {
-        Intent(this, MetronomeService::class.java).also { unbindService(metronomeServiceConnection) }
+        unbindService(metronomeServiceConnection)
         Log.d(TAG, "MetronomeService unbound")
     }
 
@@ -213,7 +213,15 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         Log.d(TAG, "Lifecycle: onDestroy")
         super.onDestroy()
+        stopNoLongerNeededMetronomeService()
         unregisterRefreshReceiver()
+    }
+
+    private fun stopNoLongerNeededMetronomeService() {
+        if (viewModel.playing.value != true) {
+            Log.d(TAG, "Stop metronome service")
+            stopService(Intent(this, MetronomeService::class.java))
+        }
     }
 
     private fun unregisterRefreshReceiver() {
