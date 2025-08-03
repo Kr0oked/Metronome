@@ -1,0 +1,3 @@
+- Stoppen von nicht mehr benötigten Services
+- Übersetzung für Französisch wurde hinzugefügt
+- Übersetzung für Hebräisch wurde verbessert

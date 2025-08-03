@@ -1,0 +1,3 @@
+- Stop no longer needed service
+- Added French translation
+- Improved Hebrew translation
