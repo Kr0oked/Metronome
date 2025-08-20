@@ -1,0 +1,4 @@
+- Çekçe çeviri
+- Ayarlar iyileştirildi
+- İzinlerin sebepleri
+- Erişilebilirlik iyileştirildi

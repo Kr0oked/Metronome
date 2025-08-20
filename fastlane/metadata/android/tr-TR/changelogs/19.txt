@@ -1,0 +1,3 @@
+- Arkaplan hizmetinin başlatılmasındaki hata düzeltildi
+- İbranice çeviri iyileştirildi
+- İspanyolca çeviri iyileştirildi

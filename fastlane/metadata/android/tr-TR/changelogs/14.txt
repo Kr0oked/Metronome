@@ -1,0 +1,1 @@
+- Farklı ekran boyutları için destek iyileştirildi

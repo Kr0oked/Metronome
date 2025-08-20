@@ -1,0 +1,2 @@
+- Düğmeye basınca dokunuş temposu
+- Rusça çevirisinin problemi düzeltildi

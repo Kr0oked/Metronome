@@ -1,0 +1,2 @@
+- Kenardan kenara modunda kenar boşluğu düzeltildi 
+- Çince çeviri iyileştirildi

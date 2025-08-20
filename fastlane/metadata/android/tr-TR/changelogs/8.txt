@@ -1,0 +1,3 @@
+- Android 14'e yükseltildi
+- Tema adlandırması iyileştirildi
+- Yanlış yazımlar düzeltildi

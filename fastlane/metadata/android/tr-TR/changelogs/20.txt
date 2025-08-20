@@ -1,0 +1,3 @@
+- Artık ihtiyaç duyulmayan hizmet durduruldu
+- Fransızca çeviri eklendi
+- İbranice çeviri iyileştirildi
