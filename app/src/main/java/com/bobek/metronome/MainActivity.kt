@@ -36,8 +36,8 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -107,8 +107,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun registerRefreshReceiver() {
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(refreshReceiver, IntentFilter(MetronomeService.ACTION_REFRESH))
+        ContextCompat.registerReceiver(
+            this,
+            refreshReceiver,
+            IntentFilter(MetronomeService.ACTION_REFRESH),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
         Log.d(TAG, "Registered refreshReceiver")
     }
 
@@ -225,8 +229,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun unregisterRefreshReceiver() {
-        LocalBroadcastManager.getInstance(this)
-            .unregisterReceiver(refreshReceiver)
+        unregisterReceiver(refreshReceiver)
         Log.d(TAG, "Unregistered refreshReceiver")
     }
 

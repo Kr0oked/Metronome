@@ -35,6 +35,7 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -42,7 +43,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
@@ -174,8 +174,12 @@ class MetronomeFragment : Fragment() {
     }
 
     private fun registerTickReceiver() {
-        LocalBroadcastManager.getInstance(requireContext())
-            .registerReceiver(tickReceiver, IntentFilter(MetronomeService.ACTION_TICK))
+        ContextCompat.registerReceiver(
+            requireContext(),
+            tickReceiver,
+            IntentFilter(MetronomeService.ACTION_TICK),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
         Log.d(TAG, "Registered tickReceiver")
     }
 
@@ -212,7 +216,7 @@ class MetronomeFragment : Fragment() {
     }
 
     private fun unregisterTickReceiver() {
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(tickReceiver)
+        requireContext().unregisterReceiver(tickReceiver)
         Log.d(TAG, "Unregistered tickReceiver")
     }
 

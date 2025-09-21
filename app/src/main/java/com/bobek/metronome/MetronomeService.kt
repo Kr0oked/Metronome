@@ -32,7 +32,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
 import androidx.lifecycle.LifecycleService
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Sound
@@ -211,18 +210,18 @@ class MetronomeService : LifecycleService() {
     }
 
     private fun publishTick(tick: Tick) {
-        Intent(this, MetronomeFragment.TickReceiver::class.java)
-            .apply { action = ACTION_TICK }
+        Intent(ACTION_TICK)
+            .apply { setPackage(packageName) }
             .apply { putExtra(EXTRA_TICK, tick) }
-            .let { LocalBroadcastManager.getInstance(this).sendBroadcast(it) }
+            .let { sendBroadcast(it) }
     }
 
     private fun performStop() {
         Log.d(TAG, "Received stop command")
         playing = false
-        Intent(this, MainActivity.RefreshReceiver::class.java)
-            .apply { action = ACTION_REFRESH }
-            .let { LocalBroadcastManager.getInstance(this).sendBroadcast(it) }
+        Intent(ACTION_REFRESH)
+            .apply { setPackage(packageName) }
+            .let { sendBroadcast(it) }
     }
 
 
