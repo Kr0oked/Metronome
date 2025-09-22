@@ -53,6 +53,8 @@ import com.bobek.metronome.view.model.MetronomeViewModel
 
 private const val TAG = "MetronomeFragment"
 private const val LARGE_TEMPO_CHANGE_SIZE = 10
+private const val TAP_WINDOW_MILLIS = 5_000L
+private const val MILLIS_PER_MINUTE = 60_000L
 
 class MetronomeFragment : Fragment() {
 
@@ -60,7 +62,7 @@ class MetronomeFragment : Fragment() {
     private val tickReceiver = TickReceiver()
 
     private var binding: FragmentMetronomeBinding? = null
-    private var lastTap: Long = 0
+    private var taps = ArrayDeque<Long>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMetronomeBinding.inflate(inflater, container, false)
@@ -131,19 +133,35 @@ class MetronomeFragment : Fragment() {
     }
 
     private fun tapTempo() {
-        val currentTime = System.currentTimeMillis()
-        val tempoValue = calculateTapTempo(lastTap, currentTime)
+        val currentTimeMillis = System.currentTimeMillis()
 
-        if (tempoValue > Tempo.MAX) {
-            viewModel.tempoData.value = Tempo(Tempo.MAX)
-        } else if (tempoValue >= Tempo.MIN) {
-            viewModel.tempoData.value = Tempo(tempoValue)
-        }
+        pruneOldTaps(currentTimeMillis)
+        taps.add(currentTimeMillis)
 
-        lastTap = currentTime
+        val averageIntervalMillis = averageTapIntervalInMillis() ?: return
+        val tempoValue = bpmFromMillis(averageIntervalMillis)
+        setTempoWithinBounds(tempoValue)
     }
 
-    private fun calculateTapTempo(firstTap: Long, secondTap: Long): Int = (60_000 / (secondTap - firstTap)).toInt()
+    private fun pruneOldTaps(currentTimeMillis: Long) {
+        taps.removeAll { currentTimeMillis - it > TAP_WINDOW_MILLIS }
+    }
+
+    private fun averageTapIntervalInMillis(): Int? = taps
+        .zipWithNext { a, b -> b - a }
+        .average()
+        .toInt()
+        .takeIf { it > 0L }
+
+    private fun bpmFromMillis(millis: Int): Int = (MILLIS_PER_MINUTE / millis).toInt()
+
+    private fun setTempoWithinBounds(tempoValue: Int) {
+        viewModel.tempoData.value = when {
+            tempoValue > Tempo.MAX -> Tempo(Tempo.MAX)
+            tempoValue < Tempo.MIN -> Tempo(Tempo.MIN)
+            else -> Tempo(tempoValue.toInt())
+        }
+    }
 
     private fun tapTempoOnTouchListener(view: View, event: MotionEvent): Boolean {
         when (event.action) {
