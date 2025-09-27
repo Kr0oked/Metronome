@@ -1,0 +1,2 @@
+- Üçüncü parti lisanslarını görüntüleme eklendi
+- Brezilya Portekizcesi çevirisi eklendi

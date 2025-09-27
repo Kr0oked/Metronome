@@ -1,0 +1,4 @@
+- Monokrom simge
+- Bildirimler için izin
+- Görselleştirilmelerin boyutu düzeltildi
+- Düğmeler yeniden düzenlendi

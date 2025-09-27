@@ -1,0 +1,5 @@
+- Material 3 tasarım
+- Tempoyu adım adım arttırmak ve azaltmak için düğmeler
+- Gece modu tercihi için yeni imgeler
+- İlk vuruşu vurgulama seçeneği
+- Uygulama tercihini kalıcı yap

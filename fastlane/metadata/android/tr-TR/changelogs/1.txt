@@ -1,0 +1,3 @@
+- Metronom işlevleri
+- Gündüz & Gece modu
+- İngilizce ve Almanca çeviriler

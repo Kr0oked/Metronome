@@ -1,0 +1,2 @@
+- Metronom artık keskin ve takılmıyor
+- Dokunma temposu işlevi iyileştirildi

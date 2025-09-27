@@ -1,0 +1,6 @@
+- Android 16'ya yükseltildi
+- Üç yeni ses eklendi
+- İbranice çeviri eklendi
+- Yanıp sönme işlevindeki hata düzeltildi 
+- Arkaplan hizmetinin başlatılmasını önleyen hata düzeltildi
+- Açık kaynak lisanlarını açarken ortaya çıkan hata düzeltildi

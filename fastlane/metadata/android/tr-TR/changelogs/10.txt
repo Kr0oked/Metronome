@@ -1,0 +1,1 @@
+- Tempo aralığı 30-252 bpm'e uzatıldı

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metronome">Metrônomo</string>
+    <string name="beats_label">Batidas</string>
+    <string name="beats_slider_description">Deslize para ajustar as batidas</string>
+    <string name="subdivisions_label">Subdivisões</string>
+    <string name="subdivisions_slider_description">Deslize para ajustar as subdivisões</string>
+    <string name="tempo_label">Tempo em BPM</string>
+    <string name="tempo_slider_description">Deslize para ajustar o tempo em BPM</string>
+    <string name="start_stop_button_description">Inicia ou para o metrônomo</string>
+    <string name="tap_tempo_button_description">Toque diversas vezes para ajustar o tempo</string>
+    <string name="increment_tempo_button_description">Aumentar o tempo</string>
+    <string name="decrement_tempo_button_description">Diminuir o tempo</string>
+    <string name="tick_visualization_image_description">Visualização de tempo</string>
+    <string name="notification_channel_playback_name">Reprodução</string>
+    <string name="notification_channel_playback_description">Reprodução atual</string>
+    <string name="notification_playback_title">Metrônomo está ligado</string>
+    <string name="notification_playback_action_stop_title">Parar</string>
+    <string name="settings">Configurações</string>
+    <string name="emphasize_first_beat">Enfatizar primeira batida</string>
+    <string name="night_mode">Tema</string>
+    <string name="night_mode_follow_system">Idêntico ao sistema</string>
+    <string name="night_mode_no">Claro</string>
+    <string name="night_mode_yes">Escuro</string>
+    <string name="about">Sobre</string>
+    <string name="author">Autor</string>
+    <string name="license">Licença</string>
+    <string name="source_code">Código fonte</string>
+    <string name="version">Versão</string>
+    <string name="request_notifications_permission_rationale_title">Precisamos de permissão para enviar notificações</string>
+    <string name="request_notifications_permission_rationale_message">Esta app deseja exibir uma notificação enquanto o metrônomo estiver em execução. Pode então parar facilmente o metrônomo, mesmo se a app estiver a ser executado em segundo plano.</string>
+    <string name="loading_indicator_description">Indicador visual de que a app está a carregar conteúdo</string>
+    <string name="ok">OK</string>
+    <string name="no_thanks">Não, obrigado</string>
+    <string name="tempo_marking_largo">Largo</string>
+    <string name="tempo_marking_larghetto">Larghetto</string>
+    <string name="tempo_marking_adagio">Adagio</string>
+    <string name="tempo_marking_andante">Andante</string>
+    <string name="tempo_marking_moderato">Moderato</string>
+    <string name="tempo_marking_allegro">Allegro</string>
+    <string name="tempo_marking_presto">Presto</string>
+    <string name="tempo_marking_prestissimo">Prestissimo</string>
+    <string name="third_party_licenses">Licenças de terceiros</string>
+    <string name="third_party_licenses_summary">Licenças de bibliotecas de código aberto incluídas</string>
+</resources>

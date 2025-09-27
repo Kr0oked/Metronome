@@ -1,0 +1,3 @@
+- Boşluk tikleri eklendi 
+- Çince çeviri eklendi
+- İspanyolca çeviri eklendi

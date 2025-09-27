@@ -1,0 +1,2 @@
+- Android 14'de uygulama çökmesi düzeltildi
+- Android 14'de bildirimdeki durdurma düğmesi düzeltildi
