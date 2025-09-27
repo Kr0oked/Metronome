@@ -1,0 +1,3 @@
+- Mittelung des Tempos beim Antippen
+- Übersetzung für Portugiesisch wurde hinzugefügt
+- Übersetzung für Türkisch wurde hinzugefügt

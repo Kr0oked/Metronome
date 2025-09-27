@@ -1,0 +1,3 @@
+- Averaging of tapping speed
+- Added Portuguese translation
+- Added Turkish translation
