@@ -159,7 +159,7 @@ class MetronomeFragment : Fragment() {
         viewModel.tempoData.value = when {
             tempoValue > Tempo.MAX -> Tempo(Tempo.MAX)
             tempoValue < Tempo.MIN -> Tempo(Tempo.MIN)
-            else -> Tempo(tempoValue.toInt())
+            else -> Tempo(tempoValue)
         }
     }
 
