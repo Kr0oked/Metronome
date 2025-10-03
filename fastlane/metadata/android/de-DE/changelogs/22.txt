@@ -1,0 +1,1 @@
+- Fehler in der Kommunikation zwischen Hintergrunddienst und UI behoben

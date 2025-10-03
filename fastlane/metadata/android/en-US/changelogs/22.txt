@@ -1,0 +1,1 @@
+- Fix error in communication between background service and UI
