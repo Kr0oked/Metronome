@@ -23,8 +23,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
 import android.view.HapticFeedbackConstants
@@ -36,6 +34,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat.getParcelableExtra
 import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -240,18 +239,9 @@ class MetronomeFragment : Fragment() {
 
     inner class TickReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            extractTick(intent)
+            getParcelableExtra(intent, MetronomeService.EXTRA_TICK, Tick::class.java)
                 ?.also { tick -> Log.v(TAG, "Received $tick") }
                 ?.also { tick -> visualizeTick(tick) }
-        }
-    }
-
-    private fun extractTick(intent: Intent): Tick? {
-        return if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(MetronomeService.EXTRA_TICK, Tick::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(MetronomeService.EXTRA_TICK)
         }
     }
 
