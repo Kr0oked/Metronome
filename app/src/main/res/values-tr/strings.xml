@@ -46,5 +46,5 @@
     <string name="tempo_marking_allegro">Allegro</string>
     <string name="tempo_marking_presto">Presto</string>
     <string name="tempo_marking_prestissimo">Prestissimo</string>
-    <string name="sound_pluck">Pluck</string>
+    <string name="sound_pluck">Koparma</string>
 </resources>
