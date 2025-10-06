@@ -1,0 +1,3 @@
+- Vuruş hızının ortalaması
+- Portekizce çeviri eklendi
+- Türkçe çeviri eklendi
