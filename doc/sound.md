@@ -30,7 +30,7 @@
 - Tracks -> Add New -> Mono Track
 - Generate -> Tone -> Waveform Square
     - Frequency (Hz): {tickTone}
-    - Amplitude: 1
+    - Amplitude: 0.8
     - Duration: 0,050s
 - Effect -> Fade Out
 - Effect -> Fade Out
