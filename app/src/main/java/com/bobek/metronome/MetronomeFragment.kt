@@ -49,12 +49,14 @@ import com.bobek.metronome.data.TickType
 import com.bobek.metronome.databinding.FragmentMetronomeBinding
 import com.bobek.metronome.view.component.TickVisualization
 import com.bobek.metronome.view.model.MetronomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MetronomeFragment"
 private const val LARGE_TEMPO_CHANGE_SIZE = 10
 private const val TAP_WINDOW_MILLIS = 5_000L
 private const val MILLIS_PER_MINUTE = 60_000L
 
+@AndroidEntryPoint
 class MetronomeFragment : Fragment() {
 
     private val viewModel: MetronomeViewModel by activityViewModels()

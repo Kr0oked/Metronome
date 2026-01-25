@@ -23,10 +23,12 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import dagger.hilt.android.AndroidEntryPoint
 import de.philipp_bobek.oss_licenses_parser.OssLicensesParser
 import de.philipp_bobek.oss_licenses_parser.ThirdPartyLicense
 import de.philipp_bobek.oss_licenses_parser.ThirdPartyLicenseMetadata
 
+@AndroidEntryPoint
 class ThirdPartyLicensesFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

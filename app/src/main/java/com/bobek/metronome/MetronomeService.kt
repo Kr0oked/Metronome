@@ -39,12 +39,14 @@ import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.domain.Metronome
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MetronomeService"
 private const val NOTIFICATION_CHANNEL_PLAYBACK_ID = "metronome-playback"
 private const val NOTIFICATION_ID = 1
 private const val NO_REQUEST_CODE = 0
 
+@AndroidEntryPoint
 class MetronomeService : LifecycleService() {
 
     private var metronome: Metronome? = null

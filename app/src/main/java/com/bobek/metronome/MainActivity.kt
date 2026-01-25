@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -45,12 +46,18 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.databinding.ActivityMainBinding
-import com.bobek.metronome.preference.PreferenceStore
+import com.bobek.metronome.settings.SettingsRepository
 import com.bobek.metronome.view.model.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 private const val TAG = "MainActivity"
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MetronomeViewModel by viewModels()
@@ -60,7 +67,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var preferenceStore: PreferenceStore
+
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
 
     private var metronomeService: MetronomeService? = null
 
@@ -75,25 +84,8 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        initPreferenceStore()
         initViewModel()
         registerRefreshReceiver()
-    }
-
-    private fun initPreferenceStore() {
-        preferenceStore = PreferenceStore(this, lifecycle)
-        preferenceStore.beats.observe(this) { viewModel.beatsData.value = it }
-        preferenceStore.subdivisions.observe(this) { viewModel.subdivisionsData.value = it }
-        preferenceStore.gaps.observe(this) { viewModel.gapsData.value = it }
-        preferenceStore.tempo.observe(this) { viewModel.tempoData.value = it }
-        preferenceStore.emphasizeFirstBeat.observe(this) { viewModel.emphasizeFirstBeat.value = it }
-        preferenceStore.sound.observe(this) { viewModel.sound.value = it }
-        preferenceStore.nightMode.observe(this) { setNightMode(it) }
-    }
-
-    private fun setNightMode(appNightMode: AppNightMode) {
-        Log.d(TAG, "Setting night mode to $appNightMode")
-        setDefaultNightMode(appNightMode.systemValue)
     }
 
     private fun initViewModel() {
@@ -104,6 +96,12 @@ class MainActivity : AppCompatActivity() {
         viewModel.emphasizeFirstBeat.observe(this) { metronomeService?.emphasizeFirstBeat = it }
         viewModel.sound.observe(this) { metronomeService?.sound = it }
         viewModel.playing.observe(this) { metronomeService?.playing = it }
+        viewModel.nightMode.observe(this) { setNightMode(it) }
+    }
+
+    private fun setNightMode(appNightMode: AppNightMode) {
+        Log.d(TAG, "Setting night mode to $appNightMode")
+        setDefaultNightMode(appNightMode.systemValue)
     }
 
     private fun registerRefreshReceiver() {
@@ -126,21 +124,23 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-            handlePostNotificationsPermission()
+            runBlocking {
+                handlePostNotificationsPermission()
+            }
         }
 
         startAndBindToMetronomeService()
     }
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
-    private fun handlePostNotificationsPermission() {
+    private suspend fun handlePostNotificationsPermission() {
         if (neverRequestedPostNotificationsPermission() && postNotificationsPermissionNotGranted()) {
             startPostNotificationsPermissionRequestWorkflow()
         }
     }
 
-    private fun neverRequestedPostNotificationsPermission() =
-        preferenceStore.postNotificationsPermissionRequested.value == false
+    private suspend fun neverRequestedPostNotificationsPermission(): Boolean =
+        settingsRepository.getPostNotificationsPermissionRequested().first()
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun postNotificationsPermissionNotGranted() =
@@ -167,7 +167,9 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton(R.string.no_thanks) { dialog, _ ->
                 Log.i(TAG, "Continuing without requesting POST_NOTIFICATIONS permission")
-                preferenceStore.postNotificationsPermissionRequested.value = true
+                lifecycleScope.launch {
+                    settingsRepository.setPostNotificationsPermissionRequested(true)
+                }
                 dialog.dismiss()
             }
             .show()
@@ -201,17 +203,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         Log.d(TAG, "Lifecycle: onStop")
         super.onStop()
-        updatePreferenceStore()
-    }
-
-    private fun updatePreferenceStore() {
-        preferenceStore.beats.value = viewModel.beatsData.value
-        preferenceStore.subdivisions.value = viewModel.subdivisionsData.value
-        preferenceStore.gaps.value = viewModel.gapsData.value
-        preferenceStore.tempo.value = viewModel.tempoData.value
-        preferenceStore.emphasizeFirstBeat.value = viewModel.emphasizeFirstBeat.value
-        preferenceStore.sound.value = viewModel.sound.value
-        Log.d(TAG, "Updated preference store")
     }
 
     override fun onDestroy() {
@@ -222,7 +213,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun stopNoLongerNeededMetronomeService() {
-        if (viewModel.playing.value != true) {
+        if (metronomeService?.playing == false) {
             Log.d(TAG, "Stop metronome service")
             stopService(Intent(this, MetronomeService::class.java))
         }
@@ -252,7 +243,9 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "Permission POST_NOTIFICATIONS granted")
             } else {
                 Log.i(TAG, "Permission POST_NOTIFICATIONS denied")
-                preferenceStore.postNotificationsPermissionRequested.value = true
+                lifecycleScope.launch {
+                    settingsRepository.setPostNotificationsPermissionRequested(true)
+                }
             }
         }
 

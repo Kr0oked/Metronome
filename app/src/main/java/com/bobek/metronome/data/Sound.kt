@@ -20,7 +20,7 @@ package com.bobek.metronome.data
 
 import androidx.annotation.RawRes
 import com.bobek.metronome.R
-import com.bobek.metronome.preference.PreferenceConstants
+import com.bobek.metronome.settings.PreferenceConstants
 
 enum class Sound(
     @RawRes val strongSoundResourceId: Int,

@@ -19,15 +19,29 @@
 package com.bobek.metronome
 
 import android.os.Bundle
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.Preference.SummaryProvider
 import androidx.preference.PreferenceFragmentCompat
-import com.bobek.metronome.preference.PreferenceConstants
+import com.bobek.metronome.settings.PreferenceConstants
+import com.bobek.metronome.settings.SettingsPreferenceDataStoreAdapter
+import com.bobek.metronome.settings.SettingsRepository
+import com.bobek.metronome.view.model.MetronomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat() {
 
+    private val viewModel: MetronomeViewModel by activityViewModels()
+
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        preferenceManager.preferenceDataStore = SettingsPreferenceDataStoreAdapter(viewModel)
+
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
         findPreference<Preference>(PreferenceConstants.VERSION)?.summaryProvider =

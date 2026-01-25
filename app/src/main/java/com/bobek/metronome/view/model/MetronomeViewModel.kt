@@ -21,15 +21,26 @@ package com.bobek.metronome.view.model
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Sound
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
+import com.bobek.metronome.settings.SettingsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 private const val TAG = "MetronomeViewModel"
 
-class MetronomeViewModel : ViewModel() {
+@HiltViewModel
+class MetronomeViewModel @Inject constructor(
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
 
     val beatsData = MutableLiveData(Beats())
     val beatsText = MutableLiveData("")
@@ -57,6 +68,7 @@ class MetronomeViewModel : ViewModel() {
     val sound = MutableLiveData(Sound.SQUARE_WAVE)
     val playing = MutableLiveData(false)
     val connected = MutableLiveData(false)
+    val nightMode = MutableLiveData(AppNightMode.FOLLOW_SYSTEM)
 
     private val beatsDataObserver = getBeatsDataObserver()
     private val beatsTextObserver = getBeatsTextObserver()
@@ -81,6 +93,7 @@ class MetronomeViewModel : ViewModel() {
     private val soundObserver = getSoundObserver()
     private val playingObserver = getPlayingObserver()
     private val connectedObserver = getConnectedObserver()
+    private val nightModeObserver = getNightModeObserver()
 
     init {
         beatsData.observeForever(beatsDataObserver)
@@ -106,6 +119,17 @@ class MetronomeViewModel : ViewModel() {
         sound.observeForever(soundObserver)
         playing.observeForever(playingObserver)
         connected.observeForever(connectedObserver)
+        nightMode.observeForever(nightModeObserver)
+
+        viewModelScope.launch {
+            beatsData.value = settingsRepository.getBeats().first()
+            subdivisionsData.value = settingsRepository.getSubdivisions().first()
+            gapsData.value = settingsRepository.getGaps().first()
+            tempoData.value = settingsRepository.getTempo().first()
+            emphasizeFirstBeat.value = settingsRepository.getEmphasizeFirstBeat().first()
+            sound.value = settingsRepository.getSound().first()
+            nightMode.value = settingsRepository.getNightMode().first()
+        }
     }
 
     fun startStop() {
@@ -136,6 +160,17 @@ class MetronomeViewModel : ViewModel() {
         sound.removeObserver(soundObserver)
         playing.removeObserver(playingObserver)
         connected.removeObserver(connectedObserver)
+        nightMode.removeObserver(nightModeObserver)
+
+        runBlocking {
+            beatsData.value?.let { settingsRepository.setBeats(it) }
+            subdivisionsData.value?.let { settingsRepository.setSubdivisions(it) }
+            gapsData.value?.let { settingsRepository.setGaps(it) }
+            tempoData.value?.let { settingsRepository.setTempo(it) }
+            emphasizeFirstBeat.value?.let { settingsRepository.setEmphasizeFirstBeat(it) }
+            sound.value?.let { settingsRepository.setSound(it) }
+            nightMode.value?.let { settingsRepository.setNightMode(it) }
+        }
     }
 
     override fun toString(): String {
@@ -148,6 +183,7 @@ class MetronomeViewModel : ViewModel() {
                 "sound=${sound.value}," +
                 "playing=${playing.value}, " +
                 "connected=${connected.value}" +
+                "nightMode=${nightMode.value}" +
                 ")"
     }
 
@@ -272,5 +308,9 @@ class MetronomeViewModel : ViewModel() {
 
     private fun getConnectedObserver(): (t: Boolean) -> Unit = {
         Log.d(TAG, "connected: $it")
+    }
+
+    private fun getNightModeObserver(): (t: AppNightMode) -> Unit = {
+        Log.d(TAG, "nightMode: $it")
     }
 }

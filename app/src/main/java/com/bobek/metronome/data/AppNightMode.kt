@@ -20,7 +20,7 @@ package com.bobek.metronome.data
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.NightMode
-import com.bobek.metronome.preference.PreferenceConstants
+import com.bobek.metronome.settings.PreferenceConstants
 
 enum class AppNightMode(@NightMode val systemValue: Int, val preferenceValue: String) {
 
