@@ -19,6 +19,7 @@
 package com.bobek.metronome
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
@@ -31,25 +32,37 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.WindowManager
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
+import androidx.core.content.IntentCompat.getParcelableExtra
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.bobek.metronome.data.AppNightMode
-import com.bobek.metronome.databinding.ActivityMainBinding
+import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
+import com.bobek.metronome.ui.MetronomeScreen
+import com.bobek.metronome.ui.SettingsScreen
+import com.bobek.metronome.ui.ThirdPartyLicenseScreen
+import com.bobek.metronome.ui.ThirdPartyLicensesScreen
+import com.bobek.metronome.ui.theme.AppTheme
 import com.bobek.metronome.view.model.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import de.philipp_bobek.oss_licenses_parser.OssLicensesParser
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -58,15 +71,13 @@ import javax.inject.Inject
 private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
 
     private val viewModel: MetronomeViewModel by viewModels()
     private val postNotificationsPermissionRequest = registerPostNotificationsPermissionRequest()
     private val metronomeServiceConnection = MetronomeServiceConnection()
     private val refreshReceiver = RefreshReceiver()
-
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    private val tickReceiver = TickReceiver()
 
     @Inject
     lateinit var settingsRepository: SettingsRepository
@@ -76,16 +87,82 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "Lifecycle: onCreate")
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        setSupportActionBar(binding.toolbar)
+        setContent {
+            val navController = rememberNavController()
+            val nightMode by viewModel.nightMode.observeAsState(AppNightMode.FOLLOW_SYSTEM)
+            val playing by viewModel.playing.observeAsState(false)
+            val currentTick by viewModel.currentTick.observeAsState()
 
-        val navController = getNavController()
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+            val isDarkTheme = when (nightMode) {
+                AppNightMode.NO -> false
+                AppNightMode.YES -> true
+                AppNightMode.FOLLOW_SYSTEM -> isSystemInDarkTheme()
+                else -> isSystemInDarkTheme()
+            }
+
+            val activity = LocalContext.current as? Activity
+            LaunchedEffect(playing) {
+                if (playing) {
+                    activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                } else {
+                    activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+            }
+
+            AppTheme(darkTheme = isDarkTheme) {
+                NavHost(navController = navController, startDestination = "metronome") {
+                    composable("metronome") {
+                        MetronomeScreen(
+                            viewModel = viewModel,
+                            onSettingsClick = { navController.navigate("settings") },
+                            currentTick = currentTick?.beat
+                        )
+                    }
+                    composable("settings") {
+                        SettingsScreen(
+                            viewModel = viewModel,
+                            onBackClick = { navController.popBackStack() },
+                            onThirdPartyLicensesClick = { navController.navigate("licenses") }
+                        )
+                    }
+                    composable("licenses") {
+                        ThirdPartyLicensesScreen(
+                            onBackClick = { navController.popBackStack() },
+                            onLicenseClick = { metadata ->
+                                navController.navigate("license/${metadata.libraryName}")
+                            }
+                        )
+                    }
+                    composable("license/{libraryName}") { backStackEntry ->
+                        val libraryName = backStackEntry.arguments?.getString("libraryName") ?: ""
+                        val context = LocalContext.current
+                        val licenseContent = remember(libraryName) {
+                            val metadata = context.resources
+                                .openRawResource(R.raw.third_party_license_metadata)
+                                .use(OssLicensesParser::parseMetadata)
+                                .find { it.libraryName == libraryName }
+
+                            metadata?.let {
+                                context.resources
+                                    .openRawResource(R.raw.third_party_licenses)
+                                    .use { stream -> OssLicensesParser.parseLicense(it, stream).licenseContent }
+                            } ?: ""
+                        }
+
+                        ThirdPartyLicenseScreen(
+                            libraryName = libraryName,
+                            licenseContent = licenseContent,
+                            onBackClick = { navController.popBackStack() }
+                        )
+                    }
+                }
+            }
+        }
 
         initViewModel()
-        registerRefreshReceiver()
+        registerReceivers()
     }
 
     private fun initViewModel() {
@@ -96,39 +173,30 @@ class MainActivity : AppCompatActivity() {
         viewModel.emphasizeFirstBeat.observe(this) { metronomeService?.emphasizeFirstBeat = it }
         viewModel.sound.observe(this) { metronomeService?.sound = it }
         viewModel.playing.observe(this) { metronomeService?.playing = it }
-        viewModel.nightMode.observe(this) { setNightMode(it) }
     }
 
-    private fun setNightMode(appNightMode: AppNightMode) {
-        Log.d(TAG, "Setting night mode to $appNightMode")
-        setDefaultNightMode(appNightMode.systemValue)
-    }
-
-    private fun registerRefreshReceiver() {
+    private fun registerReceivers() {
         ContextCompat.registerReceiver(
             this,
             refreshReceiver,
             IntentFilter(MetronomeService.ACTION_REFRESH),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
-        Log.d(TAG, "Registered refreshReceiver")
-    }
-
-    override fun onStart() {
-        Log.d(TAG, "Lifecycle: onStart")
-        super.onStart()
+        ContextCompat.registerReceiver(
+            this,
+            tickReceiver,
+            IntentFilter(MetronomeService.ACTION_TICK),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
     }
 
     override fun onResume() {
-        Log.d(TAG, "Lifecycle: onResume")
         super.onResume()
-
         if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
             runBlocking {
                 handlePostNotificationsPermission()
             }
         }
-
         startAndBindToMetronomeService()
     }
 
@@ -140,7 +208,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun neverRequestedPostNotificationsPermission(): Boolean =
-        settingsRepository.getPostNotificationsPermissionRequested().first()
+        settingsRepository.getPostNotificationsPermissionRequested().first().not()
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun postNotificationsPermissionNotGranted() =
@@ -166,7 +234,6 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             .setNegativeButton(R.string.no_thanks) { dialog, _ ->
-                Log.i(TAG, "Continuing without requesting POST_NOTIFICATIONS permission")
                 lifecycleScope.launch {
                     settingsRepository.setPostNotificationsPermissionRequested(true)
                 }
@@ -177,82 +244,41 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun launchPostNotificationsPermissionRequest() {
-        Log.i(TAG, "Requesting POST_NOTIFICATIONS permission")
         postNotificationsPermissionRequest.launch(POST_NOTIFICATIONS)
     }
 
     private fun startAndBindToMetronomeService() {
-        Intent(this, MetronomeService::class.java)
-            .also { service -> startService(service) }
-            .also { Log.d(TAG, "MetronomeService started") }
-            .also { service -> bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT) }
-            .also { Log.d(TAG, "MetronomeService binding") }
-    }
-
-    override fun onPause() {
-        Log.d(TAG, "Lifecycle: onPause")
-        super.onPause()
-        unbindFromMetronomeService()
-    }
-
-    private fun unbindFromMetronomeService() {
-        unbindService(metronomeServiceConnection)
-        Log.d(TAG, "MetronomeService unbound")
-    }
-
-    override fun onStop() {
-        Log.d(TAG, "Lifecycle: onStop")
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        Log.d(TAG, "Lifecycle: onDestroy")
-        super.onDestroy()
-        stopNoLongerNeededMetronomeService()
-        unregisterRefreshReceiver()
-    }
-
-    private fun stopNoLongerNeededMetronomeService() {
-        if (metronomeService?.playing == false) {
-            Log.d(TAG, "Stop metronome service")
-            stopService(Intent(this, MetronomeService::class.java))
+        Intent(this, MetronomeService::class.java).also { service ->
+            startService(service)
+            bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT)
         }
     }
 
-    private fun unregisterRefreshReceiver() {
+    override fun onPause() {
+        super.onPause()
+        unbindService(metronomeServiceConnection)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (metronomeService?.playing == false) {
+            stopService(Intent(this, MetronomeService::class.java))
+        }
         unregisterReceiver(refreshReceiver)
-        Log.d(TAG, "Unregistered refreshReceiver")
+        unregisterReceiver(tickReceiver)
     }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = getNavController()
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
-
-    private fun getNavController(): NavController {
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
-        return navHostFragment.navController
-    }
-
 
     private fun registerPostNotificationsPermissionRequest() =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (granted) {
-                Log.i(TAG, "Permission POST_NOTIFICATIONS granted")
-            } else {
-                Log.i(TAG, "Permission POST_NOTIFICATIONS denied")
+            if (!granted) {
                 lifecycleScope.launch {
                     settingsRepository.setPostNotificationsPermissionRequested(true)
                 }
             }
         }
 
-
     private inner class MetronomeServiceConnection : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            Log.i(TAG, "MetronomeService connected")
             val binder = service as MetronomeService.LocalBinder
             metronomeService = binder.getService()
             viewModel.connected.value = true
@@ -260,20 +286,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
-            Log.i(TAG, "MetronomeService disconnected")
             metronomeService = null
             viewModel.connected.value = false
         }
     }
 
-
     inner class RefreshReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.d(TAG, "Received refresh command")
             synchronizeViewModelWithService()
         }
     }
 
+    inner class TickReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            getParcelableExtra(intent, MetronomeService.EXTRA_TICK, Tick::class.java)?.let {
+                viewModel.onTickReceived(it)
+            }
+        }
+    }
 
     private fun synchronizeViewModelWithService() {
         metronomeService?.let { service ->

@@ -25,7 +25,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     id("com.google.android.gms.oss-licenses-plugin")
-    id("kotlin-kapt")
     id("kotlin-parcelize")
 }
 
@@ -37,9 +36,7 @@ java {
 
 android {
     namespace = "com.bobek.metronome"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.bobek.metronome"
@@ -71,21 +68,9 @@ android {
     buildFeatures {
         buildConfig = true
         compose = true
-        dataBinding = true
     }
     androidResources {
         generateLocaleConfig = true
-    }
-    testOptions {
-        managedDevices {
-            localDevices {
-                create("pixel5api30") {
-                    device = "Pixel 5"
-                    apiLevel = 30
-                    systemImageSource = "aosp-atd"
-                }
-            }
-        }
     }
     packaging {
         resources {
@@ -109,12 +94,18 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.service)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.preference.ktx)
