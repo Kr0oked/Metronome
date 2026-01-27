@@ -19,55 +19,16 @@
 package com.bobek.metronome
 
 import android.os.Bundle
-import androidx.core.os.bundleOf
-import androidx.navigation.fragment.findNavController
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import dagger.hilt.android.AndroidEntryPoint
-import de.philipp_bobek.oss_licenses_parser.OssLicensesParser
-import de.philipp_bobek.oss_licenses_parser.ThirdPartyLicense
-import de.philipp_bobek.oss_licenses_parser.ThirdPartyLicenseMetadata
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 
-@AndroidEntryPoint
-class ThirdPartyLicensesFragment : PreferenceFragmentCompat() {
-
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        val context = preferenceManager.context
-        val screen = preferenceManager.createPreferenceScreen(context)
-
-        context.resources
-            .openRawResource(R.raw.third_party_license_metadata)
-            .use(OssLicensesParser::parseMetadata)
-            .sortedBy { metadata -> metadata.libraryName }
-            .map(::getPreference)
-            .forEach(screen::addPreference)
-
-        preferenceScreen = screen
-    }
-
-    private fun getPreference(metadata: ThirdPartyLicenseMetadata): Preference {
-        val preference = Preference(requireContext())
-        preference.title = metadata.libraryName
-        preference.setOnPreferenceClickListener {
-            navigateToThirdPartyLicenseFragment(metadata)
-            true
-        }
-        return preference
-    }
-
-    private fun navigateToThirdPartyLicenseFragment(metadata: ThirdPartyLicenseMetadata) {
-        val thirdPartyLicense = requireContext().resources
-            .openRawResource(R.raw.third_party_licenses)
-            .use { thirdPartyLicensesFile -> OssLicensesParser.parseLicense(metadata, thirdPartyLicensesFile) }
-
-        navigateToThirdPartyLicenseFragment(thirdPartyLicense)
-    }
-
-    private fun navigateToThirdPartyLicenseFragment(thirdPartyLicense: ThirdPartyLicense) {
-        val bundle = bundleOf(
-            "libraryName" to thirdPartyLicense.libraryName,
-            "licenseContent" to thirdPartyLicense.licenseContent
-        )
-        findNavController().navigate(R.id.action_ThirdPartyLicensesFragment_to_ThirdPartyLicenseFragment, bundle)
+/**
+ * Redundant Fragment. Use the Compose version instead.
+ */
+class ThirdPartyLicensesFragment : Fragment() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return null
     }
 }

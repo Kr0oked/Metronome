@@ -37,7 +37,7 @@ class SettingsPreferenceDataStoreAdapter(
 
             PreferenceConstants.NIGHT_MODE -> {
                 value?.let {
-                    viewModel.nightMode.value = AppNightMode.forPreferenceValue(it)
+                    viewModel.setNightMode(AppNightMode.forPreferenceValue(it))
                 }
             }
         }

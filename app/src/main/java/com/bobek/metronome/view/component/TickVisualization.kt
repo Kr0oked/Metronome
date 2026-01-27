@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,45 +19,13 @@
 package com.bobek.metronome.view.component
 
 import android.content.Context
-import android.graphics.drawable.AnimationDrawable
 import android.util.AttributeSet
-import android.view.HapticFeedbackConstants
-import android.view.LayoutInflater
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.databinding.InverseBindingListener
-import com.bobek.metronome.databinding.TickVisualizationBinding
+import android.view.View
 
-class TickVisualization(context: Context, attributes: AttributeSet) : ConstraintLayout(context, attributes) {
-
-    private val binding: TickVisualizationBinding
-
-    var gap: Boolean
-        get() = binding.gap
-        set(gap) {
-            binding.gap = gap
-        }
-
-    var gapChangedListener: InverseBindingListener? = null
-
-    init {
-        val layoutInflater = LayoutInflater.from(context)
-
-        binding = TickVisualizationBinding.inflate(layoutInflater, this, true)
-        binding.gap = false
-
-        setOnClickListener {
-            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-            binding.gap = binding.gap.not()
-            gapChangedListener?.onChange()
-        }
-    }
-
-    fun blink() {
-        val background = binding.tickVisualizationImage.background
-
-        if (background is AnimationDrawable) {
-            background.stop()
-            background.start()
-        }
-    }
+/**
+ * Redundant View-based component. Use the Compose version instead.
+ */
+class TickVisualization(context: Context, attributes: AttributeSet) : View(context, attributes) {
+    var gap: Boolean = false
+    fun blink() {}
 }

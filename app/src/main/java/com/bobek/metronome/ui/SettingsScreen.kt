@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -110,7 +111,7 @@ fun SettingsScreen(
             )
 
             ListItem(
-                headlineContent = { Text(stringResource(R.string.sound)) },
+                headlineContent = { Text(stringResource(R.string.sound_square_wave)) },
                 supportingContent = { Text(getSoundLabel(sound)) },
                 modifier = Modifier.clickable { showSoundDialog = true }
             )
@@ -172,7 +173,7 @@ fun SettingsScreen(
         val soundValues = stringArrayResource(R.array.sound_values)
 
         SingleChoiceDialog(
-            title = stringResource(R.string.sound),
+            title = stringResource(R.string.sound_square_wave),
             entries = soundEntries.toList(),
             values = soundValues.toList(),
             currentValue = sound.preferenceValue,
@@ -200,6 +201,16 @@ fun SettingsScreen(
             onDismiss = { showNightModeDialog = false }
         )
     }
+}
+
+@Composable
+fun SettingsCategory(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
+    )
 }
 
 @Composable
@@ -245,7 +256,7 @@ fun SingleChoiceDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
+                Text(stringResource(android.R.string.cancel))
             }
         }
     )

@@ -18,8 +18,6 @@
 
 package com.bobek.metronome.data
 
-import androidx.databinding.InverseMethod
-
 data class Beats(val value: Int = DEFAULT) {
 
     init {
@@ -31,12 +29,8 @@ data class Beats(val value: Int = DEFAULT) {
         const val MAX = 8
         const val DEFAULT = 4
 
-        @InverseMethod("floatToBeats")
-        @JvmStatic
         fun beatsToFloat(beats: Beats): Float = beats.value.toFloat()
 
-        @JvmStatic
         fun floatToBeats(float: Float): Beats = Beats(float.toInt())
     }
 }
-

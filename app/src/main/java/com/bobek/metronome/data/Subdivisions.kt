@@ -18,8 +18,6 @@
 
 package com.bobek.metronome.data
 
-import androidx.databinding.InverseMethod
-
 data class Subdivisions(val value: Int = DEFAULT) {
 
     init {
@@ -31,11 +29,8 @@ data class Subdivisions(val value: Int = DEFAULT) {
         const val MAX = 4
         const val DEFAULT = 1
 
-        @InverseMethod("floatToSubdivisions")
-        @JvmStatic
         fun subdivisionsToFloat(subdivisions: Subdivisions): Float = subdivisions.value.toFloat()
 
-        @JvmStatic
         fun floatToSubdivisions(float: Float): Subdivisions = Subdivisions(float.toInt())
     }
 }

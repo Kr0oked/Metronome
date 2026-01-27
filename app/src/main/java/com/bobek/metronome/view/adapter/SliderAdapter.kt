@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,7 @@
 
 package com.bobek.metronome.view.adapter
 
-import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
-import androidx.databinding.InverseBindingListener
-import com.google.android.material.slider.Slider
-
-object SliderAdapter {
-
-    @BindingAdapter("android:value")
-    @JvmStatic
-    fun setValue(slider: Slider, value: Float) {
-        if (slider.value != value) {
-            slider.value = value
-        }
-    }
-
-    @InverseBindingAdapter(attribute = "android:value")
-    @JvmStatic
-    fun getValue(slider: Slider): Float = slider.value
-
-    @BindingAdapter("android:valueAttrChanged")
-    @JvmStatic
-    fun setValueChangedListener(slider: Slider, attrChange: InverseBindingListener) =
-        slider.addOnChangeListener { _, _, _ -> attrChange.onChange() }
-}
+/**
+ * Redundant Adapter. No longer needed after Compose migration.
+ */
+object SliderAdapter

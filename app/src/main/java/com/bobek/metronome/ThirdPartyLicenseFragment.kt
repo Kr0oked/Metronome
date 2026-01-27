@@ -23,15 +23,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.bobek.metronome.databinding.FragmentThirdPartyLicenseBinding
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
+/**
+ * Redundant Fragment. Use the Compose version instead.
+ */
 class ThirdPartyLicenseFragment : Fragment() {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val binding = FragmentThirdPartyLicenseBinding.inflate(inflater, container, false)
-        binding.licenseContent = arguments?.getString("licenseContent")
-        return binding.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return null
     }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,7 @@
 
 package com.bobek.metronome.view.adapter
 
-import androidx.databinding.BindingAdapter
-import com.bobek.metronome.R
-import com.google.android.material.button.MaterialButton
-
-object MaterialButtonAdapter {
-
-    @BindingAdapter("playing")
-    @JvmStatic
-    fun setPlaying(button: MaterialButton, playing: Boolean) {
-        if (playing) {
-            button.setIconResource(R.drawable.ic_pause)
-        } else {
-            button.setIconResource(R.drawable.ic_play_arrow)
-        }
-    }
-}
+/**
+ * Redundant Adapter. No longer needed after Compose migration.
+ */
+object MaterialButtonAdapter

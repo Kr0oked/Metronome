@@ -18,8 +18,6 @@
 
 package com.bobek.metronome.data
 
-import androidx.databinding.InverseMethod
-
 data class Tempo(val value: Int = DEFAULT) {
 
     val marking = TempoMarking.forTempo(value)
@@ -33,11 +31,8 @@ data class Tempo(val value: Int = DEFAULT) {
         const val MAX = 252
         const val DEFAULT = 80
 
-        @InverseMethod("floatToTempo")
-        @JvmStatic
         fun tempoToFloat(tempo: Tempo): Float = tempo.value.toFloat()
 
-        @JvmStatic
         fun floatToTempo(float: Float): Tempo = Tempo(float.toInt())
     }
 }
