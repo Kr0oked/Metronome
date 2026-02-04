@@ -18,18 +18,13 @@
 
 package com.bobek.metronome
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.performTextReplacement
 import androidx.test.filters.LargeTest
-import com.bobek.metronome.SliderUtils.setValue
-import com.bobek.metronome.SliderUtils.withValue
-import com.bobek.metronome.TextInputLayoutUtils.displaysError
-import com.bobek.metronome.TextInputLayoutUtils.doesNotDisplayError
-import org.hamcrest.Matchers.not
+import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Subdivisions
+import com.bobek.metronome.data.Tempo
 import org.junit.Test
 
 @LargeTest
@@ -37,116 +32,115 @@ class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun contentVisible() {
-        onView(withId(R.id.loading_indicator)).check(matches(not(isDisplayed())))
-        onView(withId(R.id.content)).check(matches(isDisplayed()))
+        onContent().assertIsDisplayed()
     }
 
     @Test
     fun initialState() {
-        onBeatsSlider().perform(setValue(4.toFloat()))
-        onSubdivisionsSlider().perform(setValue(1.toFloat()))
+        onBeatsSlider().setProgress(4f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onSubdivisionsSlider().setProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
         applyTempo(80)
 
-        onBeatsSlider().check(matches(withValue(4.0f)))
-        onBeatsEdit().check(matches(withText("4")))
-        onSubdivisionsSlider().check(matches(withValue(1.0f)))
-        onSubdivisionsEdit().check(matches(withText("1")))
-        onTempoSlider().check(matches(withValue(80.0f)))
-        onTempoEdit().check(matches(withText("80")))
-        onTempoMarkingText().check(matches(withText(R.string.tempo_marking_andante)))
+        onBeatsSlider().assertProgress(4f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onBeatsEdit().assertTextEquals("4")
+        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onSubdivisionsEdit().assertTextEquals("1")
+        onTempoSlider().assertProgress(80f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoEdit().assertTextEquals("80")
+        verifyTempoMarking(R.string.tempo_marking_andante)
     }
 
     @Test
     fun beatsSliderAndEditReflectEachOther() {
-        onBeatsSlider().perform(setValue(1.0f))
-        onBeatsEdit().check(matches(withText("1")))
+        onBeatsSlider().setProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onBeatsEdit().assertTextEquals("1")
 
-        onBeatsEdit().perform(ViewActions.replaceText("2"))
-        onBeatsSlider().check(matches(withValue(2.0f)))
+        onBeatsEdit().performTextReplacement("2")
+        onBeatsSlider().assertProgress(2f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
     }
 
     @Test
     fun subdivisionsSliderAndEditReflectEachOther() {
-        onSubdivisionsSlider().perform(setValue(1.0f))
-        onSubdivisionsEdit().check(matches(withText("1")))
+        onSubdivisionsSlider().setProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onSubdivisionsEdit().assertTextEquals("1")
 
-        onSubdivisionsEdit().perform(ViewActions.replaceText("2"))
-        onSubdivisionsSlider().check(matches(withValue(2.0f)))
+        onSubdivisionsEdit().performTextReplacement("2")
+        onSubdivisionsSlider().assertProgress(2f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
     }
 
     @Test
     fun tempoSliderAndEditReflectEachOther() {
-        onTempoSlider().perform(setValue(30.0f))
-        onTempoEdit().check(matches(withText("30")))
+        onTempoSlider().setProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoEdit().assertTextEquals("30")
 
-        onTempoEdit().perform(ViewActions.replaceText("40"))
-        onTempoSlider().check(matches(withValue(40.0f)))
+        onTempoEdit().performTextReplacement("40")
+        onTempoSlider().assertProgress(40f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
     }
 
     @Test
     fun beatsErrorWhenValueTooBig() {
-        onBeatsSlider().perform(setValue(1.0f))
-        onBeatsEditLayout().check(matches(doesNotDisplayError()))
+        onBeatsSlider().setProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onBeatsEditLayout().assertHasNoError()
 
-        onBeatsEdit().perform(ViewActions.replaceText("9"))
-        onBeatsEditLayout().check(matches(displaysError()))
+        onBeatsEdit().performTextReplacement("9")
+        onBeatsEditLayout().assertHasError()
 
-        onBeatsSlider().check(matches(withValue(1.0f)))
+        onBeatsSlider().assertProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
     }
 
     @Test
     fun beatsErrorWhenValueNotANumber() {
-        onBeatsSlider().perform(setValue(1.0f))
-        onBeatsEditLayout().check(matches(doesNotDisplayError()))
+        onBeatsSlider().setProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onBeatsEditLayout().assertHasNoError()
 
-        onBeatsEdit().perform(ViewActions.replaceText("."))
-        onBeatsEditLayout().check(matches(displaysError()))
+        onBeatsEdit().performTextReplacement(".")
+        onBeatsEditLayout().assertHasError()
 
-        onBeatsSlider().check(matches(withValue(1.0f)))
+        onBeatsSlider().assertProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
     }
 
     @Test
     fun subdivisionsErrorWhenValueTooBig() {
-        onSubdivisionsSlider().perform(setValue(1.0f))
-        onSubdivisionsEditLayout().check(matches(doesNotDisplayError()))
+        onSubdivisionsSlider().setProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onSubdivisionsEditLayout().assertHasNoError()
 
-        onSubdivisionsEdit().perform(ViewActions.replaceText("5"))
+        onSubdivisionsEdit().performTextReplacement("5")
 
-        onSubdivisionsEditLayout().check(matches(displaysError()))
-        onSubdivisionsSlider().check(matches(withValue(1.0f)))
+        onSubdivisionsEditLayout().assertHasError()
+        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
     }
 
     @Test
     fun subdivisionsErrorWhenValueNotANumber() {
-        onSubdivisionsSlider().perform(setValue(1.0f))
-        onSubdivisionsEditLayout().check(matches(doesNotDisplayError()))
+        onSubdivisionsSlider().setProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onSubdivisionsEditLayout().assertHasNoError()
 
-        onSubdivisionsEdit().perform(ViewActions.replaceText("."))
+        onSubdivisionsEdit().performTextReplacement(".")
 
-        onSubdivisionsEditLayout().check(matches(displaysError()))
-        onSubdivisionsSlider().check(matches(withValue(1.0f)))
+        onSubdivisionsEditLayout().assertHasError()
+        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
     }
 
     @Test
     fun tempoErrorWhenValueTooBig() {
-        onTempoSlider().perform(setValue(30.0f))
-        onTempoEditLayout().check(matches(doesNotDisplayError()))
+        onTempoSlider().setProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoEditLayout().assertHasNoError()
 
-        onTempoEdit().perform(ViewActions.replaceText("253"))
+        onTempoEdit().performTextReplacement("253")
 
-        onTempoEditLayout().check(matches(displaysError()))
-        onTempoSlider().check(matches(withValue(30.0f)))
+        onTempoEditLayout().assertHasError()
+        onTempoSlider().assertProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
     }
 
     @Test
     fun tempoErrorWhenValueNotANumber() {
-        onTempoSlider().perform(setValue(30.0f))
-        onTempoEditLayout().check(matches(doesNotDisplayError()))
+        onTempoSlider().setProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoEditLayout().assertHasNoError()
 
-        onTempoEdit().perform(ViewActions.replaceText("."))
+        onTempoEdit().performTextReplacement(".")
 
-        onTempoEditLayout().check(matches(displaysError()))
-        onTempoSlider().check(matches(withValue(30.0f)))
+        onTempoEditLayout().assertHasError()
+        onTempoSlider().assertProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
     }
 
     @Test

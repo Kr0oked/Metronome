@@ -99,7 +99,6 @@ class MainActivity : ComponentActivity() {
                 AppNightMode.NO -> false
                 AppNightMode.YES -> true
                 AppNightMode.FOLLOW_SYSTEM -> isSystemInDarkTheme()
-                else -> isSystemInDarkTheme()
             }
 
             val activity = LocalContext.current as? Activity

@@ -47,8 +47,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -102,7 +105,8 @@ fun MetronomeScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
+                    .padding(padding)
+                    .testTag("loading_indicator"),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -113,7 +117,8 @@ fun MetronomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .testTag("content"),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
@@ -129,7 +134,8 @@ fun MetronomeScreen(
                                 isGap = gaps?.value?.contains(i) == true,
                                 onGapToggle = {
                                     toggleGap(viewModel, i)
-                                }
+                                },
+                                modifier = Modifier.testTag("tick_visualization_$i")
                             )
                         } else {
                             Spacer(modifier = Modifier.size(40.dp))
@@ -147,7 +153,9 @@ fun MetronomeScreen(
                         steps = Beats.MAX - Beats.MIN - 1,
                         textValue = beatsText,
                         onTextChange = { viewModel.onBeatsTextChanged(it) },
-                        isError = beatsError
+                        isError = beatsError,
+                        sliderTestTag = "beats_slider",
+                        editTestTag = "beats_edit"
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -161,7 +169,9 @@ fun MetronomeScreen(
                         steps = Subdivisions.MAX - Subdivisions.MIN - 1,
                         textValue = subdivisionsText,
                         onTextChange = { viewModel.onSubdivisionsTextChanged(it) },
-                        isError = subdivisionsError
+                        isError = subdivisionsError,
+                        sliderTestTag = "subdivisions_slider",
+                        editTestTag = "subdivisions_edit"
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -173,7 +183,8 @@ fun MetronomeScreen(
                             tempo.marking.labelResourceId.let {
                                 Text(
                                     stringResource(it),
-                                    style = MaterialTheme.typography.labelLarge
+                                    style = MaterialTheme.typography.labelLarge,
+                                    modifier = Modifier.testTag("tempo_marking_text")
                                 )
                             }
                         }
@@ -182,12 +193,16 @@ fun MetronomeScreen(
                                 value = tempo.value.toFloat(),
                                 onValueChange = { viewModel.tempoData.value = Tempo(it.toInt()) },
                                 valueRange = Tempo.MIN.toFloat()..Tempo.MAX.toFloat(),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f).testTag("tempo_slider")
                             )
                             OutlinedTextField(
                                 value = tempoText,
                                 onValueChange = { viewModel.onTempoTextChanged(it) },
-                                modifier = Modifier.width(80.dp).padding(start = 8.dp),
+                                modifier = Modifier
+                                    .width(80.dp)
+                                    .padding(start = 8.dp)
+                                    .testTag("tempo_edit")
+                                    .semantics { if (tempoError) error("Invalid input") },
                                 textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
@@ -206,22 +221,27 @@ fun MetronomeScreen(
                     TempoActionButton(
                         iconRes = R.drawable.ic_remove,
                         onClick = { changeTempo(viewModel, -1) },
-                        onLongClick = { repeat(10) { changeTempo(viewModel, -1) } }
+                        onLongClick = { repeat(10) { changeTempo(viewModel, -1) } },
+                        modifier = Modifier.testTag("decrement_tempo_button")
                     )
-                    IconButton(onClick = { viewModel.tapTempo() }) {
+                    IconButton(
+                        onClick = { viewModel.tapTempo() },
+                        modifier = Modifier.testTag("tap_tempo_button")
+                    ) {
                         Icon(painterResource(R.drawable.ic_drum), contentDescription = stringResource(R.string.tap_tempo_button_description), modifier = Modifier.size(32.dp))
                     }
                     TempoActionButton(
                         iconRes = R.drawable.ic_add,
                         onClick = { changeTempo(viewModel, 1) },
-                        onLongClick = { repeat(10) { changeTempo(viewModel, 1) } }
+                        onLongClick = { repeat(10) { changeTempo(viewModel, 1) } },
+                        modifier = Modifier.testTag("increment_tempo_button")
                     )
                 }
 
                 // Start/Stop Button
                 IconButton(
                     onClick = { viewModel.startStop() },
-                    modifier = Modifier.size(64.dp)
+                    modifier = Modifier.size(64.dp).testTag("start_stop_button")
                 ) {
                     Icon(
                         painter = if (playing) painterResource(R.drawable.ic_pause) else painterResource(R.drawable.ic_play_arrow),
@@ -243,7 +263,9 @@ fun ControlSection(
     steps: Int,
     textValue: String,
     onTextChange: (String) -> Unit,
-    isError: Boolean
+    isError: Boolean,
+    sliderTestTag: String,
+    editTestTag: String
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(label, style = MaterialTheme.typography.labelLarge)
@@ -253,12 +275,16 @@ fun ControlSection(
                 onValueChange = onValueChange,
                 valueRange = valueRange,
                 steps = steps,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).testTag(sliderTestTag)
             )
             OutlinedTextField(
                 value = textValue,
                 onValueChange = onTextChange,
-                modifier = Modifier.width(64.dp).padding(start = 8.dp),
+                modifier = Modifier
+                    .width(64.dp)
+                    .padding(start = 8.dp)
+                    .testTag(editTestTag)
+                    .semantics { if (isError) error("Invalid input") },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
@@ -272,12 +298,13 @@ fun ControlSection(
 fun TempoActionButton(
     iconRes: Int,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
     IconButton(
         onClick = onClick,
-        modifier = Modifier.pointerInput(Unit) {
+        modifier = modifier.pointerInput(Unit) {
             detectTapGestures(
                 onTap = { onClick() },
                 onLongPress = {
