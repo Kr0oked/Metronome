@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,5 @@ data class Subdivisions(val value: Int = DEFAULT) {
         const val MIN = 1
         const val MAX = 4
         const val DEFAULT = 1
-
-        fun subdivisionsToFloat(subdivisions: Subdivisions): Float = subdivisions.value.toFloat()
-
-        fun floatToSubdivisions(float: Float): Subdivisions = Subdivisions(float.toInt())
     }
 }

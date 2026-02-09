@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,5 @@ data class Tempo(val value: Int = DEFAULT) {
         const val MIN = 30
         const val MAX = 252
         const val DEFAULT = 80
-
-        fun tempoToFloat(tempo: Tempo): Float = tempo.value.toFloat()
-
-        fun floatToTempo(float: Float): Tempo = Tempo(float.toInt())
     }
 }

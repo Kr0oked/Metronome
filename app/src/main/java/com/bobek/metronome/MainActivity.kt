@@ -19,7 +19,6 @@
 package com.bobek.metronome
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
@@ -34,6 +33,7 @@ import android.os.IBinder
 import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
                 AppNightMode.FOLLOW_SYSTEM -> isSystemInDarkTheme()
             }
 
-            val activity = LocalContext.current as? Activity
+            val activity = LocalActivity.current
             LaunchedEffect(playing) {
                 if (playing) {
                     activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

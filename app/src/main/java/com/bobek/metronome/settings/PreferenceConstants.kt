@@ -42,8 +42,4 @@ object PreferenceConstants {
     const val NIGHT_MODE_VALUE_YES = "yes"
 
     const val POST_NOTIFICATIONS_PERMISSION_REQUESTED = "post_notifications_permission_requested"
-
-    const val THIRD_PARTY_LICENSES = "third_party_licenses"
-
-    const val VERSION = "version"
 }

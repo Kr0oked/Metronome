@@ -23,10 +23,4 @@ import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class MetronomeApplication : Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-        DynamicColors.applyToActivitiesIfAvailable(this)
-    }
-}
+class MetronomeApplication : Application()

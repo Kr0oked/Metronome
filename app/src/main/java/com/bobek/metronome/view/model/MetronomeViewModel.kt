@@ -159,7 +159,7 @@ class MetronomeViewModel @Inject constructor(
             } else {
                 beatsTextError.value = true
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             beatsTextError.value = true
         }
     }
@@ -174,7 +174,7 @@ class MetronomeViewModel @Inject constructor(
             } else {
                 subdivisionsTextError.value = true
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             subdivisionsTextError.value = true
         }
     }
@@ -189,7 +189,7 @@ class MetronomeViewModel @Inject constructor(
             } else {
                 tempoTextError.value = true
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             tempoTextError.value = true
         }
     }

@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,13 @@
 
 package com.bobek.metronome.data
 
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.app.AppCompatDelegate.NightMode
 import com.bobek.metronome.settings.PreferenceConstants
 
-enum class AppNightMode(@NightMode val systemValue: Int, val preferenceValue: String) {
+enum class AppNightMode(val preferenceValue: String) {
 
-    FOLLOW_SYSTEM(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM, PreferenceConstants.NIGHT_MODE_VALUE_FOLLOW_SYSTEM),
-    NO(AppCompatDelegate.MODE_NIGHT_NO, PreferenceConstants.NIGHT_MODE_VALUE_NO),
-    YES(AppCompatDelegate.MODE_NIGHT_YES, PreferenceConstants.NIGHT_MODE_VALUE_YES);
+    FOLLOW_SYSTEM(PreferenceConstants.NIGHT_MODE_VALUE_FOLLOW_SYSTEM),
+    NO(PreferenceConstants.NIGHT_MODE_VALUE_NO),
+    YES(PreferenceConstants.NIGHT_MODE_VALUE_YES);
 
     companion object {
         fun forPreferenceValue(preferenceValue: String): AppNightMode {

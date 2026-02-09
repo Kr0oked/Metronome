@@ -28,9 +28,5 @@ data class Beats(val value: Int = DEFAULT) {
         const val MIN = 1
         const val MAX = 8
         const val DEFAULT = 4
-
-        fun beatsToFloat(beats: Beats): Float = beats.value.toFloat()
-
-        fun floatToBeats(float: Float): Beats = Beats(float.toInt())
     }
 }
