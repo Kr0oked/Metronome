@@ -16,35 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.ui
+package com.bobek.metronome.ui.settings
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,25 +43,26 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.bobek.metronome.BuildConfig
+import com.bobek.metronome.ComposeMetronomeViewModel
+import com.bobek.metronome.IMetronomeViewModel
 import com.bobek.metronome.R
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Sound
-import com.bobek.metronome.view.model.MetronomeViewModel
 
+@PreviewScreenSizes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    viewModel: MetronomeViewModel,
-    onBackClick: () -> Unit,
-    onThirdPartyLicensesClick: () -> Unit
+    viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(),
+    onBackClick: () -> Unit = {},
+    onThirdPartyLicensesClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val emphasizeFirstBeat by viewModel.emphasizeFirstBeat.observeAsState(true)
@@ -98,7 +90,7 @@ fun SettingsScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            SettingsCategory(title = stringResource(R.string.metronome))
+            SettingsCategory(title = stringResource(R.string.metronome)) // TODO: icons
 
             ListItem(
                 headlineContent = { Text(stringResource(R.string.emphasize_first_beat)) },
@@ -112,7 +104,7 @@ fun SettingsScreen(
 
             ListItem(
                 headlineContent = { Text(stringResource(R.string.sound_square_wave)) },
-                supportingContent = { Text(getSoundLabel(sound)) },
+                supportingContent = { Text(stringResource(sound.labelResourceId)) },
                 modifier = Modifier.clickable { showSoundDialog = true }
             )
 
@@ -121,7 +113,7 @@ fun SettingsScreen(
 
             ListItem(
                 headlineContent = { Text(stringResource(R.string.night_mode)) },
-                supportingContent = { Text(getNightModeLabel(nightMode)) },
+                supportingContent = { Text(stringResource(nightMode.labelResourceId)) },
                 modifier = Modifier.clickable { showNightModeDialog = true }
             )
 
@@ -132,7 +124,7 @@ fun SettingsScreen(
                 headlineContent = { Text(stringResource(R.string.author)) },
                 supportingContent = { Text(stringResource(R.string.author_name)) },
                 modifier = Modifier.clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:philipp.bobek@mailbox.org"))
+                    val intent = Intent(Intent.ACTION_VIEW, "mailto:philipp.bobek@mailbox.org".toUri())
                     context.startActivity(intent)
                 }
             )
@@ -141,7 +133,7 @@ fun SettingsScreen(
                 headlineContent = { Text(stringResource(R.string.license)) },
                 supportingContent = { Text(stringResource(R.string.license_name)) },
                 modifier = Modifier.clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.gnu.org/licenses/gpl-3.0.txt"))
+                    val intent = Intent(Intent.ACTION_VIEW, "https://www.gnu.org/licenses/gpl-3.0.txt".toUri())
                     context.startActivity(intent)
                 }
             )
@@ -156,7 +148,7 @@ fun SettingsScreen(
                 headlineContent = { Text(stringResource(R.string.source_code)) },
                 supportingContent = { Text(stringResource(R.string.source_code_name)) },
                 modifier = Modifier.clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Kr0oked/Metronome"))
+                    val intent = Intent(Intent.ACTION_VIEW, "https://github.com/Kr0oked/Metronome".toUri())
                     context.startActivity(intent)
                 }
             )
@@ -169,16 +161,14 @@ fun SettingsScreen(
     }
 
     if (showSoundDialog) {
-        val soundEntries = stringArrayResource(R.array.sound_entries)
-        val soundValues = stringArrayResource(R.array.sound_values)
-
         SingleChoiceDialog(
-            title = stringResource(R.string.sound_square_wave),
-            entries = soundEntries.toList(),
-            values = soundValues.toList(),
-            currentValue = sound.preferenceValue,
+            SingleChoiceDialogState(
+                title = stringResource(R.string.sound),
+                entries = Sound.entries,
+                currentValue = sound.preferenceValue
+            ),
             onValueSelected = { newValue ->
-                viewModel.sound.value = Sound.forPreferenceValue(newValue)
+                viewModel.sound.value = newValue
                 showSoundDialog = false
             },
             onDismiss = { showSoundDialog = false }
@@ -186,16 +176,14 @@ fun SettingsScreen(
     }
 
     if (showNightModeDialog) {
-        val nightModeEntries = stringArrayResource(R.array.night_mode_entries)
-        val nightModeValues = stringArrayResource(R.array.night_mode_values)
-
         SingleChoiceDialog(
-            title = stringResource(R.string.night_mode),
-            entries = nightModeEntries.toList(),
-            values = nightModeValues.toList(),
-            currentValue = nightMode.preferenceValue,
+            SingleChoiceDialogState(
+                title = stringResource(R.string.night_mode),
+                entries = AppNightMode.entries,
+                currentValue = nightMode.preferenceValue
+            ),
             onValueSelected = { newValue ->
-                viewModel.setNightMode(AppNightMode.forPreferenceValue(newValue))
+                viewModel.setNightMode(newValue)
                 showNightModeDialog = false
             },
             onDismiss = { showNightModeDialog = false }
@@ -211,72 +199,4 @@ fun SettingsCategory(title: String) {
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
     )
-}
-
-@Composable
-fun SingleChoiceDialog(
-    title: String,
-    entries: List<String>,
-    values: List<String>,
-    currentValue: String,
-    onValueSelected: (String) -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = {
-            Column(Modifier.selectableGroup()) {
-                entries.forEachIndexed { index, entry ->
-                    val value = values[index]
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .selectable(
-                                selected = (value == currentValue),
-                                onClick = { onValueSelected(value) },
-                                role = Role.RadioButton
-                            )
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = (value == currentValue),
-                            onClick = null
-                        )
-                        Text(
-                            text = entry,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.cancel))
-            }
-        }
-    )
-}
-
-@Composable
-fun getSoundLabel(sound: Sound): String {
-    return when (sound) {
-        Sound.SQUARE_WAVE -> stringResource(R.string.sound_square_wave)
-        Sound.SINE_WAVE -> stringResource(R.string.sound_sine_wave)
-        Sound.RISSET_DRUM -> stringResource(R.string.sound_risset_drum)
-        Sound.PLUCK -> stringResource(R.string.sound_pluck)
-    }
-}
-
-@Composable
-fun getNightModeLabel(nightMode: AppNightMode): String {
-    return when (nightMode) {
-        AppNightMode.FOLLOW_SYSTEM -> stringResource(R.string.night_mode_follow_system)
-        AppNightMode.NO -> stringResource(R.string.night_mode_no)
-        AppNightMode.YES -> stringResource(R.string.night_mode_yes)
-    }
 }

@@ -23,6 +23,7 @@
     <string name="night_mode_follow_system">Follow system</string>
     <string name="night_mode_no">Light</string>
     <string name="night_mode_yes">Dark</string>
+    <string name="sound">Sound</string>
     <string name="sound_square_wave">Hard beep</string>
     <string name="sound_sine_wave">Soft beep</string>
     <string name="sound_risset_drum">Synth drum</string>

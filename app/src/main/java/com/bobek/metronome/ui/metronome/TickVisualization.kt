@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.ui.components
+package com.bobek.metronome.ui.metronome
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -34,20 +34,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
+@Preview
 @Composable
 fun TickVisualization(
-    isBlinking: Boolean,
-    isGap: Boolean,
-    onGapToggle: () -> Unit,
-    modifier: Modifier = Modifier
+    @PreviewParameter(TickVisualizationStateProvider::class) state: TickVisualizationState,
+    onGapToggle: () -> Unit = {}
 ) {
     var blinking by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isBlinking) {
-        if (isBlinking) {
+    LaunchedEffect(state.isBlinking) {
+        if (state.isBlinking) {
             blinking = true
             delay(200)
             blinking = false
@@ -57,18 +59,33 @@ fun TickVisualization(
     val backgroundColor by animateColorAsState(
         targetValue = when {
             blinking -> MaterialTheme.colorScheme.primary
-            isGap -> MaterialTheme.colorScheme.surfaceVariant
+            state.isGap -> MaterialTheme.colorScheme.surfaceVariant
             else -> MaterialTheme.colorScheme.tertiaryContainer
         },
-        animationSpec = tween(durationMillis = 200),
-        label = "color"
+        animationSpec = tween(durationMillis = 200)
     )
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
             .background(backgroundColor)
             .clickable { onGapToggle() }
     )
+}
+
+data class TickVisualizationState(
+    val isBlinking: Boolean,
+    val isGap: Boolean
+)
+
+private class TickVisualizationStateProvider : PreviewParameterProvider<TickVisualizationState> {
+    override val values: Sequence<TickVisualizationState> = sequenceOf(
+        TickVisualizationState(isBlinking = false, isGap = false),
+        TickVisualizationState(isBlinking = false, isGap = true),
+        TickVisualizationState(isBlinking = true, isGap = false),
+        TickVisualizationState(isBlinking = true, isGap = true)
+    )
+
+    override fun getDisplayName(index: Int): String = values.elementAt(index).toString()
 }

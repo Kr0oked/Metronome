@@ -19,6 +19,7 @@
 package com.bobek.metronome
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.filters.LargeTest
@@ -32,13 +33,14 @@ class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun contentVisible() {
+        onLoadingIndicator().assertIsNotDisplayed()
         onContent().assertIsDisplayed()
     }
 
     @Test
     fun initialState() {
-        onBeatsSlider().setProgress(4f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
-        onSubdivisionsSlider().setProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onBeatsSlider().setProgress(4f)
+        onSubdivisionsSlider().setProgress(1f)
         applyTempo(80)
 
         onBeatsSlider().assertProgress(4f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
@@ -52,7 +54,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun beatsSliderAndEditReflectEachOther() {
-        onBeatsSlider().setProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onBeatsSlider().setProgress(1f)
         onBeatsEdit().assertTextEquals("1")
 
         onBeatsEdit().performTextReplacement("2")
@@ -61,7 +63,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun subdivisionsSliderAndEditReflectEachOther() {
-        onSubdivisionsSlider().setProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onSubdivisionsSlider().setProgress(1f)
         onSubdivisionsEdit().assertTextEquals("1")
 
         onSubdivisionsEdit().performTextReplacement("2")
@@ -70,7 +72,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun tempoSliderAndEditReflectEachOther() {
-        onTempoSlider().setProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoSlider().setProgress(30f)
         onTempoEdit().assertTextEquals("30")
 
         onTempoEdit().performTextReplacement("40")
@@ -79,51 +81,51 @@ class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun beatsErrorWhenValueTooBig() {
-        onBeatsSlider().setProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
-        onBeatsEditLayout().assertHasNoError()
+        onBeatsSlider().setProgress(1f)
+        onBeatsEdit().assertHasNoError()
 
         onBeatsEdit().performTextReplacement("9")
-        onBeatsEditLayout().assertHasError()
+        onBeatsEdit().assertHasError()
 
         onBeatsSlider().assertProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
     }
 
     @Test
     fun beatsErrorWhenValueNotANumber() {
-        onBeatsSlider().setProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
-        onBeatsEditLayout().assertHasNoError()
+        onBeatsSlider().setProgress(1f)
+        onBeatsEdit().assertHasNoError()
 
         onBeatsEdit().performTextReplacement(".")
-        onBeatsEditLayout().assertHasError()
+        onBeatsEdit().assertHasError()
 
         onBeatsSlider().assertProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
     }
 
     @Test
     fun subdivisionsErrorWhenValueTooBig() {
-        onSubdivisionsSlider().setProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
-        onSubdivisionsEditLayout().assertHasNoError()
+        onSubdivisionsSlider().setProgress(1f)
+        onBeatsEdit().assertHasNoError()
 
         onSubdivisionsEdit().performTextReplacement("5")
 
-        onSubdivisionsEditLayout().assertHasError()
+        onBeatsEdit().assertHasError()
         onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
     }
 
     @Test
     fun subdivisionsErrorWhenValueNotANumber() {
-        onSubdivisionsSlider().setProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
-        onSubdivisionsEditLayout().assertHasNoError()
+        onSubdivisionsSlider().setProgress(1f)
+        onBeatsEdit().assertHasNoError()
 
         onSubdivisionsEdit().performTextReplacement(".")
 
-        onSubdivisionsEditLayout().assertHasError()
+        onBeatsEdit().assertHasError()
         onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
     }
 
     @Test
     fun tempoErrorWhenValueTooBig() {
-        onTempoSlider().setProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoSlider().setProgress(30f)
         onTempoEditLayout().assertHasNoError()
 
         onTempoEdit().performTextReplacement("253")
@@ -134,7 +136,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun tempoErrorWhenValueNotANumber() {
-        onTempoSlider().setProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoSlider().setProgress(30f)
         onTempoEditLayout().assertHasNoError()
 
         onTempoEdit().performTextReplacement(".")

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.ui
+package com.bobek.metronome.ui.licenses
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -32,19 +32,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 
+@PreviewScreenSizes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThirdPartyLicenseScreen(
-    libraryName: String,
-    licenseContent: String,
-    onBackClick: () -> Unit
+    @PreviewParameter(ThirdPartyLicenseScreenStateProvider::class) state: ThirdPartyLicenseScreenState,
+    onBackClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(libraryName) },
+                title = { Text(state.libraryName) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -54,7 +57,7 @@ fun ThirdPartyLicenseScreen(
         }
     ) { padding ->
         Text(
-            text = licenseContent,
+            text = state.licenseContent,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
@@ -62,4 +65,15 @@ fun ThirdPartyLicenseScreen(
                 .verticalScroll(rememberScrollState())
         )
     }
+}
+
+data class ThirdPartyLicenseScreenState(
+    val libraryName: String,
+    val licenseContent: String
+)
+
+private class ThirdPartyLicenseScreenStateProvider : PreviewParameterProvider<ThirdPartyLicenseScreenState> {
+    override val values: Sequence<ThirdPartyLicenseScreenState> = sequenceOf(
+        ThirdPartyLicenseScreenState(libraryName = "The library name", licenseContent = "The license content")
+    )
 }

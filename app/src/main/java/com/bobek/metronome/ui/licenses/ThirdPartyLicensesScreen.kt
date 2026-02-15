@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.ui
+package com.bobek.metronome.ui.licenses
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,28 +33,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.bobek.metronome.R
-import de.philipp_bobek.oss_licenses_parser.OssLicensesParser
 import de.philipp_bobek.oss_licenses_parser.ThirdPartyLicenseMetadata
 
+@PreviewScreenSizes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThirdPartyLicensesScreen(
-    onBackClick: () -> Unit,
-    onLicenseClick: (ThirdPartyLicenseMetadata) -> Unit
+    @PreviewParameter(ThirdPartyLicensesScreenStateProvider::class) licenses: List<ThirdPartyLicenseMetadata>,
+    onBackClick: () -> Unit = {},
+    onLicenseClick: (ThirdPartyLicenseMetadata) -> Unit = {}
 ) {
-    val context = LocalContext.current
-    val licenses = remember {
-        context.resources
-            .openRawResource(R.raw.third_party_license_metadata)
-            .use(OssLicensesParser::parseMetadata)
-            .sortedBy { it.libraryName }
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -80,4 +74,14 @@ fun ThirdPartyLicensesScreen(
             }
         }
     }
+}
+
+private class ThirdPartyLicensesScreenStateProvider : PreviewParameterProvider<List<ThirdPartyLicenseMetadata>> {
+    override val values: Sequence<List<ThirdPartyLicenseMetadata>> = sequenceOf(
+        listOf(
+            ThirdPartyLicenseMetadata("Library A", 0, 0),
+            ThirdPartyLicenseMetadata("Library B", 0, 0),
+            ThirdPartyLicenseMetadata("Library C", 0, 0)
+        )
+    )
 }

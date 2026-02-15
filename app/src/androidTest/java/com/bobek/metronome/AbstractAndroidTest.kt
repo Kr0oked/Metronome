@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.bobek.metronome.data.Tempo
+import com.bobek.metronome.ui.TestConstants
 import org.junit.Rule
 import org.junit.runner.RunWith
 
@@ -47,7 +47,7 @@ abstract class AbstractAndroidTest {
     var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
     protected fun applyTempo(tempo: Int) {
-        onTempoSlider().setProgress(tempo.toFloat(), Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoSlider().setProgress(tempo.toFloat())
     }
 
     protected fun verifyTempoMarking(@StringRes resourceId: Int) {
@@ -55,7 +55,7 @@ abstract class AbstractAndroidTest {
         onTempoMarkingText().assertTextEquals(expectedText)
     }
 
-    protected fun SemanticsNodeInteraction.setProgress(value: Float, range: ClosedFloatingPointRange<Float>) {
+    protected fun SemanticsNodeInteraction.setProgress(value: Float) {
         performSemanticsAction(SemanticsActions.SetProgress) { it(value) }
     }
 
@@ -71,16 +71,30 @@ abstract class AbstractAndroidTest {
         assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Error))
     }
 
-    protected fun onLoadingIndicator(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("loading_indicator")
-    protected fun onContent(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("content")
-    protected fun onBeatsSlider(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("beats_slider")
-    protected fun onBeatsEdit(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("beats_edit")
-    protected fun onBeatsEditLayout(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("beats_edit")
-    protected fun onSubdivisionsSlider(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("subdivisions_slider")
-    protected fun onSubdivisionsEdit(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("subdivisions_edit")
-    protected fun onSubdivisionsEditLayout(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("subdivisions_edit")
-    protected fun onTempoSlider(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("tempo_slider")
-    protected fun onTempoEdit(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("tempo_edit")
-    protected fun onTempoEditLayout(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("tempo_edit")
-    protected fun onTempoMarkingText(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag("tempo_marking_text")
+    protected fun onLoadingIndicator(): SemanticsNodeInteraction =
+        composeTestRule.onNodeWithTag(TestConstants.LOADING_INDICATOR)
+
+    protected fun onContent(): SemanticsNodeInteraction =
+        composeTestRule.onNodeWithTag(TestConstants.CONTENT)
+
+    protected fun onBeatsSlider(): SemanticsNodeInteraction =
+        composeTestRule.onNodeWithTag(TestConstants.BEATS_SLIDER)
+
+    protected fun onBeatsEdit(): SemanticsNodeInteraction =
+        composeTestRule.onNodeWithTag(TestConstants.BEATS_EDIT)
+
+    protected fun onSubdivisionsSlider(): SemanticsNodeInteraction =
+        composeTestRule.onNodeWithTag(TestConstants.SUBDIVISIONS_SLIDER)
+
+    protected fun onSubdivisionsEdit(): SemanticsNodeInteraction =
+        composeTestRule.onNodeWithTag(TestConstants.SUBDIVISIONS_EDIT)
+
+    protected fun onTempoSlider(): SemanticsNodeInteraction =
+        composeTestRule.onNodeWithTag(TestConstants.TEMPO_SLIDER)
+
+    protected fun onTempoEdit(): SemanticsNodeInteraction =
+        composeTestRule.onNodeWithTag(TestConstants.TEMPO_EDIT)
+
+    protected fun onTempoMarkingText(): SemanticsNodeInteraction =
+        composeTestRule.onNodeWithTag(TestConstants.TEMPO_MARKING_TEXT)
 }

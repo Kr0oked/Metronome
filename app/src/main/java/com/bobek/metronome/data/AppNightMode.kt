@@ -18,13 +18,19 @@
 
 package com.bobek.metronome.data
 
+import androidx.annotation.StringRes
+import com.bobek.metronome.R
+import com.bobek.metronome.domain.PreferenceChoice
 import com.bobek.metronome.settings.PreferenceConstants
 
-enum class AppNightMode(val preferenceValue: String) {
+enum class AppNightMode(
+    @StringRes override val labelResourceId: Int,
+    override val preferenceValue: String
+) : PreferenceChoice {
 
-    FOLLOW_SYSTEM(PreferenceConstants.NIGHT_MODE_VALUE_FOLLOW_SYSTEM),
-    NO(PreferenceConstants.NIGHT_MODE_VALUE_NO),
-    YES(PreferenceConstants.NIGHT_MODE_VALUE_YES);
+    FOLLOW_SYSTEM(R.string.night_mode_follow_system, PreferenceConstants.NIGHT_MODE_VALUE_FOLLOW_SYSTEM),
+    NO(R.string.night_mode_no, PreferenceConstants.NIGHT_MODE_VALUE_NO),
+    YES(R.string.night_mode_yes, PreferenceConstants.NIGHT_MODE_VALUE_YES);
 
     companion object {
         fun forPreferenceValue(preferenceValue: String): AppNightMode {
