@@ -25,7 +25,6 @@
     <string name="source_code">Code Source</string>
     <string name="version">Version</string>
     <string name="request_notifications_permission_rationale_title">Nous avons besoin de votre permission pour utiliser les notifications</string>
-    <string name="loading_indicator_description">Indicateur visuel indiquant que l\'appli charge actuellement du contenu</string>
     <string name="tempo_marking_largo">Largo</string>
     <string name="tempo_marking_adagio">Adagio</string>
     <string name="tempo_marking_andante">Andante</string>

@@ -41,28 +41,30 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.error
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.MutableLiveData
 import com.bobek.metronome.ComposeMetronomeViewModel
 import com.bobek.metronome.IMetronomeViewModel
 import com.bobek.metronome.R
 import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.ui.TestConstants
@@ -75,23 +77,13 @@ fun MetronomeScreen(
     @PreviewParameter(MetronomeScreenViewModelProvider::class) viewModel: IMetronomeViewModel,
     onSettingsClick: () -> Unit = {}
 ) {
-    val connected by viewModel.connected.observeAsState(false)
-    val playing by viewModel.playing.observeAsState(false)
-    val currentTick by viewModel.currentTick.observeAsState()
-
-    val beats by viewModel.beatsData.observeAsState(Beats())
-    val beatsText by viewModel.beatsText.observeAsState("")
-    val beatsError by viewModel.beatsTextError.observeAsState(false)
-
-    val subdivisions by viewModel.subdivisionsData.observeAsState(Subdivisions())
-    val subdivisionsText by viewModel.subdivisionsText.observeAsState("")
-    val subdivisionsError by viewModel.subdivisionsTextError.observeAsState(false)
-
-    val tempo by viewModel.tempoData.observeAsState(Tempo())
-    val tempoText by viewModel.tempoText.observeAsState("")
-    val tempoError by viewModel.tempoTextError.observeAsState(false)
-
-    val gaps by viewModel.gapsData.observeAsState()
+    val connected by viewModel.getConnected().collectAsState(false)
+    val playing by viewModel.getPlaying().collectAsState(false)
+    val currentTick by viewModel.getCurrentTick().collectAsState(null)
+    val beats by viewModel.getBeats().collectAsState(Beats())
+    val subdivisions by viewModel.getSubdivisions().collectAsState(Subdivisions())
+    val tempo by viewModel.getTempo().collectAsState(Tempo())
+    val gaps by viewModel.getGaps().collectAsState(Gaps())
 
     Scaffold(
         topBar = {
@@ -134,16 +126,14 @@ fun MetronomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    for (i in 1..8) {
-                        if (i <= beats.value) {
+                    for (i in Beats.valueRange) {
+                        if (i <= beats.value) { // TODO spacing
                             TickVisualization(
                                 state = TickVisualizationState(
                                     isBlinking = currentTick?.beat == i,
-                                    isGap = gaps?.value?.contains(i) == true
+                                    isGap = gaps.value.contains(i)
                                 ),
-                                onGapToggle = {
-                                    toggleGap(viewModel, i)
-                                }
+                                onGapToggle = { viewModel.setGaps(gaps.toggle(i)) }
                             )
                         } else {
                             Spacer(modifier = Modifier.size(40.dp))
@@ -155,15 +145,11 @@ fun MetronomeScreen(
                     // Beats Control
                     ControlSection(
                         label = stringResource(R.string.beats_label),
-                        value = beats.value.toFloat(),
-                        onValueChange = { viewModel.beatsData.value = Beats(it.toInt()) },
-                        valueRange = Beats.MIN.toFloat()..Beats.MAX.toFloat(),
-                        steps = Beats.MAX - Beats.MIN - 1,
-                        textValue = beatsText,
-                        onTextChange = { viewModel.onBeatsTextChanged(it) },
-                        isError = beatsError,
-                        sliderTestTag = "beats_slider",
-                        editTestTag = "beats_edit"
+                        value = beats.value,
+                        onValueChange = { viewModel.setBeats(Beats(it)) },
+                        valueRange = Beats.valueRange,
+                        sliderTestTag = TestConstants.BEATS_SLIDER,
+                        editTestTag = TestConstants.BEATS_EDIT
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -171,55 +157,26 @@ fun MetronomeScreen(
                     // Subdivisions Control
                     ControlSection(
                         label = stringResource(R.string.subdivisions_label),
-                        value = subdivisions.value.toFloat(),
-                        onValueChange = { viewModel.subdivisionsData.value = Subdivisions(it.toInt()) },
-                        valueRange = Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat(),
-                        steps = Subdivisions.MAX - Subdivisions.MIN - 1,
-                        textValue = subdivisionsText,
-                        onTextChange = { viewModel.onSubdivisionsTextChanged(it) },
-                        isError = subdivisionsError,
-                        sliderTestTag = "subdivisions_slider",
-                        editTestTag = "subdivisions_edit"
+                        value = subdivisions.value,
+                        onValueChange = { viewModel.setSubdivisions(Subdivisions(it)) },
+                        valueRange = Subdivisions.valueRange,
+                        sliderTestTag = TestConstants.SUBDIVISIONS_SLIDER,
+                        editTestTag = TestConstants.SUBDIVISIONS_EDIT
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Tempo Control
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(stringResource(R.string.tempo_label), style = MaterialTheme.typography.labelLarge)
-                            tempo.marking.labelResourceId.let {
-                                Text(
-                                    stringResource(it),
-                                    style = MaterialTheme.typography.labelLarge,
-                                    modifier = Modifier.testTag(TestConstants.TEMPO_MARKING_TEXT)
-                                )
-                            }
-                        }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Slider(
-                                value = tempo.value.toFloat(),
-                                onValueChange = { viewModel.tempoData.value = Tempo(it.toInt()) },
-                                valueRange = Tempo.MIN.toFloat()..Tempo.MAX.toFloat(),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .testTag(TestConstants.TEMPO_SLIDER)
-                            )
-                            OutlinedTextField(
-                                value = tempoText,
-                                onValueChange = { viewModel.onTempoTextChanged(it) },
-                                modifier = Modifier
-                                    .width(80.dp)
-                                    .padding(start = 8.dp)
-                                    .testTag(TestConstants.TEMPO_EDIT)
-                                    .semantics { if (tempoError) error("Invalid input") },
-                                textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                singleLine = true,
-                                isError = tempoError
-                            )
-                        }
-                    }
+                    ControlSection(
+                        label = stringResource(R.string.tempo_label),
+                        marking = stringResource(tempo.marking.labelResourceId),
+                        value = tempo.value,
+                        onValueChange = { viewModel.setTempo(Tempo(it)) },
+                        valueRange = Tempo.valueRange,
+                        sliderTestTag = TestConstants.TEMPO_SLIDER,
+                        editTestTag = TestConstants.TEMPO_EDIT,
+                        markingTestTag = TestConstants.TEMPO_MARKING_TEXT
+                    )
                 }
 
                 // Tempo Actions
@@ -230,8 +187,8 @@ fun MetronomeScreen(
                 ) {
                     TempoActionButton(
                         iconRes = R.drawable.ic_remove,
-                        onClick = { changeTempo(viewModel, -1) },
-                        onLongClick = { repeat(10) { changeTempo(viewModel, -1) } }
+                        onClick = { viewModel.changeTempo(-1) },
+                        onLongClick = { viewModel.changeTempo(-10) }
                     )
                     IconButton(
                         onClick = { viewModel.tapTempo() },
@@ -244,8 +201,8 @@ fun MetronomeScreen(
                     }
                     TempoActionButton(
                         iconRes = R.drawable.ic_add,
-                        onClick = { changeTempo(viewModel, 1) },
-                        onLongClick = { repeat(10) { changeTempo(viewModel, 1) } }
+                        onClick = { viewModel.changeTempo(1) },
+                        onLongClick = { viewModel.changeTempo(10) }
                     )
                 }
 
@@ -268,45 +225,63 @@ fun MetronomeScreen(
 
 @Composable
 fun ControlSection(
-    label: String,
-    value: Float,
-    onValueChange: (Float) -> Unit,
-    valueRange: ClosedFloatingPointRange<Float>,
-    steps: Int,
-    textValue: String,
-    onTextChange: (String) -> Unit,
-    isError: Boolean,
-    sliderTestTag: String,
-    editTestTag: String
+    label: String = "",
+    marking: String = "",
+    value: Int = 0,
+    onValueChange: (Int) -> Unit,
+    valueRange: IntRange = IntRange.EMPTY,
+    sliderTestTag: String = "",
+    editTestTag: String = "",
+    markingTestTag: String = ""
 ) {
+    var text by rememberSaveable { mutableStateOf(value.toString()) }
+
+    var previousValue by rememberSaveable { mutableIntStateOf(value) }
+    if (value != previousValue) {
+        text = value.toString()
+        previousValue = value
+    }
+
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(label, style = MaterialTheme.typography.labelLarge)
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(label, style = MaterialTheme.typography.labelLarge)
+            Text(marking, style = MaterialTheme.typography.labelLarge, modifier = Modifier.testTag(markingTestTag))
+        }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Slider(
-                value = value,
-                onValueChange = onValueChange,
-                valueRange = valueRange,
-                steps = steps,
+                value = value.toFloat(),
+                onValueChange = { onValueChange(it.toInt()) },
+                valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
+                steps = valueRange.last - valueRange.first - 1,
                 modifier = Modifier
                     .weight(1f)
                     .testTag(sliderTestTag)
             )
             OutlinedTextField(
-                value = textValue,
-                onValueChange = onTextChange,
+                value = text,
+                onValueChange = {
+                    text = it
+                    if (isValidNumber(it, valueRange)) {
+                        onValueChange(it.toInt())
+                    }
+                },
                 modifier = Modifier
                     .width(64.dp)
                     .padding(start = 8.dp)
-                    .testTag(editTestTag)
-                    .semantics { if (isError) error("Invalid input") }, // TODO: translate
+                    .testTag(editTestTag),
                 textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true,
-                isError = isError
+                isError = !isValidNumber(text, valueRange)
             )
         }
     }
 }
+
+private fun isValidNumber(text: String, range: IntRange): Boolean =
+    text.toIntOrNull()
+        ?.let { it in range }
+        ?: false
 
 @Composable
 fun TempoActionButton(
@@ -323,7 +298,7 @@ fun TempoActionButton(
                 onTap = { onClick() },
                 onLongPress = {
                     scope.launch {
-                        onLongClick()
+                        onLongClick() // TODO: not working
                     }
                 }
             )
@@ -333,32 +308,10 @@ fun TempoActionButton(
     }
 }
 
-private fun toggleGap(viewModel: IMetronomeViewModel, position: Int) {
-    when (position) {
-        1 -> viewModel.gap1.value = viewModel.gap1.value?.not()
-        2 -> viewModel.gap2.value = viewModel.gap2.value?.not()
-        3 -> viewModel.gap3.value = viewModel.gap3.value?.not()
-        4 -> viewModel.gap4.value = viewModel.gap4.value?.not()
-        5 -> viewModel.gap5.value = viewModel.gap5.value?.not()
-        6 -> viewModel.gap6.value = viewModel.gap6.value?.not()
-        7 -> viewModel.gap7.value = viewModel.gap7.value?.not()
-        8 -> viewModel.gap8.value = viewModel.gap8.value?.not()
-    }
-}
-
-private fun changeTempo(viewModel: IMetronomeViewModel, delta: Int) {
-    viewModel.tempoData.value?.value?.let {
-        val newVal = it + delta
-        if (newVal in Tempo.MIN..Tempo.MAX) {
-            viewModel.tempoData.value = Tempo(newVal)
-        }
-    }
-}
-
 private class MetronomeScreenViewModelProvider : PreviewParameterProvider<IMetronomeViewModel> {
     override val values: Sequence<IMetronomeViewModel> = sequenceOf(
-        ComposeMetronomeViewModel(connected = MutableLiveData(true)),
-        ComposeMetronomeViewModel(connected = MutableLiveData(false))
+        ComposeMetronomeViewModel(connected = true),
+        ComposeMetronomeViewModel(connected = false)
     )
 
     override fun getDisplayName(index: Int): String? =

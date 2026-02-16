@@ -35,7 +35,6 @@
     <string name="version">Sürüm</string>
     <string name="request_notifications_permission_rationale_title">Bildirim göndermek için izne ihtiyacımız var</string>
     <string name="request_notifications_permission_rationale_message">Bu uygulama metronom çalıştığı süre boyunca bildirim göndermek istiyor. Bu sayede uygulamada arkada çalışıyorsa bile metronomu kolayca durdurabilirsiniz.</string>
-    <string name="loading_indicator_description">Uygulamanın şu anda içerik yüklediğinde dair görsel belirteç</string>
     <string name="ok">TAMAM</string>
     <string name="no_thanks">Hayır teşekkürler</string>
     <string name="tempo_marking_largo">Largo</string>

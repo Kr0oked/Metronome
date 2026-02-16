@@ -32,7 +32,6 @@
     <string name="version">版本</string>
     <string name="request_notifications_permission_rationale_title">我们需要权限以发送通知</string>
     <string name="request_notifications_permission_rationale_message">此应用程序希望在节拍器运行时发送通知。即使应用程序在后台运行，您也可以轻松地停止节拍器。</string>
-    <string name="loading_indicator_description">显示应用程序正在加载内容</string>
     <string name="ok">确定</string>
     <string name="no_thanks">不需要</string>
     <string name="tempo_marking_largo">Largo</string>

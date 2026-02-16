@@ -30,7 +30,6 @@
     <string name="version">Версия приложения</string>
     <string name="request_notifications_permission_rationale_title">Необходимо разрешение на публикацию уведомлений</string>
     <string name="request_notifications_permission_rationale_message">Этому приложению нужно показывать уведомление, пока работает метроном. Затем вы можете легко остановить метроном, даже если приложение работает в фоновом режиме.</string>
-    <string name="loading_indicator_description">Визуальный индикатор того, что приложение в данный момент загружает контент</string>
     <string name="ok">ОК</string>
     <string name="no_thanks">Нет, спасибо</string>
     <string name="tempo_marking_largo">Ларго</string>

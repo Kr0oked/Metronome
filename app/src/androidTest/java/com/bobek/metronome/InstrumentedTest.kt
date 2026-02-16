@@ -86,7 +86,6 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onBeatsEdit().performTextReplacement("9")
         onBeatsEdit().assertHasError()
-
         onBeatsSlider().assertProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
     }
 
@@ -97,51 +96,46 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onBeatsEdit().performTextReplacement(".")
         onBeatsEdit().assertHasError()
-
         onBeatsSlider().assertProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
     }
 
     @Test
     fun subdivisionsErrorWhenValueTooBig() {
         onSubdivisionsSlider().setProgress(1f)
-        onBeatsEdit().assertHasNoError()
+        onSubdivisionsEdit().assertHasNoError()
 
         onSubdivisionsEdit().performTextReplacement("5")
-
-        onBeatsEdit().assertHasError()
+        onSubdivisionsEdit().assertHasError()
         onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
     }
 
     @Test
     fun subdivisionsErrorWhenValueNotANumber() {
         onSubdivisionsSlider().setProgress(1f)
-        onBeatsEdit().assertHasNoError()
+        onSubdivisionsEdit().assertHasNoError()
 
         onSubdivisionsEdit().performTextReplacement(".")
-
-        onBeatsEdit().assertHasError()
+        onSubdivisionsEdit().assertHasError()
         onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
     }
 
     @Test
     fun tempoErrorWhenValueTooBig() {
         onTempoSlider().setProgress(30f)
-        onTempoEditLayout().assertHasNoError()
+        onTempoEdit().assertHasNoError()
 
         onTempoEdit().performTextReplacement("253")
-
-        onTempoEditLayout().assertHasError()
+        onTempoEdit().assertHasError()
         onTempoSlider().assertProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
     }
 
     @Test
     fun tempoErrorWhenValueNotANumber() {
         onTempoSlider().setProgress(30f)
-        onTempoEditLayout().assertHasNoError()
+        onTempoEdit().assertHasNoError()
 
         onTempoEdit().performTextReplacement(".")
-
-        onTempoEditLayout().assertHasError()
+        onTempoEdit().assertHasError()
         onTempoSlider().assertProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
     }
 

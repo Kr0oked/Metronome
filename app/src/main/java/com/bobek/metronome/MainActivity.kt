@@ -42,14 +42,14 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat.getParcelableExtra
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -99,13 +99,22 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun initViewModel() {
-        viewModel.beatsData.observe(this) { metronomeService?.beats = it }
-        viewModel.subdivisionsData.observe(this) { metronomeService?.subdivisions = it }
-        viewModel.gapsData.observe(this) { metronomeService?.gaps = it }
-        viewModel.tempoData.observe(this) { metronomeService?.tempo = it }
-        viewModel.emphasizeFirstBeat.observe(this) { metronomeService?.emphasizeFirstBeat = it }
-        viewModel.sound.observe(this) { metronomeService?.sound = it }
-        viewModel.playing.observe(this) { metronomeService?.playing = it }
+        runBlocking {
+            viewModel.getBeats().flowWithLifecycle(lifecycle)
+                .collect { metronomeService?.beats = it }
+            viewModel.getSubdivisions().flowWithLifecycle(lifecycle)
+                .collect { metronomeService?.subdivisions = it }
+            viewModel.getTempo().flowWithLifecycle(lifecycle)
+                .collect { metronomeService?.tempo = it }
+            viewModel.getGaps().flowWithLifecycle(lifecycle)
+                .collect { metronomeService?.gaps = it }
+            viewModel.getEmphasizeFirstBeat().flowWithLifecycle(lifecycle)
+                .collect { metronomeService?.emphasizeFirstBeat = it }
+            viewModel.getSound().flowWithLifecycle(lifecycle)
+                .collect { metronomeService?.sound = it }
+            viewModel.getPlaying().flowWithLifecycle(lifecycle)
+                .collect { metronomeService?.playing = it }
+        }
     }
 
     private fun registerReceivers() {
@@ -214,13 +223,13 @@ class MainActivity : ComponentActivity() {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as MetronomeService.LocalBinder
             metronomeService = binder.getService()
-            viewModel.connected.value = true
+            viewModel.setConnected(true)
             synchronizeViewModelWithService()
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
             metronomeService = null
-            viewModel.connected.value = false
+            viewModel.setConnected(false)
         }
     }
 
@@ -241,37 +250,39 @@ class MainActivity : ComponentActivity() {
     private fun synchronizeViewModelWithService() {
         metronomeService?.let { service ->
             if (service.playing) updateViewModel(service) else initServiceValues(service)
-            viewModel.playing.value = service.playing
+            viewModel.setPlaying(service.playing)
         }
     }
 
     private fun updateViewModel(service: MetronomeService) {
-        viewModel.beatsData.value = service.beats
-        viewModel.subdivisionsData.value = service.subdivisions
-        viewModel.gapsData.value = service.gaps
-        viewModel.tempoData.value = service.tempo
-        viewModel.emphasizeFirstBeat.value = service.emphasizeFirstBeat
-        viewModel.sound.value = service.sound
+        viewModel.setBeats(service.beats)
+        viewModel.setSubdivisions(service.subdivisions)
+        viewModel.setTempo(service.tempo)
+        viewModel.setGaps(service.gaps)
+        viewModel.setEmphasizeFirstBeat(service.emphasizeFirstBeat)
+        viewModel.setSound(service.sound)
     }
 
     private fun initServiceValues(service: MetronomeService) {
-        viewModel.beatsData.value?.let { service.beats = it }
-        viewModel.subdivisionsData.value?.let { service.subdivisions = it }
-        viewModel.gapsData.value?.let { service.gaps = it }
-        viewModel.tempoData.value?.let { service.tempo = it }
-        viewModel.emphasizeFirstBeat.value?.let { service.emphasizeFirstBeat = it }
-        viewModel.sound.value?.let { service.sound = it }
+        lifecycleScope.launch {
+            service.beats = viewModel.getBeats().first()
+            service.subdivisions = viewModel.getSubdivisions().first()
+            service.tempo = viewModel.getTempo().first()
+            service.gaps = viewModel.getGaps().first()
+            service.emphasizeFirstBeat = viewModel.getEmphasizeFirstBeat().first()
+            service.sound = viewModel.getSound().first()
+        }
     }
 }
 
 @PreviewScreenSizes
 @Composable
 fun MainContent(
-    viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = MutableLiveData(true))
+    viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = true)
 ) {
     val navController = rememberNavController()
-    val nightMode by viewModel.nightMode.observeAsState(AppNightMode.FOLLOW_SYSTEM)
-    val playing by viewModel.playing.observeAsState(false)
+    val nightMode by viewModel.getNightMode().collectAsState(AppNightMode.FOLLOW_SYSTEM)
+    val playing by viewModel.getPlaying().collectAsState(false)
 
     val isDarkTheme = when (nightMode) {
         AppNightMode.NO -> false

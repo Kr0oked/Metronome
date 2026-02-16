@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,14 @@ package com.bobek.metronome.data
 data class Beats(val value: Int = DEFAULT) {
 
     init {
-        require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
+        require(value in valueRange) { "value must be between $MIN and $MAX but was $value" }
     }
 
     companion object {
         const val MIN = 1
         const val MAX = 8
         const val DEFAULT = 4
+
+        val valueRange = MIN..MAX
     }
 }

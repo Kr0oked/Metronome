@@ -21,12 +21,14 @@ package com.bobek.metronome.data
 data class Subdivisions(val value: Int = DEFAULT) {
 
     init {
-        require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
+        require(value in valueRange) { "value must be between $MIN and $MAX but was $value" }
     }
 
     companion object {
         const val MIN = 1
         const val MAX = 4
         const val DEFAULT = 1
+
+        val valueRange = MIN..MAX
     }
 }

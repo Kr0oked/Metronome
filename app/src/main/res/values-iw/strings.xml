@@ -26,7 +26,6 @@
     <string name="third_party_licenses_summary">רישיונות של ספריות קוד פתוח בשימוש</string>
     <string name="version">גירסא</string>
     <string name="request_notifications_permission_rationale_title">אנחנו צריכים אישור לשלוח התראות</string>
-    <string name="loading_indicator_description">אינדיקציה חזותית לכך שהאפליקציה טוענת כעת תוכן</string>
     <string name="ok">בסדר</string>
     <string name="no_thanks">לא תודה</string>
     <string name="tempo_marking_larghetto">ניגון איטי</string>

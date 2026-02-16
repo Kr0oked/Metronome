@@ -23,12 +23,14 @@ data class Tempo(val value: Int = DEFAULT) {
     val marking = TempoMarking.forTempo(value)
 
     init {
-        require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
+        require(value in valueRange) { "value must be between $MIN and $MAX but was $value" }
     }
 
     companion object {
         const val MIN = 30
         const val MAX = 252
         const val DEFAULT = 80
+
+        val valueRange = MIN..MAX
     }
 }

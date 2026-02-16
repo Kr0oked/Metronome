@@ -18,10 +18,9 @@
 
 package com.bobek.metronome
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Beats
@@ -33,6 +32,9 @@ import com.bobek.metronome.data.Tick
 import com.bobek.metronome.data.TickType
 import com.bobek.metronome.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,37 +42,31 @@ private const val TAP_WINDOW_MILLIS = 5_000L
 private const val MILLIS_PER_MINUTE = 60_000L
 
 interface IMetronomeViewModel {
-    val beatsData: MutableLiveData<Beats>
-    val beatsText: MutableLiveData<String>
-    val beatsTextError: MutableLiveData<Boolean>
-    val subdivisionsData: MutableLiveData<Subdivisions>
-    val subdivisionsText: MutableLiveData<String>
-    val subdivisionsTextError: MutableLiveData<Boolean>
-    val gapsData: MutableLiveData<Gaps>
-    val gap1: MutableLiveData<Boolean>
-    val gap2: MutableLiveData<Boolean>
-    val gap3: MutableLiveData<Boolean>
-    val gap4: MutableLiveData<Boolean>
-    val gap5: MutableLiveData<Boolean>
-    val gap6: MutableLiveData<Boolean>
-    val gap7: MutableLiveData<Boolean>
-    val gap8: MutableLiveData<Boolean>
-    val tempoData: MutableLiveData<Tempo>
-    val tempoText: MutableLiveData<String>
-    val tempoTextError: MutableLiveData<Boolean>
-    val emphasizeFirstBeat: MutableLiveData<Boolean>
-    val sound: MutableLiveData<Sound>
-    val nightMode: LiveData<AppNightMode>
-    val playing: MutableLiveData<Boolean>
-    val connected: MutableLiveData<Boolean>
-    val currentTick: MutableLiveData<Tick?>
-    fun onBeatsTextChanged(text: String)
-    fun onSubdivisionsTextChanged(text: String)
-    fun onTempoTextChanged(text: String)
-    fun startStop()
-    fun onTickReceived(tick: Tick)
+    fun getBeats(): Flow<Beats>
+    fun setBeats(beats: Beats)
+    fun getSubdivisions(): Flow<Subdivisions>
+    fun setSubdivisions(subdivisions: Subdivisions)
+    fun getTempo(): Flow<Tempo>
+    fun setTempo(tempo: Tempo)
+    fun changeTempo(delta: Int)
     fun tapTempo()
+    fun getGaps(): Flow<Gaps>
+    fun setGaps(gaps: Gaps)
+    fun getEmphasizeFirstBeat(): Flow<Boolean>
+    fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean)
+    fun getSound(): Flow<Sound>
+    fun setSound(sound: Sound)
+    fun getNightMode(): Flow<AppNightMode>
     fun setNightMode(nightMode: AppNightMode)
+    fun getPlaying(): Flow<Boolean>
+    fun setPlaying(playing: Boolean)
+    fun startStop()
+    fun getConnected(): Flow<Boolean>
+    fun setConnected(connected: Boolean)
+    fun getCurrentTick(): Flow<Tick?>
+    fun onTickReceived(tick: Tick)
+    fun setMetronomeService(metronomeService: MetronomeService?)
+
 }
 
 @HiltViewModel
@@ -78,154 +74,45 @@ class MetronomeViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : ViewModel(), IMetronomeViewModel {
 
-    override val beatsData = MutableLiveData(Beats())
-    override val beatsText = MutableLiveData("")
-    override val beatsTextError = MutableLiveData(false)
-
-    override val subdivisionsData = MutableLiveData(Subdivisions())
-    override val subdivisionsText = MutableLiveData("")
-    override val subdivisionsTextError = MutableLiveData(false)
-
-    override val gapsData = MutableLiveData(Gaps())
-    override val gap1 = MutableLiveData(false)
-    override val gap2 = MutableLiveData(false)
-    override val gap3 = MutableLiveData(false)
-    override val gap4 = MutableLiveData(false)
-    override val gap5 = MutableLiveData(false)
-    override val gap6 = MutableLiveData(false)
-    override val gap7 = MutableLiveData(false)
-    override val gap8 = MutableLiveData(false)
-
-    override val tempoData = MutableLiveData(Tempo())
-    override val tempoText = MutableLiveData("")
-    override val tempoTextError = MutableLiveData(false)
-
-    override val emphasizeFirstBeat = MutableLiveData(true)
-    override val sound = MutableLiveData(Sound.SQUARE_WAVE)
-    override val nightMode = settingsRepository.getNightMode().asLiveData()
-
-    override val playing = MutableLiveData(false)
-    override val connected = MutableLiveData(false)
-    override val currentTick = MutableLiveData<Tick?>(null)
-
+    private val beatsData = MutableLiveData(Beats())
+    private val subdivisionsData = MutableLiveData(Subdivisions())
+    private val tempoData = MutableLiveData(Tempo())
+    private val gapsData = MutableLiveData(Gaps())
+    private val emphasizeFirstBeatData = MutableLiveData(true)
+    private val soundData = MutableLiveData(Sound.SQUARE_WAVE)
+    private val playingData = MutableLiveData(false)
+    private val connectedData = MutableLiveData(false)
+    private val currentTickData = MutableLiveData<Tick?>(null)
     private val taps = ArrayDeque<Long>()
 
-    init {
-        viewModelScope.launch {
-            settingsRepository.getBeats().collect { beatsData.value = it }
-            settingsRepository.getSubdivisions().collect { subdivisionsData.value = it }
-            settingsRepository.getGaps().collect { gapsData.value = it }
-            settingsRepository.getTempo().collect { tempoData.value = it }
-            settingsRepository.getEmphasizeFirstBeat().collect { emphasizeFirstBeat.value = it }
-            settingsRepository.getSound().collect { sound.value = it }
-        }
+    private var metronomeService: MetronomeService? = null
 
-        beatsData.observeForever {
-            viewModelScope.launch { settingsRepository.setBeats(it) }
-            if (beatsText.value != it.value.toString()) {
-                beatsText.value = it.value.toString()
-            }
-        }
-        subdivisionsData.observeForever {
-            viewModelScope.launch { settingsRepository.setSubdivisions(it) }
-            if (subdivisionsText.value != it.value.toString()) {
-                subdivisionsText.value = it.value.toString()
-            }
-        }
-        gapsData.observeForever {
-            viewModelScope.launch { settingsRepository.setGaps(it) }
-            updateGapLiveDatas(it)
-        }
-        tempoData.observeForever {
-            viewModelScope.launch { settingsRepository.setTempo(it) }
-            if (tempoText.value != it.value.toString()) {
-                tempoText.value = it.value.toString()
-            }
-        }
-        emphasizeFirstBeat.observeForever { viewModelScope.launch { settingsRepository.setEmphasizeFirstBeat(it) } }
-        sound.observeForever { viewModelScope.launch { settingsRepository.setSound(it) } }
+    override fun getBeats(): Flow<Beats> = beatsData.asFlow()
 
-        gap1.observeForever { updateGaps(it, 1) }
-        gap2.observeForever { updateGaps(it, 2) }
-        gap3.observeForever { updateGaps(it, 3) }
-        gap4.observeForever { updateGaps(it, 4) }
-        gap5.observeForever { updateGaps(it, 5) }
-        gap6.observeForever { updateGaps(it, 6) }
-        gap7.observeForever { updateGaps(it, 7) }
-        gap8.observeForever { updateGaps(it, 8) }
+    override fun setBeats(beats: Beats) {
+        beatsData.value = beats
     }
 
-    private fun updateGapLiveDatas(gaps: Gaps) {
-        gap1.value = gaps.value.contains(1)
-        gap2.value = gaps.value.contains(2)
-        gap3.value = gaps.value.contains(3)
-        gap4.value = gaps.value.contains(4)
-        gap5.value = gaps.value.contains(5)
-        gap6.value = gaps.value.contains(6)
-        gap7.value = gaps.value.contains(7)
-        gap8.value = gaps.value.contains(8)
+    override fun getSubdivisions(): Flow<Subdivisions> = subdivisionsData.asFlow()
+
+    override fun setSubdivisions(subdivisions: Subdivisions) {
+        subdivisionsData.value = subdivisions
     }
 
-    private fun updateGaps(gap: Boolean, position: Int) {
-        val currentGaps = gapsData.value ?: Gaps()
-        val gaps = if (gap) currentGaps + position else currentGaps - position
-        if (gapsData.value != gaps) {
-            gapsData.value = gaps
-        }
+    override fun getTempo(): Flow<Tempo> = tempoData.asFlow()
+
+    override fun setTempo(tempo: Tempo) {
+        tempoData.value = tempo
     }
 
-    override fun onBeatsTextChanged(text: String) {
-        beatsText.value = text
-        try {
-            val value = text.toInt()
-            if (value in Beats.MIN..Beats.MAX) {
-                beatsData.value = Beats(value)
-                beatsTextError.value = false
-            } else {
-                beatsTextError.value = true
-            }
-        } catch (_: NumberFormatException) {
-            beatsTextError.value = true
-        }
-    }
+    override fun changeTempo(delta: Int) {
+        val currentTempoValue = tempoData.value?.value ?: Tempo.DEFAULT
+        val newTempoValue = currentTempoValue + delta
 
-    override fun onSubdivisionsTextChanged(text: String) {
-        subdivisionsText.value = text
-        try {
-            val value = text.toInt()
-            if (value in Subdivisions.MIN..Subdivisions.MAX) {
-                subdivisionsData.value = Subdivisions(value)
-                subdivisionsTextError.value = false
-            } else {
-                subdivisionsTextError.value = true
-            }
-        } catch (_: NumberFormatException) {
-            subdivisionsTextError.value = true
-        }
-    }
-
-    override fun onTempoTextChanged(text: String) {
-        tempoText.value = text
-        try {
-            val value = text.toInt()
-            if (value in Tempo.MIN..Tempo.MAX) {
-                tempoData.value = Tempo(value)
-                tempoTextError.value = false
-            } else {
-                tempoTextError.value = true
-            }
-        } catch (_: NumberFormatException) {
-            tempoTextError.value = true
-        }
-    }
-
-    override fun startStop() {
-        playing.value = playing.value?.not()
-    }
-
-    override fun onTickReceived(tick: Tick) {
-        if (tick.type == TickType.STRONG || tick.type == TickType.WEAK) {
-            currentTick.value = tick
+        tempoData.value = when {
+            newTempoValue < Tempo.MIN -> Tempo(Tempo.MIN) // TODO Tempo.MIN and Tempo.MIN_VALUE
+            newTempoValue > Tempo.MAX -> Tempo(Tempo.MAX)
+            else -> Tempo(newTempoValue)
         }
     }
 
@@ -254,51 +141,86 @@ class MetronomeViewModel @Inject constructor(
         .toInt()
         .takeIf { it > 0 }
 
+    override fun getGaps(): Flow<Gaps> = gapsData.asFlow()
+
+    override fun setGaps(gaps: Gaps) {
+        gapsData.value = gaps
+    }
+
+    override fun getEmphasizeFirstBeat() = emphasizeFirstBeatData.asFlow()
+
+    override fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) {
+        emphasizeFirstBeatData.value = emphasizeFirstBeat
+    }
+
+    override fun getSound(): Flow<Sound> = soundData.asFlow()
+
+    override fun setSound(sound: Sound) {
+        soundData.value = sound
+    }
+
+    override fun getNightMode(): Flow<AppNightMode> = settingsRepository.getNightMode()
+
     override fun setNightMode(nightMode: AppNightMode) {
         viewModelScope.launch {
             settingsRepository.setNightMode(nightMode)
         }
     }
+
+    override fun getPlaying(): Flow<Boolean> = playingData.asFlow()
+
+    override fun setPlaying(playing: Boolean) {
+        playingData.value = playing
+    }
+
+    override fun startStop() {
+        playingData.value = playingData.value?.not()
+    }
+
+    override fun getConnected(): Flow<Boolean> = connectedData.asFlow()
+
+    override fun setConnected(connected: Boolean) {
+        connectedData.value = connected
+    }
+
+    override fun getCurrentTick(): Flow<Tick?> = currentTickData.asFlow()
+
+    override fun onTickReceived(tick: Tick) {
+        if (tick.type == TickType.STRONG || tick.type == TickType.WEAK) {
+            currentTickData.value = tick
+        }
+    }
+
+    override fun setMetronomeService(metronomeService: MetronomeService?) {
+        this.metronomeService = metronomeService
+    }
 }
 
-data class ComposeMetronomeViewModel(
-    override val beatsData: MutableLiveData<Beats> = MutableLiveData(Beats()),
-    override val beatsText: MutableLiveData<String> = MutableLiveData(""),
-    override val beatsTextError: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val subdivisionsData: MutableLiveData<Subdivisions> = MutableLiveData(Subdivisions()),
-    override val subdivisionsText: MutableLiveData<String> = MutableLiveData(""),
-    override val subdivisionsTextError: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val gapsData: MutableLiveData<Gaps> = MutableLiveData(Gaps()),
-    override val gap1: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val gap2: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val gap3: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val gap4: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val gap5: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val gap6: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val gap7: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val gap8: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val tempoData: MutableLiveData<Tempo> = MutableLiveData(Tempo()),
-    override val tempoText: MutableLiveData<String> = MutableLiveData(""),
-    override val tempoTextError: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val emphasizeFirstBeat: MutableLiveData<Boolean> = MutableLiveData(true),
-    override val sound: MutableLiveData<Sound> = MutableLiveData(Sound.SQUARE_WAVE),
-    override val nightMode: LiveData<AppNightMode> = MutableLiveData(AppNightMode.FOLLOW_SYSTEM),
-    override val playing: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val connected: MutableLiveData<Boolean> = MutableLiveData(false),
-    override val currentTick: MutableLiveData<Tick?> = MutableLiveData(null),
+class ComposeMetronomeViewModel(
+    val connected: Boolean = true
 ) : IMetronomeViewModel {
-
-    override fun onBeatsTextChanged(text: String) = Unit
-
-    override fun onSubdivisionsTextChanged(text: String) = Unit
-
-    override fun onTempoTextChanged(text: String) = Unit
-
-    override fun startStop() = Unit
-
-    override fun onTickReceived(tick: Tick) = Unit
-
+    override fun getBeats(): Flow<Beats> = emptyFlow()
+    override fun setBeats(beats: Beats) = Unit
+    override fun getSubdivisions(): Flow<Subdivisions> = emptyFlow()
+    override fun setSubdivisions(subdivisions: Subdivisions) = Unit
+    override fun getTempo(): Flow<Tempo> = emptyFlow()
+    override fun setTempo(tempo: Tempo) = Unit
+    override fun changeTempo(delta: Int) = Unit
     override fun tapTempo() = Unit
-
+    override fun getGaps(): Flow<Gaps> = emptyFlow()
+    override fun setGaps(gaps: Gaps) = Unit
+    override fun getEmphasizeFirstBeat(): Flow<Boolean> = emptyFlow()
+    override fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) = Unit
+    override fun getSound(): Flow<Sound> = emptyFlow()
+    override fun setSound(sound: Sound) = Unit
+    override fun getNightMode(): Flow<AppNightMode> = emptyFlow()
     override fun setNightMode(nightMode: AppNightMode) = Unit
+    override fun getPlaying(): Flow<Boolean> = emptyFlow()
+    override fun setPlaying(playing: Boolean) = Unit
+    override fun startStop() = Unit
+    override fun getConnected(): Flow<Boolean> = flowOf(connected)
+    override fun setConnected(connected: Boolean) = Unit
+    override fun getCurrentTick(): Flow<Tick?> = emptyFlow()
+    override fun onTickReceived(tick: Tick) = Unit
+    override fun setMetronomeService(metronomeService: MetronomeService?) = Unit
 }

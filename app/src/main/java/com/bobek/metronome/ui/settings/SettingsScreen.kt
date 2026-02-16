@@ -38,6 +38,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -65,9 +66,9 @@ fun SettingsScreen(
     onThirdPartyLicensesClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    val emphasizeFirstBeat by viewModel.emphasizeFirstBeat.observeAsState(true)
-    val sound by viewModel.sound.observeAsState(Sound.SQUARE_WAVE)
-    val nightMode by viewModel.nightMode.observeAsState(AppNightMode.FOLLOW_SYSTEM)
+    val emphasizeFirstBeat by viewModel.getEmphasizeFirstBeat().collectAsState(true)
+    val sound by viewModel.getSound().collectAsState(Sound.SQUARE_WAVE)
+    val nightMode by viewModel.getNightMode().collectAsState(AppNightMode.FOLLOW_SYSTEM)
 
     var showSoundDialog by remember { mutableStateOf(false) }
     var showNightModeDialog by remember { mutableStateOf(false) }
@@ -97,7 +98,7 @@ fun SettingsScreen(
                 trailingContent = {
                     Switch(
                         checked = emphasizeFirstBeat,
-                        onCheckedChange = { viewModel.emphasizeFirstBeat.value = it }
+                        onCheckedChange = { viewModel.setEmphasizeFirstBeat(it) }
                     )
                 }
             )
@@ -168,7 +169,7 @@ fun SettingsScreen(
                 currentValue = sound.preferenceValue
             ),
             onValueSelected = { newValue ->
-                viewModel.sound.value = newValue
+                viewModel.setSound(newValue)
                 showSoundDialog = false
             },
             onDismiss = { showSoundDialog = false }
