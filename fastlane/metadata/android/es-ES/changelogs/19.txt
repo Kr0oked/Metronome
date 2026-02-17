@@ -1,0 +1,3 @@
+- Corregido error en la inicialización del servicio en segundo plano
+- Mejorada la traducción al Hebreo
+- Mejorada la traducción al Español
