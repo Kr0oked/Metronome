@@ -1,0 +1,3 @@
+- Korjattu virhe taustapalvelun alustuksessa
+- Parannettu heprean käännöstä
+- Parannettu espanjan käännöstä

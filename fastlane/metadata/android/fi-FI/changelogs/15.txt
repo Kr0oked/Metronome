@@ -1,0 +1,2 @@
+- Korjattu asettelun reunukset edge-to-edge-tilassa
+- Parannettu kiinan käännös

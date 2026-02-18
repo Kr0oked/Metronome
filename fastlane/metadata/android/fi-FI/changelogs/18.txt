@@ -1,0 +1,6 @@
+- Päivitys Android 16:nteen
+- Lisätty kolme uutta ääntä
+- Lisätty heprea
+- Korjattu virhe vilkkutoiminnossa
+- Korjattu virhe, joka esti taustapalvelun käynnistymisen
+- Korjattu virhe avatessa avoimen lähdekoodin ohjelmistolisenssejä
