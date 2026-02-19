@@ -20,11 +20,9 @@ package com.bobek.metronome.ui.metronome
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -65,12 +63,24 @@ fun TickVisualization(
         animationSpec = tween(durationMillis = 200)
     )
 
-    Box(
+    Canvas(
         modifier = Modifier
             .size(40.dp)
-            .clip(CircleShape)
-            .background(backgroundColor)
-            .clickable { onGapToggle() }
+            .clickable { onGapToggle() },
+        onDraw = {
+            if (state.isGap) {
+                drawCircle(
+                    color = backgroundColor,
+                    radius = 18.dp.toPx(),
+                    style = Stroke(width = 4.dp.toPx())
+                )
+            } else {
+                drawCircle(
+                    color = backgroundColor,
+                    radius = 20.dp.toPx(),
+                )
+            }
+        }
     )
 }
 

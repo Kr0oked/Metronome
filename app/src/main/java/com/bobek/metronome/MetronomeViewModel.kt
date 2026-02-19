@@ -34,8 +34,10 @@ import com.bobek.metronome.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 private const val TAP_WINDOW_MILLIS = 5_000L
@@ -46,12 +48,12 @@ interface IMetronomeViewModel {
     fun setBeats(beats: Beats)
     fun getSubdivisions(): Flow<Subdivisions>
     fun setSubdivisions(subdivisions: Subdivisions)
+    fun getGaps(): Flow<Gaps>
+    fun setGaps(gaps: Gaps)
     fun getTempo(): Flow<Tempo>
     fun setTempo(tempo: Tempo)
     fun changeTempo(delta: Int)
     fun tapTempo()
-    fun getGaps(): Flow<Gaps>
-    fun setGaps(gaps: Gaps)
     fun getEmphasizeFirstBeat(): Flow<Boolean>
     fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean)
     fun getSound(): Flow<Sound>
@@ -62,11 +64,9 @@ interface IMetronomeViewModel {
     fun setPlaying(playing: Boolean)
     fun startStop()
     fun getConnected(): Flow<Boolean>
-    fun setConnected(connected: Boolean)
     fun getCurrentTick(): Flow<Tick?>
     fun onTickReceived(tick: Tick)
     fun setMetronomeService(metronomeService: MetronomeService?)
-
 }
 
 @HiltViewModel
@@ -74,18 +74,39 @@ class MetronomeViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : ViewModel(), IMetronomeViewModel {
 
-    private val beatsData = MutableLiveData(Beats())
-    private val subdivisionsData = MutableLiveData(Subdivisions())
-    private val tempoData = MutableLiveData(Tempo())
-    private val gapsData = MutableLiveData(Gaps())
-    private val emphasizeFirstBeatData = MutableLiveData(true)
-    private val soundData = MutableLiveData(Sound.SQUARE_WAVE)
-    private val playingData = MutableLiveData(false)
-    private val connectedData = MutableLiveData(false)
-    private val currentTickData = MutableLiveData<Tick?>(null)
+    private val beatsData = MutableLiveData<Beats>()
+    private val subdivisionsData = MutableLiveData<Subdivisions>()
+    private val gapsData = MutableLiveData<Gaps>()
+    private val tempoData = MutableLiveData<Tempo>()
+    private val emphasizeFirstBeatData = MutableLiveData<Boolean>()
+    private val soundData = MutableLiveData<Sound>()
+    private val nightModeData = MutableLiveData<AppNightMode>()
+    private val playingData = MutableLiveData<Boolean>()
+    private val connectedData = MutableLiveData<Boolean>()
+    private val currentTickData = MutableLiveData<Tick?>()
     private val taps = ArrayDeque<Long>()
 
     private var metronomeService: MetronomeService? = null
+
+    init {
+        beatsData.observeForever { metronomeService?.beats = it }
+        subdivisionsData.observeForever { metronomeService?.subdivisions = it }
+        gapsData.observeForever { metronomeService?.gaps = it }
+        tempoData.observeForever { metronomeService?.tempo = it }
+        emphasizeFirstBeatData.observeForever { metronomeService?.emphasizeFirstBeat = it }
+        soundData.observeForever { metronomeService?.sound = it }
+        playingData.observeForever { metronomeService?.playing = it }
+
+        viewModelScope.launch {
+            settingsRepository.getBeats().firstOrNull()?.let { beatsData.value = it }
+            settingsRepository.getSubdivisions().firstOrNull()?.let { subdivisionsData.value = it }
+            settingsRepository.getGaps().firstOrNull()?.let { gapsData.value = it }
+            settingsRepository.getTempo().firstOrNull()?.let { tempoData.value = it }
+            settingsRepository.getEmphasizeFirstBeat().firstOrNull()?.let { emphasizeFirstBeatData.value = it }
+            settingsRepository.getSound().firstOrNull()?.let { soundData.value = it }
+            settingsRepository.getNightMode().firstOrNull()?.let { nightModeData.value = it }
+        }
+    }
 
     override fun getBeats(): Flow<Beats> = beatsData.asFlow()
 
@@ -99,6 +120,12 @@ class MetronomeViewModel @Inject constructor(
         subdivisionsData.value = subdivisions
     }
 
+    override fun getGaps(): Flow<Gaps> = gapsData.asFlow()
+
+    override fun setGaps(gaps: Gaps) {
+        gapsData.value = gaps
+    }
+
     override fun getTempo(): Flow<Tempo> = tempoData.asFlow()
 
     override fun setTempo(tempo: Tempo) {
@@ -110,7 +137,7 @@ class MetronomeViewModel @Inject constructor(
         val newTempoValue = currentTempoValue + delta
 
         tempoData.value = when {
-            newTempoValue < Tempo.MIN -> Tempo(Tempo.MIN) // TODO Tempo.MIN and Tempo.MIN_VALUE
+            newTempoValue < Tempo.MIN -> Tempo(Tempo.MIN)
             newTempoValue > Tempo.MAX -> Tempo(Tempo.MAX)
             else -> Tempo(newTempoValue)
         }
@@ -141,12 +168,6 @@ class MetronomeViewModel @Inject constructor(
         .toInt()
         .takeIf { it > 0 }
 
-    override fun getGaps(): Flow<Gaps> = gapsData.asFlow()
-
-    override fun setGaps(gaps: Gaps) {
-        gapsData.value = gaps
-    }
-
     override fun getEmphasizeFirstBeat() = emphasizeFirstBeatData.asFlow()
 
     override fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) {
@@ -159,7 +180,7 @@ class MetronomeViewModel @Inject constructor(
         soundData.value = sound
     }
 
-    override fun getNightMode(): Flow<AppNightMode> = settingsRepository.getNightMode()
+    override fun getNightMode(): Flow<AppNightMode> = nightModeData.asFlow()
 
     override fun setNightMode(nightMode: AppNightMode) {
         viewModelScope.launch {
@@ -174,14 +195,10 @@ class MetronomeViewModel @Inject constructor(
     }
 
     override fun startStop() {
-        playingData.value = playingData.value?.not()
+        playingData.value = playingData.value?.not() ?: true
     }
 
     override fun getConnected(): Flow<Boolean> = connectedData.asFlow()
-
-    override fun setConnected(connected: Boolean) {
-        connectedData.value = connected
-    }
 
     override fun getCurrentTick(): Flow<Tick?> = currentTickData.asFlow()
 
@@ -193,6 +210,52 @@ class MetronomeViewModel @Inject constructor(
 
     override fun setMetronomeService(metronomeService: MetronomeService?) {
         this.metronomeService = metronomeService
+        connectedData.value = metronomeService != null
+        metronomeService?.let {
+            if (it.playing) {
+                updateViewModel(it)
+            } else {
+                initServiceValues(it)
+            }
+        }
+    }
+
+    private fun updateViewModel(metronomeService: MetronomeService) {
+        setBeats(metronomeService.beats)
+        setSubdivisions(metronomeService.subdivisions)
+        setGaps(metronomeService.gaps)
+        setTempo(metronomeService.tempo)
+        setEmphasizeFirstBeat(metronomeService.emphasizeFirstBeat)
+        setSound(metronomeService.sound)
+        setPlaying(metronomeService.playing)
+    }
+
+    private fun initServiceValues(metronomeService: MetronomeService) {
+        beatsData.value?.let { metronomeService.beats = it }
+        subdivisionsData.value?.let { metronomeService.subdivisions = it }
+        gapsData.value?.let { metronomeService.gaps = it }
+        tempoData.value?.let { metronomeService.tempo = it }
+        emphasizeFirstBeatData.value?.let { metronomeService.emphasizeFirstBeat = it }
+        soundData.value?.let { metronomeService.sound = it }
+        playingData.value?.let { metronomeService.playing = it }
+    }
+
+    override fun onCleared() {
+        runBlocking {
+            saveSettings()
+        }
+
+        super.onCleared()
+    }
+
+    private suspend fun saveSettings() {
+        beatsData.value?.let { settingsRepository.setBeats(it) }
+        subdivisionsData.value?.let { settingsRepository.setSubdivisions(it) }
+        gapsData.value?.let { settingsRepository.setGaps(it) }
+        tempoData.value?.let { settingsRepository.setTempo(it) }
+        emphasizeFirstBeatData.value?.let { settingsRepository.setEmphasizeFirstBeat(it) }
+        soundData.value?.let { settingsRepository.setSound(it) }
+        nightModeData.value?.let { settingsRepository.setNightMode(it) }
     }
 }
 
@@ -203,12 +266,12 @@ class ComposeMetronomeViewModel(
     override fun setBeats(beats: Beats) = Unit
     override fun getSubdivisions(): Flow<Subdivisions> = emptyFlow()
     override fun setSubdivisions(subdivisions: Subdivisions) = Unit
+    override fun getGaps(): Flow<Gaps> = emptyFlow()
+    override fun setGaps(gaps: Gaps) = Unit
     override fun getTempo(): Flow<Tempo> = emptyFlow()
     override fun setTempo(tempo: Tempo) = Unit
     override fun changeTempo(delta: Int) = Unit
     override fun tapTempo() = Unit
-    override fun getGaps(): Flow<Gaps> = emptyFlow()
-    override fun setGaps(gaps: Gaps) = Unit
     override fun getEmphasizeFirstBeat(): Flow<Boolean> = emptyFlow()
     override fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) = Unit
     override fun getSound(): Flow<Sound> = emptyFlow()
@@ -219,7 +282,6 @@ class ComposeMetronomeViewModel(
     override fun setPlaying(playing: Boolean) = Unit
     override fun startStop() = Unit
     override fun getConnected(): Flow<Boolean> = flowOf(connected)
-    override fun setConnected(connected: Boolean) = Unit
     override fun getCurrentTick(): Flow<Tick?> = emptyFlow()
     override fun onTickReceived(tick: Tick) = Unit
     override fun setMetronomeService(metronomeService: MetronomeService?) = Unit

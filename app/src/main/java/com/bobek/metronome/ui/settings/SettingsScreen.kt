@@ -40,7 +40,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -170,9 +169,13 @@ fun SettingsScreen(
             ),
             onValueSelected = { newValue ->
                 viewModel.setSound(newValue)
+                @Suppress("AssignedValueIsNeverRead")
                 showSoundDialog = false
             },
-            onDismiss = { showSoundDialog = false }
+            onDismiss = {
+                @Suppress("AssignedValueIsNeverRead")
+                showSoundDialog = false
+            }
         )
     }
 
@@ -185,9 +188,13 @@ fun SettingsScreen(
             ),
             onValueSelected = { newValue ->
                 viewModel.setNightMode(newValue)
+                @Suppress("AssignedValueIsNeverRead")
                 showNightModeDialog = false
             },
-            onDismiss = { showNightModeDialog = false }
+            onDismiss = {
+                @Suppress("AssignedValueIsNeverRead")
+                showNightModeDialog = false
+            }
         )
     }
 }

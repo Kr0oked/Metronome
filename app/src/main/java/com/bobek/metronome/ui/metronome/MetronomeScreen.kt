@@ -18,7 +18,9 @@
 
 package com.bobek.metronome.ui.metronome
 
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,9 +31,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,17 +45,19 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -68,7 +74,8 @@ import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.ui.TestConstants
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 @PreviewScreenSizes
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,8 +89,8 @@ fun MetronomeScreen(
     val currentTick by viewModel.getCurrentTick().collectAsState(null)
     val beats by viewModel.getBeats().collectAsState(Beats())
     val subdivisions by viewModel.getSubdivisions().collectAsState(Subdivisions())
-    val tempo by viewModel.getTempo().collectAsState(Tempo())
     val gaps by viewModel.getGaps().collectAsState(Gaps())
+    val tempo by viewModel.getTempo().collectAsState(Tempo())
 
     Scaffold(
         topBar = {
@@ -126,18 +133,14 @@ fun MetronomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    for (i in Beats.valueRange) {
-                        if (i <= beats.value) { // TODO spacing
-                            TickVisualization(
-                                state = TickVisualizationState(
-                                    isBlinking = currentTick?.beat == i,
-                                    isGap = gaps.value.contains(i)
-                                ),
-                                onGapToggle = { viewModel.setGaps(gaps.toggle(i)) }
-                            )
-                        } else {
-                            Spacer(modifier = Modifier.size(40.dp))
-                        }
+                    for (i in Beats.MIN..beats.value) {
+                        TickVisualization(
+                            state = TickVisualizationState(
+                                isBlinking = currentTick?.beat == i,
+                                isGap = gaps.value.contains(i)
+                            ),
+                            onGapToggle = { viewModel.setGaps(gaps.toggle(i)) }
+                        )
                     }
                 }
 
@@ -187,35 +190,37 @@ fun MetronomeScreen(
                 ) {
                     TempoActionButton(
                         iconRes = R.drawable.ic_remove,
+                        contentDescription = stringResource(R.string.decrement_tempo_button_description),
                         onClick = { viewModel.changeTempo(-1) },
                         onLongClick = { viewModel.changeTempo(-10) }
                     )
-                    IconButton(
+                    FilledIconButton(
                         onClick = { viewModel.tapTempo() },
+                        modifier = Modifier.size(dimensionResource(R.dimen.action_button_icon_size)),
+                        shape = RoundedCornerShape(10.dp)
                     ) {
                         Icon(
                             painterResource(R.drawable.ic_drum),
-                            contentDescription = stringResource(R.string.tap_tempo_button_description),
-                            modifier = Modifier.size(32.dp)
+                            contentDescription = stringResource(R.string.tap_tempo_button_description)
                         )
                     }
                     TempoActionButton(
                         iconRes = R.drawable.ic_add,
+                        contentDescription = stringResource(R.string.increment_tempo_button_description),
                         onClick = { viewModel.changeTempo(1) },
                         onLongClick = { viewModel.changeTempo(10) }
                     )
                 }
 
                 // Start/Stop Button
-                IconButton(
+                FilledIconButton(
                     onClick = { viewModel.startStop() },
-                    modifier = Modifier
-                        .size(64.dp)
+                    modifier = Modifier.size(dimensionResource(R.dimen.action_button_icon_size)),
+                    shape = RoundedCornerShape(10.dp)
                 ) {
                     Icon(
                         painter = if (playing) painterResource(R.drawable.ic_pause) else painterResource(R.drawable.ic_play_arrow),
                         contentDescription = stringResource(R.string.start_stop_button_description),
-                        modifier = Modifier.size(48.dp)
                     )
                 }
             }
@@ -239,6 +244,7 @@ fun ControlSection(
     var previousValue by rememberSaveable { mutableIntStateOf(value) }
     if (value != previousValue) {
         text = value.toString()
+        @Suppress("AssignedValueIsNeverRead")
         previousValue = value
     }
 
@@ -259,18 +265,20 @@ fun ControlSection(
             )
             OutlinedTextField(
                 value = text,
-                onValueChange = {
-                    text = it
-                    if (isValidNumber(it, valueRange)) {
-                        onValueChange(it.toInt())
+                onValueChange = { value ->
+                    text = value
+                        .dropWhile { it == '0' }
+                        .take(3)
+                    if (isValidNumber(text, valueRange)) {
+                        onValueChange(text.toInt())
                     }
                 },
                 modifier = Modifier
-                    .width(64.dp)
+                    .width(72.dp)
                     .padding(start = 8.dp)
                     .testTag(editTestTag),
                 textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                 singleLine = true,
                 isError = !isValidNumber(text, valueRange)
             )
@@ -285,26 +293,50 @@ private fun isValidNumber(text: String, range: IntRange): Boolean =
 
 @Composable
 fun TempoActionButton(
-    iconRes: Int,
+    @DrawableRes iconRes: Int,
+    contentDescription: String,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    val scope = rememberCoroutineScope()
-    IconButton(
-        onClick = onClick,
-        modifier = modifier.pointerInput(Unit) {
-            detectTapGestures(
-                onTap = { onClick() },
-                onLongPress = {
-                    scope.launch {
-                        onLongClick() // TODO: not working
+    val interactionSource = remember { MutableInteractionSource() }
+    val viewConfiguration = LocalViewConfiguration.current
+
+    LaunchedEffect(interactionSource) {
+        var isLongClick = false
+
+        interactionSource.interactions.collectLatest { interaction ->
+            when (interaction) {
+                is PressInteraction.Press -> {
+                    isLongClick = false
+                    delay(viewConfiguration.longPressTimeoutMillis)
+                    isLongClick = true
+                    onLongClick()
+                }
+
+                is PressInteraction.Release -> {
+                    if (isLongClick.not()) {
+                        onClick()
                     }
                 }
-            )
+
+                is PressInteraction.Cancel -> {
+                    isLongClick = true
+                }
+            }
         }
+    }
+
+    FilledIconButton(
+        onClick = {},
+        modifier = Modifier
+            .size(dimensionResource(R.dimen.action_button_icon_size)),
+        shape = RoundedCornerShape(10.dp),
+        interactionSource = interactionSource
     ) {
-        Icon(painterResource(iconRes), contentDescription = null, modifier = Modifier.size(32.dp))
+        Icon(
+            painterResource(iconRes),
+            contentDescription = contentDescription
+        )
     }
 }
 

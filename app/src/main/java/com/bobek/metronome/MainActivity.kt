@@ -49,7 +49,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat.getParcelableExtra
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -85,35 +84,13 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var settingsRepository: SettingsRepository
 
-    private var metronomeService: MetronomeService? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "Lifecycle: onCreate")
         super.onCreate(savedInstanceState)
-        initViewModel()
         registerReceivers()
         enableEdgeToEdge()
         setContent {
             MainContent(viewModel)
-        }
-    }
-
-    private fun initViewModel() {
-        runBlocking {
-            viewModel.getBeats().flowWithLifecycle(lifecycle)
-                .collect { metronomeService?.beats = it }
-            viewModel.getSubdivisions().flowWithLifecycle(lifecycle)
-                .collect { metronomeService?.subdivisions = it }
-            viewModel.getTempo().flowWithLifecycle(lifecycle)
-                .collect { metronomeService?.tempo = it }
-            viewModel.getGaps().flowWithLifecycle(lifecycle)
-                .collect { metronomeService?.gaps = it }
-            viewModel.getEmphasizeFirstBeat().flowWithLifecycle(lifecycle)
-                .collect { metronomeService?.emphasizeFirstBeat = it }
-            viewModel.getSound().flowWithLifecycle(lifecycle)
-                .collect { metronomeService?.sound = it }
-            viewModel.getPlaying().flowWithLifecycle(lifecycle)
-                .collect { metronomeService?.playing = it }
         }
     }
 
@@ -167,7 +144,7 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun showRequestNotificationsPermissionRationale() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this) // todo: replace with compose
             .setTitle(R.string.request_notifications_permission_rationale_title)
             .setMessage(R.string.request_notifications_permission_rationale_message)
             .setCancelable(false)
@@ -203,8 +180,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (metronomeService?.playing == false) {
-            stopService(Intent(this, MetronomeService::class.java))
+        lifecycleScope.launch {
+            if (!viewModel.getPlaying().first()) {
+                stopService(Intent(baseContext, MetronomeService::class.java))
+            }
         }
         unregisterReceiver(refreshReceiver)
         unregisterReceiver(tickReceiver)
@@ -222,20 +201,17 @@ class MainActivity : ComponentActivity() {
     private inner class MetronomeServiceConnection : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as MetronomeService.LocalBinder
-            metronomeService = binder.getService()
-            viewModel.setConnected(true)
-            synchronizeViewModelWithService()
+            viewModel.setMetronomeService(binder.getService())
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
-            metronomeService = null
-            viewModel.setConnected(false)
+            viewModel.setMetronomeService(null)
         }
     }
 
     inner class RefreshReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            synchronizeViewModelWithService()
+//            viewModel.setMetronomeService() // TODO
         }
     }
 
@@ -244,33 +220,6 @@ class MainActivity : ComponentActivity() {
             getParcelableExtra(intent, MetronomeService.EXTRA_TICK, Tick::class.java)?.let {
                 viewModel.onTickReceived(it)
             }
-        }
-    }
-
-    private fun synchronizeViewModelWithService() {
-        metronomeService?.let { service ->
-            if (service.playing) updateViewModel(service) else initServiceValues(service)
-            viewModel.setPlaying(service.playing)
-        }
-    }
-
-    private fun updateViewModel(service: MetronomeService) {
-        viewModel.setBeats(service.beats)
-        viewModel.setSubdivisions(service.subdivisions)
-        viewModel.setTempo(service.tempo)
-        viewModel.setGaps(service.gaps)
-        viewModel.setEmphasizeFirstBeat(service.emphasizeFirstBeat)
-        viewModel.setSound(service.sound)
-    }
-
-    private fun initServiceValues(service: MetronomeService) {
-        lifecycleScope.launch {
-            service.beats = viewModel.getBeats().first()
-            service.subdivisions = viewModel.getSubdivisions().first()
-            service.tempo = viewModel.getTempo().first()
-            service.gaps = viewModel.getGaps().first()
-            service.emphasizeFirstBeat = viewModel.getEmphasizeFirstBeat().first()
-            service.sound = viewModel.getSound().first()
         }
     }
 }

@@ -215,7 +215,7 @@ class MetronomeService : LifecycleService() {
         Intent(ACTION_TICK)
             .apply { setPackage(packageName) }
             .apply { putExtra(EXTRA_TICK, tick) }
-            .let { sendBroadcast(it) }
+            .let { sendBroadcast(it) } // todo: replace broadcasts
     }
 
     private fun performStop() {
