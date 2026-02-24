@@ -20,13 +20,17 @@ package com.bobek.metronome.ui.settings
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Help
+import androidx.compose.material.icons.filled.DisplaySettings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -45,6 +49,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -90,73 +95,82 @@ fun SettingsScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            SettingsCategory(title = stringResource(R.string.metronome)) // TODO: icons
+            SettingsSection(
+                title = stringResource(R.string.metronome),
+                icon = { Icon(painter = painterResource(R.drawable.ic_metronome), contentDescription = null) }
+            ) {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.emphasize_first_beat)) },
+                    trailingContent = {
+                        Switch(
+                            checked = emphasizeFirstBeat,
+                            onCheckedChange = { viewModel.setEmphasizeFirstBeat(it) }
+                        )
+                    }
+                )
 
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.emphasize_first_beat)) },
-                trailingContent = {
-                    Switch(
-                        checked = emphasizeFirstBeat,
-                        onCheckedChange = { viewModel.setEmphasizeFirstBeat(it) }
-                    )
-                }
-            )
-
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.sound_square_wave)) },
-                supportingContent = { Text(stringResource(sound.labelResourceId)) },
-                modifier = Modifier.clickable { showSoundDialog = true }
-            )
-
-            HorizontalDivider()
-            SettingsCategory(title = stringResource(R.string.display))
-
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.night_mode)) },
-                supportingContent = { Text(stringResource(nightMode.labelResourceId)) },
-                modifier = Modifier.clickable { showNightModeDialog = true }
-            )
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.sound_square_wave)) },
+                    supportingContent = { Text(stringResource(sound.labelResourceId)) },
+                    modifier = Modifier.clickable { showSoundDialog = true }
+                )
+            }
 
             HorizontalDivider()
-            SettingsCategory(title = stringResource(R.string.about))
+            SettingsSection(
+                title = stringResource(R.string.display),
+                icon = { Icon(Icons.Filled.DisplaySettings, contentDescription = null) }
+            ) {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.night_mode)) },
+                    supportingContent = { Text(stringResource(nightMode.labelResourceId)) },
+                    modifier = Modifier.clickable { showNightModeDialog = true }
+                )
+            }
 
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.author)) },
-                supportingContent = { Text(stringResource(R.string.author_name)) },
-                modifier = Modifier.clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, "mailto:philipp.bobek@mailbox.org".toUri())
-                    context.startActivity(intent)
-                }
-            )
+            HorizontalDivider()
+            SettingsSection(
+                title = stringResource(R.string.about),
+                icon = { Icon(Icons.AutoMirrored.Filled.Help, contentDescription = null) }
+            ) {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.author)) },
+                    supportingContent = { Text(stringResource(R.string.author_name)) },
+                    modifier = Modifier.clickable {
+                        val intent = Intent(Intent.ACTION_VIEW, "mailto:philipp.bobek@mailbox.org".toUri())
+                        context.startActivity(intent)
+                    }
+                )
 
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.license)) },
-                supportingContent = { Text(stringResource(R.string.license_name)) },
-                modifier = Modifier.clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://www.gnu.org/licenses/gpl-3.0.txt".toUri())
-                    context.startActivity(intent)
-                }
-            )
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.license)) },
+                    supportingContent = { Text(stringResource(R.string.license_name)) },
+                    modifier = Modifier.clickable {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://www.gnu.org/licenses/gpl-3.0.txt".toUri())
+                        context.startActivity(intent)
+                    }
+                )
 
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.third_party_licenses)) },
-                supportingContent = { Text(stringResource(R.string.third_party_licenses_summary)) },
-                modifier = Modifier.clickable { onThirdPartyLicensesClick() }
-            )
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.third_party_licenses)) },
+                    supportingContent = { Text(stringResource(R.string.third_party_licenses_summary)) },
+                    modifier = Modifier.clickable { onThirdPartyLicensesClick() }
+                )
 
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.source_code)) },
-                supportingContent = { Text(stringResource(R.string.source_code_name)) },
-                modifier = Modifier.clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://github.com/Kr0oked/Metronome".toUri())
-                    context.startActivity(intent)
-                }
-            )
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.source_code)) },
+                    supportingContent = { Text(stringResource(R.string.source_code_name)) },
+                    modifier = Modifier.clickable {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://github.com/Kr0oked/Metronome".toUri())
+                        context.startActivity(intent)
+                    }
+                )
 
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.version)) },
-                supportingContent = { Text(BuildConfig.VERSION_NAME) }
-            )
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.version)) },
+                    supportingContent = { Text(BuildConfig.VERSION_NAME) }
+                )
+            }
         }
     }
 
@@ -200,11 +214,23 @@ fun SettingsScreen(
 }
 
 @Composable
-fun SettingsCategory(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
-    )
+fun SettingsSection(
+    title: String,
+    icon: @Composable () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Row {
+        Box(Modifier.padding(start = 16.dp, top = 16.dp)) {
+            icon()
+        }
+        Column {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
+            )
+            content()
+        }
+    }
 }

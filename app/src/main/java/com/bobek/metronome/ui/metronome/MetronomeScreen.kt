@@ -18,7 +18,6 @@
 
 package com.bobek.metronome.ui.metronome
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +32,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -55,6 +60,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
@@ -70,7 +76,6 @@ import com.bobek.metronome.ComposeMetronomeViewModel
 import com.bobek.metronome.IMetronomeViewModel
 import com.bobek.metronome.R
 import com.bobek.metronome.data.Beats
-import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.ui.TestConstants
@@ -99,7 +104,7 @@ fun MetronomeScreen(
                 actions = {
                     IconButton(onClick = onSettingsClick) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_settings),
+                            imageVector = Icons.Filled.Settings,
                             contentDescription = stringResource(R.string.settings)
                         )
                     }
@@ -189,11 +194,11 @@ fun MetronomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TempoActionButton(
-                        iconRes = R.drawable.ic_remove,
+                        imageVector = Icons.Filled.Remove,
                         contentDescription = stringResource(R.string.decrement_tempo_button_description),
                         onClick = { viewModel.changeTempo(-1) },
                         onLongClick = { viewModel.changeTempo(-10) }
-                    )
+                    )// TODO: vibrate on click
                     FilledIconButton(
                         onClick = { viewModel.tapTempo() },
                         modifier = Modifier.size(dimensionResource(R.dimen.action_button_icon_size)),
@@ -205,7 +210,7 @@ fun MetronomeScreen(
                         )
                     }
                     TempoActionButton(
-                        iconRes = R.drawable.ic_add,
+                        imageVector = Icons.Filled.Add,
                         contentDescription = stringResource(R.string.increment_tempo_button_description),
                         onClick = { viewModel.changeTempo(1) },
                         onLongClick = { viewModel.changeTempo(10) }
@@ -219,7 +224,7 @@ fun MetronomeScreen(
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Icon(
-                        painter = if (playing) painterResource(R.drawable.ic_pause) else painterResource(R.drawable.ic_play_arrow),
+                        imageVector = if (playing) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                         contentDescription = stringResource(R.string.start_stop_button_description),
                     )
                 }
@@ -293,7 +298,7 @@ private fun isValidNumber(text: String, range: IntRange): Boolean =
 
 @Composable
 fun TempoActionButton(
-    @DrawableRes iconRes: Int,
+    imageVector: ImageVector,
     contentDescription: String,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
@@ -333,10 +338,7 @@ fun TempoActionButton(
         shape = RoundedCornerShape(10.dp),
         interactionSource = interactionSource
     ) {
-        Icon(
-            painterResource(iconRes),
-            contentDescription = contentDescription
-        )
+        Icon(imageVector = imageVector, contentDescription = contentDescription)
     }
 }
 
