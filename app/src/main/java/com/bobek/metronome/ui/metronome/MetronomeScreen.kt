@@ -84,13 +84,13 @@ fun MetronomeScreen(
     @PreviewParameter(MetronomeScreenViewModelProvider::class) viewModel: IMetronomeViewModel,
     onSettingsClick: () -> Unit = {}
 ) {
-    val connected by viewModel.getConnected().collectAsState(false)
-    val playing by viewModel.getPlaying().collectAsState(false)
-    val currentTick by viewModel.getCurrentTick().collectAsState(null)
-    val beats by viewModel.getBeats().collectAsState(Beats())
-    val subdivisions by viewModel.getSubdivisions().collectAsState(Subdivisions())
-    val gaps by viewModel.getGaps().collectAsState(Gaps())
-    val tempo by viewModel.getTempo().collectAsState(Tempo())
+    val connected by viewModel.getConnected().collectAsState()
+    val playing by viewModel.getPlaying().collectAsState()
+    val currentTick by viewModel.getCurrentTick().collectAsState()
+    val beats by viewModel.getBeats().collectAsState()
+    val subdivisions by viewModel.getSubdivisions().collectAsState()
+    val gaps by viewModel.getGaps().collectAsState()
+    val tempo by viewModel.getTempo().collectAsState()
 
     Scaffold(
         topBar = {

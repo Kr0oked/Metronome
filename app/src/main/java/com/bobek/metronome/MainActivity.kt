@@ -31,40 +31,22 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat.getParcelableExtra
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.bobek.metronome.data.AppNightMode
+import androidx.lifecycle.repeatOnLifecycle
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
-import com.bobek.metronome.ui.licenses.ThirdPartyLicenseScreen
-import com.bobek.metronome.ui.licenses.ThirdPartyLicenseScreenState
-import com.bobek.metronome.ui.licenses.ThirdPartyLicensesScreen
-import com.bobek.metronome.ui.metronome.MetronomeScreen
-import com.bobek.metronome.ui.settings.SettingsScreen
-import com.bobek.metronome.ui.theme.AppTheme
+import com.bobek.metronome.ui.MainContent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import de.philipp_bobek.oss_licenses_parser.OssLicensesParser
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -88,6 +70,14 @@ class MainActivity : ComponentActivity() {
         Log.d(TAG, "Lifecycle: onCreate")
         super.onCreate(savedInstanceState)
         registerReceivers()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.DESTROYED)
+            {
+                if (!viewModel.getPlaying().first()) {
+                    stopService(Intent(baseContext, MetronomeService::class.java))
+                }
+            }
+        }
         enableEdgeToEdge()
         setContent {
             MainContent(viewModel)
@@ -180,11 +170,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        lifecycleScope.launch {
-            if (!viewModel.getPlaying().first()) {
-                stopService(Intent(baseContext, MetronomeService::class.java))
-            }
-        }
         unregisterReceiver(refreshReceiver)
         unregisterReceiver(tickReceiver)
     }
@@ -219,90 +204,6 @@ class MainActivity : ComponentActivity() {
         override fun onReceive(context: Context, intent: Intent) {
             getParcelableExtra(intent, MetronomeService.EXTRA_TICK, Tick::class.java)?.let {
                 viewModel.onTickReceived(it)
-            }
-        }
-    }
-}
-
-@PreviewScreenSizes
-@Composable
-fun MainContent(
-    viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = true)
-) {
-    val navController = rememberNavController()
-    val nightMode by viewModel.getNightMode().collectAsState(AppNightMode.FOLLOW_SYSTEM)
-    val playing by viewModel.getPlaying().collectAsState(false)
-
-    val isDarkTheme = when (nightMode) {
-        AppNightMode.NO -> false
-        AppNightMode.YES -> true
-        AppNightMode.FOLLOW_SYSTEM -> isSystemInDarkTheme()
-    }
-
-    val activity = LocalActivity.current
-    LaunchedEffect(playing) {
-        if (playing) {
-            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        } else {
-            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        }
-    }
-
-    AppTheme(darkTheme = isDarkTheme) {
-        NavHost(navController = navController, startDestination = "metronome") {
-            composable("metronome") {
-                MetronomeScreen(
-                    viewModel = viewModel,
-                    onSettingsClick = { navController.navigate("settings") }
-                )
-            }
-            composable("settings") {
-                SettingsScreen(
-                    viewModel = viewModel,
-                    onBackClick = { navController.popBackStack() },
-                    onThirdPartyLicensesClick = { navController.navigate("licenses") }
-                )
-            }
-            composable("licenses") {
-                val context = LocalContext.current
-                val licenses = remember {
-                    context.resources
-                        .openRawResource(R.raw.third_party_license_metadata)
-                        .use(OssLicensesParser::parseMetadata)
-                        .sortedBy { it.libraryName }
-                }
-
-                ThirdPartyLicensesScreen(
-                    licenses = licenses,
-                    onBackClick = { navController.popBackStack() },
-                    onLicenseClick = { metadata ->
-                        navController.navigate("license/${metadata.libraryName}")
-                    }
-                )
-            }
-            composable("license/{libraryName}") { backStackEntry ->
-                val libraryName = backStackEntry.arguments?.getString("libraryName") ?: ""
-                val context = LocalContext.current
-                val licenseContent = remember(libraryName) {
-                    val metadata = context.resources
-                        .openRawResource(R.raw.third_party_license_metadata)
-                        .use(OssLicensesParser::parseMetadata)
-                        .find { it.libraryName == libraryName }
-
-                    metadata?.let {
-                        context.resources
-                            .openRawResource(R.raw.third_party_licenses)
-                            .use { stream -> OssLicensesParser.parseLicense(it, stream).licenseContent }
-                    } ?: ""
-                }
-
-                ThirdPartyLicenseScreen(
-                    state = ThirdPartyLicenseScreenState(
-                        libraryName = libraryName,
-                        licenseContent = licenseContent,
-                    ),
-                    onBackClick = { navController.popBackStack() }
-                )
             }
         }
     }
