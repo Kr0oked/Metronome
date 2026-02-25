@@ -61,6 +61,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
@@ -96,6 +98,8 @@ fun MetronomeScreen(
     val subdivisions by viewModel.getSubdivisions().collectAsState()
     val gaps by viewModel.getGaps().collectAsState()
     val tempo by viewModel.getTempo().collectAsState()
+
+    val hapticFeedback = LocalHapticFeedback.current
 
     Scaffold(
         topBar = {
@@ -144,7 +148,10 @@ fun MetronomeScreen(
                                 isBlinking = currentTick?.beat == i,
                                 isGap = gaps.value.contains(i)
                             ),
-                            onGapToggle = { viewModel.setGaps(gaps.toggle(i)) }
+                            onGapToggle = {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                                viewModel.setGaps(gaps.toggle(i))
+                            }
                         )
                     }
                 }
@@ -198,9 +205,12 @@ fun MetronomeScreen(
                         contentDescription = stringResource(R.string.decrement_tempo_button_description),
                         onClick = { viewModel.changeTempo(-1) },
                         onLongClick = { viewModel.changeTempo(-10) }
-                    )// TODO: vibrate on click
+                    )
                     FilledIconButton(
-                        onClick = { viewModel.tapTempo() },
+                        onClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                            viewModel.tapTempo()
+                        },
                         modifier = Modifier.size(dimensionResource(R.dimen.action_button_icon_size)),
                         shape = RoundedCornerShape(10.dp)
                     ) {
@@ -303,6 +313,7 @@ fun TempoActionButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val viewConfiguration = LocalViewConfiguration.current
+    val hapticFeedback = LocalHapticFeedback.current
 
     LaunchedEffect(interactionSource) {
         var isLongClick = false
@@ -313,6 +324,7 @@ fun TempoActionButton(
                     isLongClick = false
                     delay(viewConfiguration.longPressTimeoutMillis)
                     isLongClick = true
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                     onLongClick()
                 }
 
