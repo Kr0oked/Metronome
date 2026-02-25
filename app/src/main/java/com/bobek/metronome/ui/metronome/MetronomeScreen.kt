@@ -253,41 +253,39 @@ fun ControlSection(
         previousValue = value
     }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(label, style = MaterialTheme.typography.labelLarge)
-            Text(marking, style = MaterialTheme.typography.labelLarge, modifier = Modifier.testTag(markingTestTag))
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(label, style = MaterialTheme.typography.labelLarge)
+                Text(marking, style = MaterialTheme.typography.labelLarge, modifier = Modifier.testTag(markingTestTag))
+            }
             Slider(
                 value = value.toFloat(),
                 onValueChange = { onValueChange(it.toInt()) },
                 valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
                 steps = valueRange.last - valueRange.first - 1,
-                modifier = Modifier
-                    .weight(1f)
-                    .testTag(sliderTestTag)
-            )
-            OutlinedTextField(
-                value = text,
-                onValueChange = { value ->
-                    text = value
-                        .dropWhile { it == '0' }
-                        .take(3)
-                    if (isValidNumber(text, valueRange)) {
-                        onValueChange(text.toInt())
-                    }
-                },
-                modifier = Modifier
-                    .width(72.dp)
-                    .padding(start = 8.dp)
-                    .testTag(editTestTag),
-                textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                singleLine = true,
-                isError = !isValidNumber(text, valueRange)
+                modifier = Modifier.testTag(sliderTestTag)
             )
         }
+        OutlinedTextField(
+            value = text,
+            onValueChange = { value ->
+                text = value
+                    .dropWhile { it == '0' }
+                    .take(3)
+                if (isValidNumber(text, valueRange)) {
+                    onValueChange(text.toInt())
+                }
+            },
+            modifier = Modifier
+                .width(72.dp)
+                .padding(start = 8.dp)
+                .testTag(editTestTag),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+            singleLine = true,
+            isError = !isValidNumber(text, valueRange)
+        )
     }
 }
 
