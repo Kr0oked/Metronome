@@ -35,13 +35,18 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 @Preview
 @Composable
 fun TickVisualization(
     @PreviewParameter(TickVisualizationStateProvider::class) state: TickVisualizationState,
+    size: Dp = 40.dp,
+    animationDuration : Duration = 200.milliseconds,
     onGapToggle: () -> Unit = {}
 ) {
     var blinking by remember { mutableStateOf(false) }
@@ -49,7 +54,7 @@ fun TickVisualization(
     LaunchedEffect(state.isBlinking) {
         if (state.isBlinking) {
             blinking = true
-            delay(200)
+            delay(animationDuration)
             blinking = false
         }
     }
@@ -60,24 +65,24 @@ fun TickVisualization(
             state.isGap -> MaterialTheme.colorScheme.surfaceVariant
             else -> MaterialTheme.colorScheme.tertiaryContainer
         },
-        animationSpec = tween(durationMillis = 200)
+        animationSpec = tween(durationMillis = animationDuration.inWholeMilliseconds.toInt())
     )
 
     Canvas(
         modifier = Modifier
-            .size(40.dp)
+            .size(size)
             .clickable { onGapToggle() },
         onDraw = {
             if (state.isGap) {
                 drawCircle(
                     color = backgroundColor,
-                    radius = 18.dp.toPx(),
-                    style = Stroke(width = 4.dp.toPx())
+                    radius = (size * 0.45f).toPx(),
+                    style = Stroke(width = (size * 0.1f).toPx())
                 )
             } else {
                 drawCircle(
                     color = backgroundColor,
-                    radius = 20.dp.toPx(),
+                    radius = (size / 2.0f).toPx(),
                 )
             }
         }

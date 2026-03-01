@@ -41,9 +41,9 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.bobek.metronome.R
 import de.philipp_bobek.oss_licenses_parser.ThirdPartyLicenseMetadata
 
+@Composable
 @PreviewScreenSizes
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun ThirdPartyLicensesScreen(
     @PreviewParameter(ThirdPartyLicensesScreenStateProvider::class) licenses: List<ThirdPartyLicenseMetadata>,
     onBackClick: () -> Unit = {},

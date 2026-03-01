@@ -37,9 +37,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 
+@Composable
 @PreviewScreenSizes
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun ThirdPartyLicenseScreen(
     @PreviewParameter(ThirdPartyLicenseScreenStateProvider::class) state: ThirdPartyLicenseScreenState,
     onBackClick: () -> Unit = {}

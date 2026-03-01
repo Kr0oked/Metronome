@@ -18,6 +18,7 @@
 
 package com.bobek.metronome.ui
 
+import android.annotation.SuppressLint
 import android.view.WindowManager
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -43,8 +44,9 @@ import com.bobek.metronome.ui.settings.SettingsScreen
 import com.bobek.metronome.ui.theme.AppTheme
 import de.philipp_bobek.oss_licenses_parser.OssLicensesParser
 
-@PreviewScreenSizes
 @Composable
+@PreviewScreenSizes
+@SuppressLint("LocalContextResourcesRead")
 fun MainContent(
     viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = true)
 ) {

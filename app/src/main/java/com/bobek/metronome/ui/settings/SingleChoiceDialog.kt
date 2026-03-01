@@ -42,8 +42,8 @@ import androidx.compose.ui.unit.dp
 import com.bobek.metronome.data.Sound
 import com.bobek.metronome.domain.PreferenceChoice
 
-@Preview
 @Composable
+@Preview
 fun <T : PreferenceChoice> SingleChoiceDialog(
     @PreviewParameter(SingleChoiceDialogStateProvider::class) state: SingleChoiceDialogState<T>,
     onValueSelected: (T) -> Unit = {},

@@ -61,9 +61,9 @@ import com.bobek.metronome.R
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Sound
 
+@Composable
 @PreviewScreenSizes
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun SettingsScreen(
     viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(),
     onBackClick: () -> Unit = {},

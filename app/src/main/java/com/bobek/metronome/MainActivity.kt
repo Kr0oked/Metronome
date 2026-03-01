@@ -134,7 +134,7 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun showRequestNotificationsPermissionRationale() {
-        MaterialAlertDialogBuilder(this) // todo: replace with compose
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.request_notifications_permission_rationale_title)
             .setMessage(R.string.request_notifications_permission_rationale_message)
             .setCancelable(false)
