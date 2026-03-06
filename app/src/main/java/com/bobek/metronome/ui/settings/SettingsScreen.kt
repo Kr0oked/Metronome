@@ -70,9 +70,9 @@ fun SettingsScreen(
     onThirdPartyLicensesClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    val emphasizeFirstBeat by viewModel.getEmphasizeFirstBeat().collectAsState()
-    val sound by viewModel.getSound().collectAsState()
-    val nightMode by viewModel.getNightMode().collectAsState()
+    val emphasizeFirstBeat by viewModel.getEmphasizeFirstBeatFlow().collectAsState()
+    val sound by viewModel.getSoundFlow().collectAsState()
+    val nightMode by viewModel.getNightModeFlow().collectAsState()
 
     var showSoundDialog by remember { mutableStateOf(false) }
     var showNightModeDialog by remember { mutableStateOf(false) }
@@ -214,7 +214,7 @@ fun SettingsScreen(
 }
 
 @Composable
-fun SettingsSection(
+private fun SettingsSection(
     title: String,
     icon: @Composable () -> Unit,
     content: @Composable () -> Unit

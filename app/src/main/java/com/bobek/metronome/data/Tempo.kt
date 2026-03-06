@@ -18,19 +18,19 @@
 
 package com.bobek.metronome.data
 
-data class Tempo(val value: Int = DEFAULT) {
+data class Tempo(val value: Int = DEFAULT_VALUE) {
 
     val marking = TempoMarking.forTempo(value)
 
     init {
-        require(value in valueRange) { "value must be between $MIN and $MAX but was $value" }
+        require(value in valueRange) { "value must be between $MIN_VALUE and $MAX_VALUE but was $value" }
     }
 
     companion object {
-        const val MIN = 30
-        const val MAX = 252
-        const val DEFAULT = 80
+        const val MIN_VALUE = 30
+        const val MAX_VALUE = 252
+        const val DEFAULT_VALUE = 80
 
-        val valueRange = MIN..MAX
+        val valueRange = MIN_VALUE..MAX_VALUE
     }
 }

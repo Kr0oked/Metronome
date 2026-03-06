@@ -43,11 +43,11 @@ class InstrumentedTest : AbstractAndroidTest() {
         onSubdivisionsSlider().setProgress(1f)
         applyTempo(80)
 
-        onBeatsSlider().assertProgress(4f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onBeatsSlider().assertProgress(4f, Beats.MIN_VALUE.toFloat()..Beats.MAX_VALUE.toFloat())
         onBeatsEdit().assertTextEquals("4")
-        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN_VALUE.toFloat()..Subdivisions.MAX_VALUE.toFloat())
         onSubdivisionsEdit().assertTextEquals("1")
-        onTempoSlider().assertProgress(80f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoSlider().assertProgress(80f, Tempo.MIN_VALUE.toFloat()..Tempo.MAX_VALUE.toFloat())
         onTempoEdit().assertTextEquals("80")
         verifyTempoMarking(R.string.tempo_marking_andante)
     }
@@ -58,7 +58,7 @@ class InstrumentedTest : AbstractAndroidTest() {
         onBeatsEdit().assertTextEquals("1")
 
         onBeatsEdit().performTextReplacement("2")
-        onBeatsSlider().assertProgress(2f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onBeatsSlider().assertProgress(2f, Beats.MIN_VALUE.toFloat()..Beats.MAX_VALUE.toFloat())
     }
 
     @Test
@@ -67,7 +67,7 @@ class InstrumentedTest : AbstractAndroidTest() {
         onSubdivisionsEdit().assertTextEquals("1")
 
         onSubdivisionsEdit().performTextReplacement("2")
-        onSubdivisionsSlider().assertProgress(2f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onSubdivisionsSlider().assertProgress(2f, Subdivisions.MIN_VALUE.toFloat()..Subdivisions.MAX_VALUE.toFloat())
     }
 
     @Test
@@ -76,7 +76,7 @@ class InstrumentedTest : AbstractAndroidTest() {
         onTempoEdit().assertTextEquals("30")
 
         onTempoEdit().performTextReplacement("40")
-        onTempoSlider().assertProgress(40f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoSlider().assertProgress(40f, Tempo.MIN_VALUE.toFloat()..Tempo.MAX_VALUE.toFloat())
     }
 
     @Test
@@ -86,7 +86,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onBeatsEdit().performTextReplacement("9")
         onBeatsEdit().assertHasError()
-        onBeatsSlider().assertProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onBeatsSlider().assertProgress(1f, Beats.MIN_VALUE.toFloat()..Beats.MAX_VALUE.toFloat())
     }
 
     @Test
@@ -96,7 +96,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onBeatsEdit().performTextReplacement(".")
         onBeatsEdit().assertHasError()
-        onBeatsSlider().assertProgress(1f, Beats.MIN.toFloat()..Beats.MAX.toFloat())
+        onBeatsSlider().assertProgress(1f, Beats.MIN_VALUE.toFloat()..Beats.MAX_VALUE.toFloat())
     }
 
     @Test
@@ -106,7 +106,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onSubdivisionsEdit().performTextReplacement("5")
         onSubdivisionsEdit().assertHasError()
-        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN_VALUE.toFloat()..Subdivisions.MAX_VALUE.toFloat())
     }
 
     @Test
@@ -116,7 +116,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onSubdivisionsEdit().performTextReplacement(".")
         onSubdivisionsEdit().assertHasError()
-        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN.toFloat()..Subdivisions.MAX.toFloat())
+        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN_VALUE.toFloat()..Subdivisions.MAX_VALUE.toFloat())
     }
 
     @Test
@@ -126,7 +126,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onTempoEdit().performTextReplacement("253")
         onTempoEdit().assertHasError()
-        onTempoSlider().assertProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoSlider().assertProgress(30f, Tempo.MIN_VALUE.toFloat()..Tempo.MAX_VALUE.toFloat())
     }
 
     @Test
@@ -136,7 +136,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onTempoEdit().performTextReplacement(".")
         onTempoEdit().assertHasError()
-        onTempoSlider().assertProgress(30f, Tempo.MIN.toFloat()..Tempo.MAX.toFloat())
+        onTempoSlider().assertProgress(30f, Tempo.MIN_VALUE.toFloat()..Tempo.MAX_VALUE.toFloat())
     }
 
     @Test

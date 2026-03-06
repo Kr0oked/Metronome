@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.DESTROYED)
             {
-                if (!viewModel.getPlaying().first()) {
+                if (!viewModel.getPlayingFlow().value) {
                     stopService(Intent(baseContext, MetronomeService::class.java))
                 }
             }
@@ -203,7 +203,7 @@ class MainActivity : ComponentActivity() {
     inner class TickReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             getParcelableExtra(intent, MetronomeService.EXTRA_TICK, Tick::class.java)?.let {
-                viewModel.onTickReceived(it)
+                viewModel.emitTick(it)
             }
         }
     }

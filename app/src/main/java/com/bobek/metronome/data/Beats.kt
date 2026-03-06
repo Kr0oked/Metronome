@@ -18,17 +18,17 @@
 
 package com.bobek.metronome.data
 
-data class Beats(val value: Int = DEFAULT) {
+data class Beats(val value: Int = DEFAULT_VALUE) {
 
     init {
-        require(value in valueRange) { "value must be between $MIN and $MAX but was $value" }
+        require(value in valueRange) { "value must be between $MIN_VALUE and $MAX_VALUE but was $value" }
     }
 
     companion object {
-        const val MIN = 1
-        const val MAX = 8
-        const val DEFAULT = 4
+        const val MIN_VALUE = 1
+        const val MAX_VALUE = 8
+        const val DEFAULT_VALUE = 4
 
-        val valueRange = MIN..MAX
+        val valueRange = MIN_VALUE..MAX_VALUE
     }
 }

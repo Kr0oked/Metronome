@@ -51,8 +51,8 @@ fun MainContent(
     viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = true)
 ) {
     val navController = rememberNavController()
-    val nightMode by viewModel.getNightMode().collectAsState()
-    val playing by viewModel.getPlaying().collectAsState()
+    val nightMode by viewModel.getNightModeFlow().collectAsState()
+    val playing by viewModel.getPlayingFlow().collectAsState()
 
     val isDarkTheme = when (nightMode) {
         AppNightMode.NO -> false

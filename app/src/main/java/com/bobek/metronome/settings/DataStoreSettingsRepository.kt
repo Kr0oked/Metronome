@@ -56,7 +56,7 @@ class DataStoreSettingsRepository @Inject constructor(
     }
 
     override fun getBeats(): Flow<Beats> = preferencesDataStore.data
-        .map { it[BEATS_KEY] ?: Beats.DEFAULT }
+        .map { it[BEATS_KEY] ?: Beats.DEFAULT_VALUE }
         .map { Beats(it) }
 
     override suspend fun setBeats(beats: Beats) {
@@ -65,7 +65,7 @@ class DataStoreSettingsRepository @Inject constructor(
     }
 
     override fun getSubdivisions(): Flow<Subdivisions> = preferencesDataStore.data
-        .map { it[SUBDIVISIONS_KEY] ?: Subdivisions.DEFAULT }
+        .map { it[SUBDIVISIONS_KEY] ?: Subdivisions.DEFAULT_VALUE }
         .map { Subdivisions(it) }
 
     override suspend fun setSubdivisions(subdivisions: Subdivisions) {
@@ -91,7 +91,7 @@ class DataStoreSettingsRepository @Inject constructor(
     }
 
     override fun getTempo(): Flow<Tempo> = preferencesDataStore.data
-        .map { it[TEMPO_KEY] ?: Tempo.DEFAULT }
+        .map { it[TEMPO_KEY] ?: Tempo.DEFAULT_VALUE }
         .map { Tempo(it) }
 
     override suspend fun setTempo(tempo: Tempo) {

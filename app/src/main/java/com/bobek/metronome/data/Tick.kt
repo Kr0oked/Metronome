@@ -21,10 +21,12 @@ package com.bobek.metronome.data
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-@Parcelize
+@Parcelize // TODO: remove parcelize
 data class Tick(val beat: Int, val type: TickType, val gap: Boolean) : Parcelable {
 
     init {
-        require(beat in Beats.MIN..Beats.MAX) { "beat must be between ${Beats.MIN} and ${Beats.MAX} but was $beat" }
+        require(beat in Beats.MIN_VALUE..Beats.MAX_VALUE) {
+            "beat must be between ${Beats.MIN_VALUE} and ${Beats.MAX_VALUE} but was $beat"
+        }
     }
 }

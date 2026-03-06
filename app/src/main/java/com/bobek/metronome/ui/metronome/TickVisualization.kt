@@ -26,17 +26,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.bobek.metronome.ComposeMetronomeViewModel
+import com.bobek.metronome.IMetronomeViewModel
+import com.bobek.metronome.data.Gaps
+import com.bobek.metronome.data.TickType
 import kotlinx.coroutines.delay
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -46,61 +53,78 @@ import kotlin.time.Duration.Companion.milliseconds
 fun TickVisualization(
     @PreviewParameter(TickVisualizationStateProvider::class) state: TickVisualizationState,
     size: Dp = 40.dp,
-    animationDuration : Duration = 200.milliseconds,
-    onGapToggle: () -> Unit = {}
+    animationDuration: Duration = 200.milliseconds
 ) {
+    val beats by state.viewModel.getBeatsFlow().collectAsState()
+    val gaps by state.viewModel.getGapsFlow().collectAsState()
     var blinking by remember { mutableStateOf(false) }
 
-    LaunchedEffect(state.isBlinking) {
-        if (state.isBlinking) {
-            blinking = true
-            delay(animationDuration)
-            blinking = false
+    val hapticFeedback = LocalHapticFeedback.current
+
+    LaunchedEffect(Unit) {
+        state.viewModel.getTickFlow().collect { tick ->
+            if (tick.beat == state.beatsValue && tick.type != TickType.SUB) {
+                blinking = true
+                delay(animationDuration)
+                blinking = false
+            }
         }
     }
+
+    val isGap = gaps.value.contains(state.beatsValue)
 
     val backgroundColor by animateColorAsState(
         targetValue = when {
             blinking -> MaterialTheme.colorScheme.primary
-            state.isGap -> MaterialTheme.colorScheme.surfaceVariant
+            isGap -> MaterialTheme.colorScheme.surfaceVariant
             else -> MaterialTheme.colorScheme.tertiaryContainer
         },
         animationSpec = tween(durationMillis = animationDuration.inWholeMilliseconds.toInt())
     )
 
-    Canvas(
-        modifier = Modifier
-            .size(size)
-            .clickable { onGapToggle() },
-        onDraw = {
-            if (state.isGap) {
-                drawCircle(
-                    color = backgroundColor,
-                    radius = (size * 0.45f).toPx(),
-                    style = Stroke(width = (size * 0.1f).toPx())
-                )
-            } else {
-                drawCircle(
-                    color = backgroundColor,
-                    radius = (size / 2.0f).toPx(),
-                )
+    if (state.beatsValue <= beats.value) {
+        Canvas(
+            modifier = Modifier
+                .size(size)
+                .clickable {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                    state.viewModel.setGaps(gaps.toggle(state.beatsValue))
+                },
+            onDraw = {
+                val minDimension = this.size.minDimension
+
+                if (isGap) {
+                    drawCircle(
+                        color = backgroundColor,
+                        radius = (minDimension * 0.45f),
+                        style = Stroke(width = (minDimension * 0.1f))
+                    )
+                } else {
+                    drawCircle(
+                        color = backgroundColor,
+                        radius = (minDimension / 2.0f),
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 data class TickVisualizationState(
-    val isBlinking: Boolean,
-    val isGap: Boolean
+    val viewModel: IMetronomeViewModel,
+    val beatsValue: Int
 )
 
 private class TickVisualizationStateProvider : PreviewParameterProvider<TickVisualizationState> {
     override val values: Sequence<TickVisualizationState> = sequenceOf(
-        TickVisualizationState(isBlinking = false, isGap = false),
-        TickVisualizationState(isBlinking = false, isGap = true),
-        TickVisualizationState(isBlinking = true, isGap = false),
-        TickVisualizationState(isBlinking = true, isGap = true)
+        TickVisualizationState(viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf())), beatsValue = 1),
+        TickVisualizationState(viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf(1))), beatsValue = 1)
     )
 
-    override fun getDisplayName(index: Int): String = values.elementAt(index).toString()
+    override fun getDisplayName(index: Int): String? =
+        when (index) {
+            0 -> "No gap"
+            1 -> "Gap"
+            else -> null
+        }
 }

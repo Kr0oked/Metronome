@@ -54,7 +54,7 @@ fun MetronomeScreen(
     @PreviewParameter(MetronomeScreenViewModelProvider::class) viewModel: IMetronomeViewModel,
     onSettingsClick: () -> Unit = {}
 ) {
-    val connected by viewModel.getConnected().collectAsState()
+    val connected by viewModel.getConnectedFlow().collectAsState()
 
     Scaffold(
         topBar = {
