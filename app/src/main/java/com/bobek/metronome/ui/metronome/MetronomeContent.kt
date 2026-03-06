@@ -25,8 +25,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -49,6 +51,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -97,15 +100,12 @@ fun MetronomeContent(viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(
 
 @Composable
 private fun LandscapeContent(viewModel: IMetronomeViewModel) {
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(dimensionResource(R.dimen.root_layout_padding)),
-    ) {
+    Row(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .weight(2f)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(dimensionResource(R.dimen.root_layout_padding)),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             BeatsControlSection(viewModel)
@@ -117,26 +117,28 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
         Column(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(dimensionResource(R.dimen.root_layout_padding)),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             TickVisualizationArea(
                 viewModel = viewModel,
                 rows = 2
             )
-            Column(modifier = Modifier.fillMaxSize()) {
+
+            Spacer(modifier = Modifier.height(generalSpacing()))
+
+            Column(verticalArrangement = Arrangement.spacedBy(generalSpacing())) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.spacedBy(generalSpacing()),
+                    verticalAlignment = Alignment.Bottom
                 ) {
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.CenterEnd
                     ) {
                         DecrementTempoButton(
                             viewModel = viewModel,
@@ -145,10 +147,8 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
                         )
                     }
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.CenterStart
                     ) {
                         IncrementTempoButton(
                             viewModel = viewModel,
@@ -161,13 +161,12 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.spacedBy(generalSpacing()),
+                    verticalAlignment = Alignment.Top
                 ) {
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.CenterEnd
                     ) {
                         TapTempoButton(
                             viewModel = viewModel,
@@ -176,10 +175,8 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
                         )
                     }
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.CenterStart
                     ) {
                         StartStopButton(
                             viewModel = viewModel,
@@ -214,42 +211,54 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(generalSpacing())
         ) {
-            DecrementTempoButton(
-                viewModel = viewModel,
-                modifier = Modifier
-                    .largeButton()
-                    .weight(1f),
-                iconSize = buttonIconSize()
-            )
-            TapTempoButton(
-                viewModel = viewModel,
-                modifier = Modifier
-                    .largeButton()
-                    .weight(1f),
-                iconSize = buttonIconSize()
-            )
-            IncrementTempoButton(
-                viewModel = viewModel,
-                modifier = Modifier
-                    .largeButton()
-                    .weight(1f),
-                iconSize = buttonIconSize()
-            )
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                DecrementTempoButton(
+                    viewModel = viewModel,
+                    modifier = Modifier.largeButton(),
+                    iconSize = buttonIconSize()
+                )
+            }
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                TapTempoButton(
+                    viewModel = viewModel,
+                    modifier = Modifier.largeButton(),
+                    iconSize = buttonIconSize()
+                )
+            }
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                IncrementTempoButton(
+                    viewModel = viewModel,
+                    modifier = Modifier.largeButton(),
+                    iconSize = buttonIconSize()
+                )
+            }
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(generalSpacing())
         ) {
-            StartStopButton(
-                viewModel = viewModel,
-                modifier = Modifier.largeButton(),
-                iconSize = buttonIconSize()
-            )
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                StartStopButton(
+                    viewModel = viewModel,
+                    modifier = Modifier.largeButton(),
+                    iconSize = buttonIconSize()
+                )
+            }
         }
     }
 }
@@ -263,11 +272,13 @@ private fun TickVisualizationArea(
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(generalSpacing())
     ) {
         for (rowIndex in 0 until rows) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(dimensionResource(R.dimen.beat_visualization_size)),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 for (position in 1..maxItemsInEachRow) {
@@ -276,7 +287,7 @@ private fun TickVisualizationArea(
                             viewModel = viewModel,
                             beatsValue = position + rowIndex * maxItemsInEachRow
                         ),
-                        size = dimensionResource(R.dimen.beat_visualization_size)
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
@@ -374,7 +385,7 @@ private fun ControlSection(
             },
             modifier = Modifier
                 .width(72.dp)
-                .padding(start = 8.dp)
+                .padding(start = generalSpacing())
                 .testTag(editTestTag),
             textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
@@ -519,15 +530,21 @@ private fun TempoActionButton(
     }
 }
 
+@Stable
 @Composable
 private fun metronomeButtonShape(): RoundedCornerShape = RoundedCornerShape(28.dp)
 
+@Stable
 @Composable
 private fun Modifier.largeButton(): Modifier = this
     .widthIn(Dp.Unspecified, 184.dp)
     .heightIn(Dp.Unspecified, 136.dp)
     .fillMaxSize()
-    .padding(8.dp)
 
+@Stable
 @Composable
 private fun buttonIconSize(): Dp = 40.dp
+
+@Stable
+@Composable
+private fun generalSpacing(): Dp = 8.dp

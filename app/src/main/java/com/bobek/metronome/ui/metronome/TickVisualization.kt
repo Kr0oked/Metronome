@@ -22,7 +22,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -38,8 +41,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.bobek.metronome.ComposeMetronomeViewModel
 import com.bobek.metronome.IMetronomeViewModel
 import com.bobek.metronome.data.Gaps
@@ -48,11 +49,11 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-@Preview
+@Preview(widthDp = 40)
 @Composable
 fun TickVisualization(
     @PreviewParameter(TickVisualizationStateProvider::class) state: TickVisualizationState,
-    size: Dp = 40.dp,
+    modifier: Modifier = Modifier,
     animationDuration: Duration = 200.milliseconds
 ) {
     val beats by state.viewModel.getBeatsFlow().collectAsState()
@@ -83,30 +84,36 @@ fun TickVisualization(
     )
 
     if (state.beatsValue <= beats.value) {
-        Canvas(
-            modifier = Modifier
-                .size(size)
-                .clickable {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                    state.viewModel.setGaps(gaps.toggle(state.beatsValue))
-                },
-            onDraw = {
-                val minDimension = this.size.minDimension
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            Canvas(
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .fillMaxSize()
+                    .clickable {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                        state.viewModel.setGaps(gaps.toggle(state.beatsValue))
+                    },
+                onDraw = {
+                    val minDimension = this.size.minDimension
 
-                if (isGap) {
-                    drawCircle(
-                        color = backgroundColor,
-                        radius = (minDimension * 0.45f),
-                        style = Stroke(width = (minDimension * 0.1f))
-                    )
-                } else {
-                    drawCircle(
-                        color = backgroundColor,
-                        radius = (minDimension / 2.0f),
-                    )
+                    if (isGap) {
+                        drawCircle(
+                            color = backgroundColor,
+                            radius = (minDimension * 0.45f),
+                            style = Stroke(width = (minDimension * 0.1f))
+                        )
+                    } else {
+                        drawCircle(
+                            color = backgroundColor,
+                            radius = (minDimension / 2.0f),
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
