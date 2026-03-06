@@ -20,8 +20,10 @@
 
 <resources>
     <dimen name="root_layout_padding">16dp</dimen>
-
-    <dimen name="beat_visualization_size">40dp</dimen>
-
-    <dimen name="action_button_icon_size">64dp</dimen>
+    <dimen name="general_spacing">8dp</dimen>
+    <dimen name="tick_visualization_size">40dp</dimen>
+    <dimen name="button_width">184dp</dimen>
+    <dimen name="button_height">136dp</dimen>
+    <dimen name="button_corner_shape">28dp</dimen>
+    <dimen name="button_icon_size">40dp</dimen>
 </resources>

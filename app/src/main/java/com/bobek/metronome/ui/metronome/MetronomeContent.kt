@@ -78,6 +78,8 @@ import androidx.compose.ui.unit.dp
 import com.bobek.metronome.ComposeMetronomeViewModel
 import com.bobek.metronome.IMetronomeViewModel
 import com.bobek.metronome.R
+import com.bobek.metronome.R.dimen.button_icon_size
+import com.bobek.metronome.R.dimen.general_spacing
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
@@ -126,14 +128,14 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
                 rows = 2
             )
 
-            Spacer(modifier = Modifier.height(generalSpacing()))
+            Spacer(modifier = Modifier.height(dimensionResource(general_spacing)))
 
-            Column(verticalArrangement = Arrangement.spacedBy(generalSpacing())) {
+            Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(general_spacing))) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(generalSpacing()),
+                    horizontalArrangement = Arrangement.spacedBy(dimensionResource(general_spacing)),
                     verticalAlignment = Alignment.Bottom
                 ) {
                     Box(
@@ -143,7 +145,7 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
                         DecrementTempoButton(
                             viewModel = viewModel,
                             modifier = Modifier.largeButton(),
-                            iconSize = buttonIconSize()
+                            iconSize = dimensionResource(button_icon_size)
                         )
                     }
                     Box(
@@ -153,7 +155,7 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
                         IncrementTempoButton(
                             viewModel = viewModel,
                             modifier = Modifier.largeButton(),
-                            iconSize = buttonIconSize()
+                            iconSize = dimensionResource(button_icon_size)
                         )
                     }
                 }
@@ -161,7 +163,7 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(generalSpacing()),
+                    horizontalArrangement = Arrangement.spacedBy(dimensionResource(general_spacing)),
                     verticalAlignment = Alignment.Top
                 ) {
                     Box(
@@ -171,7 +173,7 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
                         TapTempoButton(
                             viewModel = viewModel,
                             modifier = Modifier.largeButton(),
-                            iconSize = buttonIconSize()
+                            iconSize = dimensionResource(button_icon_size)
                         )
                     }
                     Box(
@@ -181,7 +183,7 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
                         StartStopButton(
                             viewModel = viewModel,
                             modifier = Modifier.largeButton(),
-                            iconSize = buttonIconSize()
+                            iconSize = dimensionResource(button_icon_size)
                         )
                     }
                 }
@@ -211,7 +213,7 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(generalSpacing())
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(general_spacing))
         ) {
             Box(
                 modifier = Modifier.weight(1f),
@@ -220,7 +222,7 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
                 DecrementTempoButton(
                     viewModel = viewModel,
                     modifier = Modifier.largeButton(),
-                    iconSize = buttonIconSize()
+                    iconSize = dimensionResource(button_icon_size)
                 )
             }
             Box(
@@ -230,7 +232,7 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
                 TapTempoButton(
                     viewModel = viewModel,
                     modifier = Modifier.largeButton(),
-                    iconSize = buttonIconSize()
+                    iconSize = dimensionResource(button_icon_size)
                 )
             }
             Box(
@@ -240,14 +242,14 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
                 IncrementTempoButton(
                     viewModel = viewModel,
                     modifier = Modifier.largeButton(),
-                    iconSize = buttonIconSize()
+                    iconSize = dimensionResource(button_icon_size)
                 )
             }
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(generalSpacing())
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(general_spacing))
         ) {
             Box(
                 modifier = Modifier.weight(1f),
@@ -256,7 +258,7 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
                 StartStopButton(
                     viewModel = viewModel,
                     modifier = Modifier.largeButton(),
-                    iconSize = buttonIconSize()
+                    iconSize = dimensionResource(button_icon_size)
                 )
             }
         }
@@ -272,13 +274,13 @@ private fun TickVisualizationArea(
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(generalSpacing())
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(general_spacing))
     ) {
         for (rowIndex in 0 until rows) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(dimensionResource(R.dimen.beat_visualization_size)),
+                    .height(dimensionResource(R.dimen.tick_visualization_size)),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 for (position in 1..maxItemsInEachRow) {
@@ -385,7 +387,7 @@ private fun ControlSection(
             },
             modifier = Modifier
                 .width(72.dp)
-                .padding(start = generalSpacing())
+                .padding(start = dimensionResource(general_spacing))
                 .testTag(editTestTag),
             textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
@@ -532,19 +534,12 @@ private fun TempoActionButton(
 
 @Stable
 @Composable
-private fun metronomeButtonShape(): RoundedCornerShape = RoundedCornerShape(28.dp)
+private fun metronomeButtonShape(): RoundedCornerShape =
+    RoundedCornerShape(dimensionResource(R.dimen.button_corner_shape))
 
 @Stable
 @Composable
 private fun Modifier.largeButton(): Modifier = this
-    .widthIn(Dp.Unspecified, 184.dp)
-    .heightIn(Dp.Unspecified, 136.dp)
+    .widthIn(Dp.Unspecified, dimensionResource(R.dimen.button_width))
+    .heightIn(Dp.Unspecified, dimensionResource(R.dimen.button_height))
     .fillMaxSize()
-
-@Stable
-@Composable
-private fun buttonIconSize(): Dp = 40.dp
-
-@Stable
-@Composable
-private fun generalSpacing(): Dp = 8.dp
