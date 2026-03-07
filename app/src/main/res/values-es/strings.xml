@@ -2,11 +2,8 @@
 <resources>
     <string name="metronome">Metrónomo</string>
     <string name="beats_label">Pulso</string>
-    <string name="beats_slider_description">Control deslizante para ajustar el pulso</string>
     <string name="subdivisions_label">Subdivisiones</string>
-    <string name="subdivisions_slider_description">Control deslizante para ajustar las subdivisiones</string>
     <string name="tempo_label">Tempo en BPM</string>
-    <string name="tempo_slider_description">Control deslizante para ajustar el tempo en BPM</string>
     <string name="start_stop_button_description">Iniciar o parar el metrónomo</string>
     <string name="tap_tempo_button_description">Pulse varias veces para ajustar el tempo</string>
     <string name="increment_tempo_button_description">Aumenta el tempo</string>

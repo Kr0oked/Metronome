@@ -2,11 +2,8 @@
 <resources>
     <string name="metronome">Metronom</string>
     <string name="beats_label">Schläge</string>
-    <string name="beats_slider_description">Slider zur Eingabe der Schläge</string>
     <string name="subdivisions_label">Unterteilungen</string>
-    <string name="subdivisions_slider_description">Slider zur Eingabe der Unterteilungen</string>
     <string name="tempo_label">Tempo in BPM</string>
-    <string name="tempo_slider_description">Slider zur Eingabe des Tempo in BPM</string>
     <string name="start_stop_button_description">Startet oder stoppt das Metronom</string>
     <string name="tap_tempo_button_description">Mehrmals antippen um das Tempo zu setzen</string>
     <string name="increment_tempo_button_description">Erhöht das Tempo</string>

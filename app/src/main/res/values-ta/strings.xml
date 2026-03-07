@@ -8,11 +8,8 @@
     <string name="tempo_marking_prestissimo">மிக விரைவில்</string>
     <string name="metronome">மெட்ரோனோம்</string>
     <string name="beats_label">துடிப்புகள்</string>
-    <string name="beats_slider_description">துடிப்புகளை அமைக்க ச்லைடர்</string>
     <string name="subdivisions_label">துணைப்பிரிவுகள்</string>
-    <string name="subdivisions_slider_description">துணைப்பிரிவுகளை அமைக்க ச்லைடர்</string>
     <string name="tempo_label">பிபிஎம்மில் டெம்போ</string>
-    <string name="tempo_slider_description">பிபிஎம்மில் டெம்போவை அமைக்க ச்லைடர்</string>
     <string name="start_stop_button_description">மெட்ரோனோம் தொடங்குகிறது அல்லது நிறுத்துகிறது</string>
     <string name="tap_tempo_button_description">டெம்போவை அமைக்க பல முறை தட்டவும்</string>
     <string name="increment_tempo_button_description">டெம்போவை அதிகரிக்கிறது</string>

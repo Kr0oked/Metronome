@@ -2,11 +2,8 @@
 <resources>
     <string name="metronome">Метроном</string>
     <string name="beats_label">Удары</string>
-    <string name="beats_slider_description">Слайдер для установки ударов</string>
     <string name="subdivisions_label">Подразделы</string>
-    <string name="subdivisions_slider_description">Слайдер для установки подразделов</string>
     <string name="tempo_label">Темп в BPM</string>
-    <string name="tempo_slider_description">Слайдер для установки темпа в BPM</string>
     <string name="start_stop_button_description">Запуск или остановка метронома</string>
     <string name="tap_tempo_button_description">Нажмите несколько раз, чтобы установить темп</string>
     <string name="increment_tempo_button_description">Увеличивает темп</string>

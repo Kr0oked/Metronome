@@ -38,11 +38,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.bobek.metronome.ComposeMetronomeViewModel
 import com.bobek.metronome.IMetronomeViewModel
+import com.bobek.metronome.R
 import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.TickType
 import kotlinx.coroutines.delay
@@ -88,10 +92,15 @@ fun TickVisualization(
             modifier = modifier,
             contentAlignment = Alignment.Center
         ) {
+            val description = stringResource(R.string.tick_visualization_image_description)
+
             Canvas(
                 modifier = Modifier
                     .aspectRatio(1f)
                     .fillMaxSize()
+                    .semantics {
+                        contentDescription = description
+                    }
                     .clickable {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                         state.viewModel.setGaps(gaps.toggle(state.beatsValue))

@@ -2,11 +2,8 @@
 <resources>
     <string name="metronome">节拍器</string>
     <string name="beats_label">拍子</string>
-    <string name="beats_slider_description">设置拍子的滑块</string>
     <string name="subdivisions_label">小节</string>
-    <string name="subdivisions_slider_description">设置小节的滑块</string>
     <string name="tempo_label">每分钟节奏</string>
-    <string name="tempo_slider_description">设置每分钟节奏的滑块</string>
     <string name="start_stop_button_description">开始或停止节拍器</string>
     <string name="tap_tempo_button_description">轻点多次以设置节奏</string>
     <string name="increment_tempo_button_description">增加节奏</string>
