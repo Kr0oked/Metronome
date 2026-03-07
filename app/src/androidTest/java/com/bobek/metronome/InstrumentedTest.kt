@@ -23,9 +23,6 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.filters.LargeTest
-import com.bobek.metronome.data.Beats
-import com.bobek.metronome.data.Subdivisions
-import com.bobek.metronome.data.Tempo
 import org.junit.Test
 
 @LargeTest
@@ -41,13 +38,13 @@ class InstrumentedTest : AbstractAndroidTest() {
     fun initialState() {
         onBeatsSlider().setProgress(4f)
         onSubdivisionsSlider().setProgress(1f)
-        applyTempo(80)
+        onTempoSlider().setProgress(80f)
 
-        onBeatsSlider().assertProgress(4f, Beats.MIN_VALUE.toFloat()..Beats.MAX_VALUE.toFloat())
+        onBeatsSlider().assertBeatsProgress(4f)
         onBeatsEdit().assertTextEquals("4")
-        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN_VALUE.toFloat()..Subdivisions.MAX_VALUE.toFloat())
+        onSubdivisionsSlider().assertSubdivisionsProgress(1f)
         onSubdivisionsEdit().assertTextEquals("1")
-        onTempoSlider().assertProgress(80f, Tempo.MIN_VALUE.toFloat()..Tempo.MAX_VALUE.toFloat())
+        onTempoSlider().assertTempoProgress(80f)
         onTempoEdit().assertTextEquals("80")
         verifyTempoMarking(R.string.tempo_marking_andante)
     }
@@ -58,7 +55,7 @@ class InstrumentedTest : AbstractAndroidTest() {
         onBeatsEdit().assertTextEquals("1")
 
         onBeatsEdit().performTextReplacement("2")
-        onBeatsSlider().assertProgress(2f, Beats.MIN_VALUE.toFloat()..Beats.MAX_VALUE.toFloat())
+        onBeatsSlider().assertBeatsProgress(2f)
     }
 
     @Test
@@ -67,7 +64,7 @@ class InstrumentedTest : AbstractAndroidTest() {
         onSubdivisionsEdit().assertTextEquals("1")
 
         onSubdivisionsEdit().performTextReplacement("2")
-        onSubdivisionsSlider().assertProgress(2f, Subdivisions.MIN_VALUE.toFloat()..Subdivisions.MAX_VALUE.toFloat())
+        onSubdivisionsSlider().assertSubdivisionsProgress(2f)
     }
 
     @Test
@@ -76,7 +73,7 @@ class InstrumentedTest : AbstractAndroidTest() {
         onTempoEdit().assertTextEquals("30")
 
         onTempoEdit().performTextReplacement("40")
-        onTempoSlider().assertProgress(40f, Tempo.MIN_VALUE.toFloat()..Tempo.MAX_VALUE.toFloat())
+        onTempoSlider().assertTempoProgress(40f)
     }
 
     @Test
@@ -86,7 +83,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onBeatsEdit().performTextReplacement("9")
         onBeatsEdit().assertHasError()
-        onBeatsSlider().assertProgress(1f, Beats.MIN_VALUE.toFloat()..Beats.MAX_VALUE.toFloat())
+        onBeatsSlider().assertBeatsProgress(1f)
     }
 
     @Test
@@ -96,7 +93,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onBeatsEdit().performTextReplacement(".")
         onBeatsEdit().assertHasError()
-        onBeatsSlider().assertProgress(1f, Beats.MIN_VALUE.toFloat()..Beats.MAX_VALUE.toFloat())
+        onBeatsSlider().assertBeatsProgress(1f)
     }
 
     @Test
@@ -106,7 +103,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onSubdivisionsEdit().performTextReplacement("5")
         onSubdivisionsEdit().assertHasError()
-        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN_VALUE.toFloat()..Subdivisions.MAX_VALUE.toFloat())
+        onSubdivisionsSlider().assertSubdivisionsProgress(1f)
     }
 
     @Test
@@ -116,7 +113,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onSubdivisionsEdit().performTextReplacement(".")
         onSubdivisionsEdit().assertHasError()
-        onSubdivisionsSlider().assertProgress(1f, Subdivisions.MIN_VALUE.toFloat()..Subdivisions.MAX_VALUE.toFloat())
+        onSubdivisionsSlider().assertSubdivisionsProgress(1f)
     }
 
     @Test
@@ -126,7 +123,7 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onTempoEdit().performTextReplacement("253")
         onTempoEdit().assertHasError()
-        onTempoSlider().assertProgress(30f, Tempo.MIN_VALUE.toFloat()..Tempo.MAX_VALUE.toFloat())
+        onTempoSlider().assertTempoProgress(30f)
     }
 
     @Test
@@ -136,57 +133,57 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onTempoEdit().performTextReplacement(".")
         onTempoEdit().assertHasError()
-        onTempoSlider().assertProgress(30f, Tempo.MIN_VALUE.toFloat()..Tempo.MAX_VALUE.toFloat())
+        onTempoSlider().assertTempoProgress(30f)
     }
 
     @Test
     fun tempoMarkings() {
-        applyTempo(30)
+        onTempoSlider().setProgress(30f)
         verifyTempoMarking(R.string.tempo_marking_largo)
 
-        applyTempo(59)
+        onTempoSlider().setProgress(59f)
         verifyTempoMarking(R.string.tempo_marking_largo)
 
-        applyTempo(60)
+        onTempoSlider().setProgress(60f)
         verifyTempoMarking(R.string.tempo_marking_larghetto)
 
-        applyTempo(65)
+        onTempoSlider().setProgress(65f)
         verifyTempoMarking(R.string.tempo_marking_larghetto)
 
-        applyTempo(66)
+        onTempoSlider().setProgress(66f)
         verifyTempoMarking(R.string.tempo_marking_adagio)
 
-        applyTempo(75)
+        onTempoSlider().setProgress(75f)
         verifyTempoMarking(R.string.tempo_marking_adagio)
 
-        applyTempo(76)
+        onTempoSlider().setProgress(76f)
         verifyTempoMarking(R.string.tempo_marking_andante)
 
-        applyTempo(107)
+        onTempoSlider().setProgress(107f)
         verifyTempoMarking(R.string.tempo_marking_andante)
 
-        applyTempo(108)
+        onTempoSlider().setProgress(108f)
         verifyTempoMarking(R.string.tempo_marking_moderato)
 
-        applyTempo(119)
+        onTempoSlider().setProgress(119f)
         verifyTempoMarking(R.string.tempo_marking_moderato)
 
-        applyTempo(120)
+        onTempoSlider().setProgress(120f)
         verifyTempoMarking(R.string.tempo_marking_allegro)
 
-        applyTempo(167)
+        onTempoSlider().setProgress(167f)
         verifyTempoMarking(R.string.tempo_marking_allegro)
 
-        applyTempo(168)
+        onTempoSlider().setProgress(168f)
         verifyTempoMarking(R.string.tempo_marking_presto)
 
-        applyTempo(169)
+        onTempoSlider().setProgress(169f)
         verifyTempoMarking(R.string.tempo_marking_presto)
 
-        applyTempo(200)
+        onTempoSlider().setProgress(200f)
         verifyTempoMarking(R.string.tempo_marking_prestissimo)
 
-        applyTempo(252)
+        onTempoSlider().setProgress(252f)
         verifyTempoMarking(R.string.tempo_marking_prestissimo)
     }
 }

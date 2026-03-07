@@ -46,10 +46,6 @@ abstract class AbstractAndroidTest {
     @get:Rule
     var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
-    protected fun applyTempo(tempo: Int) {
-        onTempoSlider().setProgress(tempo.toFloat())
-    }
-
     protected fun verifyTempoMarking(@StringRes resourceId: Int) {
         val expectedText = composeTestRule.activity.getString(resourceId)
         onTempoMarkingText().assertTextEquals(expectedText)
@@ -59,8 +55,16 @@ abstract class AbstractAndroidTest {
         performSemanticsAction(SemanticsActions.SetProgress) { it(value) }
     }
 
-    protected fun SemanticsNodeInteraction.assertProgress(value: Float, range: ClosedFloatingPointRange<Float>) {
-        assert(hasProgressBarRangeInfo(ProgressBarRangeInfo(value, range)))
+    protected fun SemanticsNodeInteraction.assertBeatsProgress(value: Float) {
+        assert(hasProgressBarRangeInfo(ProgressBarRangeInfo(value, 1f..8f, 6)))
+    }
+
+    protected fun SemanticsNodeInteraction.assertSubdivisionsProgress(value: Float) {
+        assert(hasProgressBarRangeInfo(ProgressBarRangeInfo(value, 1f..4f, 2)))
+    }
+
+    protected fun SemanticsNodeInteraction.assertTempoProgress(value: Float) {
+        assert(hasProgressBarRangeInfo(ProgressBarRangeInfo(value, 30f..252f, 221)))
     }
 
     protected fun SemanticsNodeInteraction.assertHasError() {
