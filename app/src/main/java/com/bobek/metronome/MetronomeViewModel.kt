@@ -67,8 +67,7 @@ interface IMetronomeViewModel {
     fun startStop()
     fun getConnectedFlow(): StateFlow<Boolean>
     fun getTickFlow(): SharedFlow<Tick>
-    fun emitTick(tick: Tick)
-    fun setMetronomeService(metronomeService: MetronomeService?)
+    fun setMetronomeService(metronomeService: IMetronomeService?)
 }
 
 @OptIn(FlowPreview::class)
@@ -78,19 +77,31 @@ class MetronomeViewModel @Inject constructor(
 ) : ViewModel(), IMetronomeViewModel {
 
     private val beatsFlow = MutableStateFlow(Beats())
+
     private val subdivisionsFlow = MutableStateFlow(Subdivisions())
+
     private val gapsFlow = MutableStateFlow(Gaps())
+
     private val tempoFlow = MutableStateFlow(Tempo())
+
     private val emphasizeFirstBeatFlow = MutableStateFlow(true)
+
     private val soundFlow = MutableStateFlow(Sound.SQUARE_WAVE)
+
     private val nightModeFlow = MutableStateFlow(AppNightMode.FOLLOW_SYSTEM)
+
     private val playingFlow = MutableStateFlow(false)
+
     private val connectedFlow = MutableStateFlow(false)
-    private val tickFlow =
-        MutableSharedFlow<Tick>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+
+    private val tickFlow = MutableSharedFlow<Tick>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
     private val taps = ArrayDeque<Long>()
 
-    private var metronomeService: MetronomeService? = null
+    private var metronomeService: IMetronomeService? = null
 
     init {
         runBlocking {
@@ -256,14 +267,13 @@ class MetronomeViewModel @Inject constructor(
 
     override fun getTickFlow(): SharedFlow<Tick> = tickFlow
 
-    override fun emitTick(tick: Tick) {
-        tickFlow.tryEmit(tick)
-    }
-
-    override fun setMetronomeService(metronomeService: MetronomeService?) {
+    override fun setMetronomeService(metronomeService: IMetronomeService?) {
         this.metronomeService = metronomeService
         connectedFlow.value = metronomeService != null
+
         metronomeService?.let {
+            setupFlowsFromMetronomeService(metronomeService)
+
             if (it.playing) {
                 updateViewModel(it)
             } else {
@@ -272,7 +282,17 @@ class MetronomeViewModel @Inject constructor(
         }
     }
 
-    private fun updateViewModel(metronomeService: MetronomeService) {
+    private fun setupFlowsFromMetronomeService(metronomeService: IMetronomeService) {
+        viewModelScope.launch {
+            metronomeService.getTickFlow().collect { tickFlow.tryEmit(it) }
+        }
+
+        viewModelScope.launch {
+            metronomeService.getRefreshFlow().collect { updateViewModel(metronomeService) }
+        }
+    }
+
+    private fun updateViewModel(metronomeService: IMetronomeService) {
         beatsFlow.value = metronomeService.beats
         subdivisionsFlow.value = metronomeService.subdivisions
         gapsFlow.value = metronomeService.gaps
@@ -282,7 +302,7 @@ class MetronomeViewModel @Inject constructor(
         playingFlow.value = metronomeService.playing
     }
 
-    private fun initServiceValues(metronomeService: MetronomeService) {
+    private fun initServiceValues(metronomeService: IMetronomeService) {
         metronomeService.beats = beatsFlow.value
         metronomeService.subdivisions = subdivisionsFlow.value
         metronomeService.gaps = gapsFlow.value
@@ -325,6 +345,5 @@ class ComposeMetronomeViewModel(
     override fun startStop() = Unit
     override fun getConnectedFlow(): StateFlow<Boolean> = MutableStateFlow(connected)
     override fun getTickFlow(): SharedFlow<Tick> = MutableSharedFlow()
-    override fun emitTick(tick: Tick) = Unit
-    override fun setMetronomeService(metronomeService: MetronomeService?) = Unit
+    override fun setMetronomeService(metronomeService: IMetronomeService?) = Unit
 }

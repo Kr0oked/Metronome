@@ -19,11 +19,8 @@
 package com.bobek.metronome
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.content.BroadcastReceiver
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager.PERMISSION_DENIED
 import android.os.Build.VERSION
@@ -37,12 +34,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
-import androidx.core.content.IntentCompat.getParcelableExtra
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
 import com.bobek.metronome.ui.MainContent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -60,8 +54,6 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MetronomeViewModel by viewModels()
     private val postNotificationsPermissionRequest = registerPostNotificationsPermissionRequest()
     private val metronomeServiceConnection = MetronomeServiceConnection()
-    private val refreshReceiver = RefreshReceiver()
-    private val tickReceiver = TickReceiver()
 
     @Inject
     lateinit var settingsRepository: SettingsRepository
@@ -69,7 +61,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "Lifecycle: onCreate")
         super.onCreate(savedInstanceState)
-        registerReceivers()
+        setupStrategyToStopNoLongerNeededService()
+        enableEdgeToEdge()
+        setContent {
+            MainContent(viewModel)
+        }
+    }
+
+    private fun setupStrategyToStopNoLongerNeededService() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.DESTROYED)
             {
@@ -78,25 +77,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        enableEdgeToEdge()
-        setContent {
-            MainContent(viewModel)
-        }
-    }
-
-    private fun registerReceivers() {
-        ContextCompat.registerReceiver(
-            this,
-            refreshReceiver,
-            IntentFilter(MetronomeService.ACTION_REFRESH),
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
-        ContextCompat.registerReceiver(
-            this,
-            tickReceiver,
-            IntentFilter(MetronomeService.ACTION_TICK),
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
     }
 
     override fun onResume() {
@@ -168,12 +148,6 @@ class MainActivity : ComponentActivity() {
         unbindService(metronomeServiceConnection)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(refreshReceiver)
-        unregisterReceiver(tickReceiver)
-    }
-
     private fun registerPostNotificationsPermissionRequest() =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (!granted) {
@@ -184,27 +158,17 @@ class MainActivity : ComponentActivity() {
         }
 
     private inner class MetronomeServiceConnection : ServiceConnection {
+
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder = service as MetronomeService.LocalBinder
-            viewModel.setMetronomeService(binder.getService())
+            if (service is MetronomeService.LocalBinder) {
+                viewModel.setMetronomeService(service.getService())
+            } else {
+                Log.w(TAG, "Unexpected service binder type: ${service::class.qualifiedName}")
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
             viewModel.setMetronomeService(null)
-        }
-    }
-
-    inner class RefreshReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-//            viewModel.setMetronomeService() // TODO
-        }
-    }
-
-    inner class TickReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            getParcelableExtra(intent, MetronomeService.EXTRA_TICK, Tick::class.java)?.let {
-                viewModel.emitTick(it)
-            }
         }
     }
 }

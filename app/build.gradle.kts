@@ -22,7 +22,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     id("com.google.android.gms.oss-licenses-plugin")
-    id("kotlin-parcelize")
 }
 
 java {
