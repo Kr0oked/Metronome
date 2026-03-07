@@ -44,7 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,8 +74,8 @@ fun SettingsScreen(
     val sound by viewModel.getSoundFlow().collectAsState()
     val nightMode by viewModel.getNightModeFlow().collectAsState()
 
-    var showSoundDialog by remember { mutableStateOf(false) }
-    var showNightModeDialog by remember { mutableStateOf(false) }
+    var showSoundDialog by rememberSaveable { mutableStateOf(false) }
+    var showNightModeDialog by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
