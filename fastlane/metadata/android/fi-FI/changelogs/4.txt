@@ -1,0 +1,4 @@
+- Yksivärinen kuvake
+- Lupa ilmoituksille
+- Parannettu visualisointien kokoa
+- Painikkeiden uudelleenjärjestely

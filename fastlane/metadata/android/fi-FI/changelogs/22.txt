@@ -1,0 +1,1 @@
+- Korjattu tiedonkulkuvirhe taustapalvelun ja käyttöliittymän välillä

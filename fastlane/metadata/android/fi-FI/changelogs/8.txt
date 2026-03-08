@@ -1,0 +1,3 @@
+- Päivitetty Android 14:nteen
+- Parannettu teemojen nimeämistä
+- Korjattu kirjoitusvirheitä

@@ -1,0 +1,1 @@
+- Arka plan hizmeti ile kullanıcı arayüzü arasındaki iletişim hatası düzeltildi

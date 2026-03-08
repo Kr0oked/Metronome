@@ -1,0 +1,6 @@
+-  Actualización a Android 16
+- Añadidos tres nuevos sonidos
+- Agregada la traducción a Hebreo
+- Corregido error en función de paroadeo
+- Corregido error que previene empezar el servicio en segundo plano 
+- Corregido error al abrir las licencias de código abierto
