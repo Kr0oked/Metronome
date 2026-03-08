@@ -29,16 +29,12 @@
     <string name="version">Versie</string>
     <string name="request_notifications_permission_rationale_title">We hebben toestemming nodig om meldingen te geven</string>
     <string name="request_notifications_permission_rationale_message">Deze app wil een melding geven zolang de metronoom loopt. Je kunt de metronoom dan eenvoudig stoppen, zelfs als de app op de achtergrond draait.</string>
-    <string name="loading_indicator_description">Visuele indicator dat de app momenteel inhoud aan het laden is</string>
     <string name="ok">OK</string>
     <string name="no_thanks">Nee bedankt</string>
     <string name="metronome">Metronoom</string>
     <string name="beats_label">Slagen</string>
-    <string name="beats_slider_description">Schuifregelaar om de slagen in te stellen</string>
     <string name="subdivisions_label">Onderverdelingen</string>
-    <string name="subdivisions_slider_description">Schuifregelaar om de onderverdelingen in te stellen</string>
     <string name="tempo_label">Tempo in BPM</string>
-    <string name="tempo_slider_description">Schuifregelaar om het tempo in BPM in te stellen</string>
     <string name="tempo_marking_largo">Largo</string>
     <string name="tempo_marking_larghetto">Larghetto</string>
     <string name="tempo_marking_adagio">Adagio</string>
