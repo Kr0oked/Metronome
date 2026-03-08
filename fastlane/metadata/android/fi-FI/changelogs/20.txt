@@ -1,0 +1,3 @@
+- Pysäyttää tarpeettoman palvelun
+- Lisätty ranska
+- Parannettu heprean käännöstä

@@ -1,0 +1,2 @@
+- Napauta tempo napin painalluksella
+- Korjattu ongelma venäjän käännöksessä

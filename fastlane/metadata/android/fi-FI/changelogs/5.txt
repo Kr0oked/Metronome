@@ -1,0 +1,4 @@
+- Lisätty tšekki
+- Parannettu asetuksia
+- Käyttöoikeuksien perustelut
+- Parannettu saavutettavuus

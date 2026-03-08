@@ -1,0 +1,2 @@
+- Korjattu sovelluksen kaatuminen Android 14:ssä
+- Korjattu pysäytyspainike ilmoituksessa Android 14:ssä

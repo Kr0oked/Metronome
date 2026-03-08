@@ -1,0 +1,3 @@
+- Laskee keskiarvon naputusnopeudesta
+- Lisätty portugali
+- Lisätty turkin kieli

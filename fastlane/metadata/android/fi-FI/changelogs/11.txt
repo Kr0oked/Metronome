@@ -1,0 +1,2 @@
+- Lisätty näkymä kolmansien osapuolten ohjelmistolisensseille
+- Lisätty brasilianportugalinkielinen käännös

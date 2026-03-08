@@ -1,0 +1,5 @@
+- Material 3 -tyyli
+- Painikkeet tempon nopeuttamiseen ja hidastamiseen
+- Uudet kuvakkeet tummaan teemaan
+- Mahdollisuus korostaa ensimmäistä iskua
+- Sovellusasetusten tallentaminen

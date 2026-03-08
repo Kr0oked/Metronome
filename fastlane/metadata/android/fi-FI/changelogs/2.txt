@@ -1,0 +1,2 @@
+- Metronomi on nyt tarkka, eikä se enää pätki
+- Parannettu tempon naputtamistoimintoa
