@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@ import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -103,9 +101,7 @@ class Metronome(
         } catch (_: CancellationException) {
             Log.d(TAG, "Received cancellation")
             track.pause()
-            if (VERSION.SDK_INT >= VERSION_CODES.N) {
-                Log.d(TAG, "Underrun count was ${track.underrunCount}")
-            }
+            Log.d(TAG, "Underrun count was ${track.underrunCount}")
         } finally {
             track.release()
         }

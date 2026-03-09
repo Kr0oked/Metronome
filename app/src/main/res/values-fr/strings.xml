@@ -7,9 +7,7 @@
     <string name="settings">Paramètres</string>
     <string name="subdivisions_label">Sous-divisions</string>
     <string name="sound_risset_drum">Percussion synthétique</string>
-    <string name="subdivisions_slider_description">Curseur pour définir les sous-divisions</string>
     <string name="tempo_label">Tempo en BPM</string>
-    <string name="beats_slider_description">Curseur pour définir le nombre de temps</string>
     <string name="tap_tempo_button_description">Tappez en rythme pour définir le rythme</string>
     <string name="tick_visualization_image_description">Visualisation du tic-tac</string>
     <string name="notification_playback_title">Le métronome est en marche</string>
@@ -25,14 +23,12 @@
     <string name="source_code">Code Source</string>
     <string name="version">Version</string>
     <string name="request_notifications_permission_rationale_title">Nous avons besoin de votre permission pour utiliser les notifications</string>
-    <string name="loading_indicator_description">Indicateur visuel indiquant que l\'appli charge actuellement du contenu</string>
     <string name="tempo_marking_largo">Largo</string>
     <string name="tempo_marking_adagio">Adagio</string>
     <string name="tempo_marking_andante">Andante</string>
     <string name="tempo_marking_allegro">Allegro</string>
     <string name="display">Affichage</string>
     <string name="night_mode_follow_system">Suivre les paramètres système</string>
-    <string name="tempo_slider_description">Curseur pour définir le tempo en BPM</string>
     <string name="night_mode">Thème</string>
     <string name="night_mode_yes">Sombre</string>
     <string name="night_mode_no">Clair</string>

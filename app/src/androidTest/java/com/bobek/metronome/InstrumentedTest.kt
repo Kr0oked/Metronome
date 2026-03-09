@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,11 @@
 
 package com.bobek.metronome
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.performTextReplacement
 import androidx.test.filters.LargeTest
-import com.bobek.metronome.SliderUtils.setValue
-import com.bobek.metronome.SliderUtils.withValue
-import com.bobek.metronome.TextInputLayoutUtils.displaysError
-import com.bobek.metronome.TextInputLayoutUtils.doesNotDisplayError
-import org.hamcrest.Matchers.not
 import org.junit.Test
 
 @LargeTest
@@ -37,166 +30,160 @@ class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun contentVisible() {
-        onView(withId(R.id.loading_indicator)).check(matches(not(isDisplayed())))
-        onView(withId(R.id.content)).check(matches(isDisplayed()))
+        onLoadingIndicator().assertIsNotDisplayed()
+        onContent().assertIsDisplayed()
     }
 
     @Test
     fun initialState() {
-        onBeatsSlider().perform(setValue(4.toFloat()))
-        onSubdivisionsSlider().perform(setValue(1.toFloat()))
-        applyTempo(80)
+        onBeatsSlider().setProgress(4f)
+        onSubdivisionsSlider().setProgress(1f)
+        onTempoSlider().setProgress(80f)
 
-        onBeatsSlider().check(matches(withValue(4.0f)))
-        onBeatsEdit().check(matches(withText("4")))
-        onSubdivisionsSlider().check(matches(withValue(1.0f)))
-        onSubdivisionsEdit().check(matches(withText("1")))
-        onTempoSlider().check(matches(withValue(80.0f)))
-        onTempoEdit().check(matches(withText("80")))
-        onTempoMarkingText().check(matches(withText(R.string.tempo_marking_andante)))
+        onBeatsSlider().assertBeatsProgress(4f)
+        onBeatsEdit().assertTextEquals("4")
+        onSubdivisionsSlider().assertSubdivisionsProgress(1f)
+        onSubdivisionsEdit().assertTextEquals("1")
+        onTempoSlider().assertTempoProgress(80f)
+        onTempoEdit().assertTextEquals("80")
+        verifyTempoMarking(R.string.tempo_marking_andante)
     }
 
     @Test
     fun beatsSliderAndEditReflectEachOther() {
-        onBeatsSlider().perform(setValue(1.0f))
-        onBeatsEdit().check(matches(withText("1")))
+        onBeatsSlider().setProgress(1f)
+        onBeatsEdit().assertTextEquals("1")
 
-        onBeatsEdit().perform(ViewActions.replaceText("2"))
-        onBeatsSlider().check(matches(withValue(2.0f)))
+        onBeatsEdit().performTextReplacement("2")
+        onBeatsSlider().assertBeatsProgress(2f)
     }
 
     @Test
     fun subdivisionsSliderAndEditReflectEachOther() {
-        onSubdivisionsSlider().perform(setValue(1.0f))
-        onSubdivisionsEdit().check(matches(withText("1")))
+        onSubdivisionsSlider().setProgress(1f)
+        onSubdivisionsEdit().assertTextEquals("1")
 
-        onSubdivisionsEdit().perform(ViewActions.replaceText("2"))
-        onSubdivisionsSlider().check(matches(withValue(2.0f)))
+        onSubdivisionsEdit().performTextReplacement("2")
+        onSubdivisionsSlider().assertSubdivisionsProgress(2f)
     }
 
     @Test
     fun tempoSliderAndEditReflectEachOther() {
-        onTempoSlider().perform(setValue(30.0f))
-        onTempoEdit().check(matches(withText("30")))
+        onTempoSlider().setProgress(30f)
+        onTempoEdit().assertTextEquals("30")
 
-        onTempoEdit().perform(ViewActions.replaceText("40"))
-        onTempoSlider().check(matches(withValue(40.0f)))
+        onTempoEdit().performTextReplacement("40")
+        onTempoSlider().assertTempoProgress(40f)
     }
 
     @Test
     fun beatsErrorWhenValueTooBig() {
-        onBeatsSlider().perform(setValue(1.0f))
-        onBeatsEditLayout().check(matches(doesNotDisplayError()))
+        onBeatsSlider().setProgress(1f)
+        onBeatsEdit().assertHasNoError()
 
-        onBeatsEdit().perform(ViewActions.replaceText("9"))
-        onBeatsEditLayout().check(matches(displaysError()))
-
-        onBeatsSlider().check(matches(withValue(1.0f)))
+        onBeatsEdit().performTextReplacement("9")
+        onBeatsEdit().assertHasError()
+        onBeatsSlider().assertBeatsProgress(1f)
     }
 
     @Test
     fun beatsErrorWhenValueNotANumber() {
-        onBeatsSlider().perform(setValue(1.0f))
-        onBeatsEditLayout().check(matches(doesNotDisplayError()))
+        onBeatsSlider().setProgress(1f)
+        onBeatsEdit().assertHasNoError()
 
-        onBeatsEdit().perform(ViewActions.replaceText("."))
-        onBeatsEditLayout().check(matches(displaysError()))
-
-        onBeatsSlider().check(matches(withValue(1.0f)))
+        onBeatsEdit().performTextReplacement(".")
+        onBeatsEdit().assertHasError()
+        onBeatsSlider().assertBeatsProgress(1f)
     }
 
     @Test
     fun subdivisionsErrorWhenValueTooBig() {
-        onSubdivisionsSlider().perform(setValue(1.0f))
-        onSubdivisionsEditLayout().check(matches(doesNotDisplayError()))
+        onSubdivisionsSlider().setProgress(1f)
+        onSubdivisionsEdit().assertHasNoError()
 
-        onSubdivisionsEdit().perform(ViewActions.replaceText("5"))
-
-        onSubdivisionsEditLayout().check(matches(displaysError()))
-        onSubdivisionsSlider().check(matches(withValue(1.0f)))
+        onSubdivisionsEdit().performTextReplacement("5")
+        onSubdivisionsEdit().assertHasError()
+        onSubdivisionsSlider().assertSubdivisionsProgress(1f)
     }
 
     @Test
     fun subdivisionsErrorWhenValueNotANumber() {
-        onSubdivisionsSlider().perform(setValue(1.0f))
-        onSubdivisionsEditLayout().check(matches(doesNotDisplayError()))
+        onSubdivisionsSlider().setProgress(1f)
+        onSubdivisionsEdit().assertHasNoError()
 
-        onSubdivisionsEdit().perform(ViewActions.replaceText("."))
-
-        onSubdivisionsEditLayout().check(matches(displaysError()))
-        onSubdivisionsSlider().check(matches(withValue(1.0f)))
+        onSubdivisionsEdit().performTextReplacement(".")
+        onSubdivisionsEdit().assertHasError()
+        onSubdivisionsSlider().assertSubdivisionsProgress(1f)
     }
 
     @Test
     fun tempoErrorWhenValueTooBig() {
-        onTempoSlider().perform(setValue(30.0f))
-        onTempoEditLayout().check(matches(doesNotDisplayError()))
+        onTempoSlider().setProgress(30f)
+        onTempoEdit().assertHasNoError()
 
-        onTempoEdit().perform(ViewActions.replaceText("253"))
-
-        onTempoEditLayout().check(matches(displaysError()))
-        onTempoSlider().check(matches(withValue(30.0f)))
+        onTempoEdit().performTextReplacement("253")
+        onTempoEdit().assertHasError()
+        onTempoSlider().assertTempoProgress(30f)
     }
 
     @Test
     fun tempoErrorWhenValueNotANumber() {
-        onTempoSlider().perform(setValue(30.0f))
-        onTempoEditLayout().check(matches(doesNotDisplayError()))
+        onTempoSlider().setProgress(30f)
+        onTempoEdit().assertHasNoError()
 
-        onTempoEdit().perform(ViewActions.replaceText("."))
-
-        onTempoEditLayout().check(matches(displaysError()))
-        onTempoSlider().check(matches(withValue(30.0f)))
+        onTempoEdit().performTextReplacement(".")
+        onTempoEdit().assertHasError()
+        onTempoSlider().assertTempoProgress(30f)
     }
 
     @Test
     fun tempoMarkings() {
-        applyTempo(30)
+        onTempoSlider().setProgress(30f)
         verifyTempoMarking(R.string.tempo_marking_largo)
 
-        applyTempo(59)
+        onTempoSlider().setProgress(59f)
         verifyTempoMarking(R.string.tempo_marking_largo)
 
-        applyTempo(60)
+        onTempoSlider().setProgress(60f)
         verifyTempoMarking(R.string.tempo_marking_larghetto)
 
-        applyTempo(65)
+        onTempoSlider().setProgress(65f)
         verifyTempoMarking(R.string.tempo_marking_larghetto)
 
-        applyTempo(66)
+        onTempoSlider().setProgress(66f)
         verifyTempoMarking(R.string.tempo_marking_adagio)
 
-        applyTempo(75)
+        onTempoSlider().setProgress(75f)
         verifyTempoMarking(R.string.tempo_marking_adagio)
 
-        applyTempo(76)
+        onTempoSlider().setProgress(76f)
         verifyTempoMarking(R.string.tempo_marking_andante)
 
-        applyTempo(107)
+        onTempoSlider().setProgress(107f)
         verifyTempoMarking(R.string.tempo_marking_andante)
 
-        applyTempo(108)
+        onTempoSlider().setProgress(108f)
         verifyTempoMarking(R.string.tempo_marking_moderato)
 
-        applyTempo(119)
+        onTempoSlider().setProgress(119f)
         verifyTempoMarking(R.string.tempo_marking_moderato)
 
-        applyTempo(120)
+        onTempoSlider().setProgress(120f)
         verifyTempoMarking(R.string.tempo_marking_allegro)
 
-        applyTempo(167)
+        onTempoSlider().setProgress(167f)
         verifyTempoMarking(R.string.tempo_marking_allegro)
 
-        applyTempo(168)
+        onTempoSlider().setProgress(168f)
         verifyTempoMarking(R.string.tempo_marking_presto)
 
-        applyTempo(169)
+        onTempoSlider().setProgress(169f)
         verifyTempoMarking(R.string.tempo_marking_presto)
 
-        applyTempo(200)
+        onTempoSlider().setProgress(200f)
         verifyTempoMarking(R.string.tempo_marking_prestissimo)
 
-        applyTempo(252)
+        onTempoSlider().setProgress(252f)
         verifyTempoMarking(R.string.tempo_marking_prestissimo)
     }
 }

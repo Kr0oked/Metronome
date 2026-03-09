@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2025 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,63 +39,97 @@ import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.domain.Metronome
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 private const val TAG = "MetronomeService"
 private const val NOTIFICATION_CHANNEL_PLAYBACK_ID = "metronome-playback"
 private const val NOTIFICATION_ID = 1
 private const val NO_REQUEST_CODE = 0
+private const val ACTION_STOP = "com.bobek.metronome.intent.action.STOP"
 
-class MetronomeService : LifecycleService() {
+interface IMetronomeService {
+    var beats: Beats
+    var subdivisions: Subdivisions
+    var gaps: Gaps
+    var tempo: Tempo
+    var emphasizeFirstBeat: Boolean
+    var sound: Sound
+    var playing: Boolean
+
+    fun getTickFlow(): SharedFlow<Tick>
+
+    fun getRefreshFlow(): SharedFlow<Unit>
+}
+
+@AndroidEntryPoint
+class MetronomeService : LifecycleService(), IMetronomeService {
 
     private var metronome: Metronome? = null
 
     private var bound = false
 
-    var beats: Beats = Beats()
+    private val tickFlow = MutableSharedFlow<Tick>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    private val refreshFlow = MutableSharedFlow<Unit>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    override var beats: Beats = Beats()
         get() = metronome?.beats ?: field
         set(beats) {
             field = beats
             metronome?.beats = beats
         }
 
-    var subdivisions: Subdivisions = Subdivisions()
+    override var subdivisions: Subdivisions = Subdivisions()
         get() = metronome?.subdivisions ?: field
         set(subdivisions) {
             field = subdivisions
             metronome?.subdivisions = subdivisions
         }
 
-    var gaps: Gaps = Gaps()
+    override var gaps: Gaps = Gaps()
         get() = metronome?.gaps ?: field
         set(gaps) {
             field = gaps
             metronome?.gaps = gaps
         }
 
-    var tempo: Tempo = Tempo()
+    override var tempo: Tempo = Tempo()
         get() = metronome?.tempo ?: field
         set(tempo) {
             field = tempo
             metronome?.tempo = tempo
         }
 
-    var emphasizeFirstBeat: Boolean = true
+    override var emphasizeFirstBeat: Boolean = true
         get() = metronome?.emphasizeFirstBeat ?: field
         set(emphasizeFirstBeat) {
             field = emphasizeFirstBeat
             metronome?.emphasizeFirstBeat = emphasizeFirstBeat
         }
 
-    var sound: Sound = Sound.SQUARE_WAVE
+    override var sound: Sound = Sound.SQUARE_WAVE
         get() = metronome?.sound ?: field
         set(sound) {
             field = sound
             metronome?.sound = sound
         }
 
-    var playing: Boolean
+    override var playing: Boolean
         get() = metronome?.playing == true
         set(playing) = if (playing) startMetronome() else stopMetronome()
+
+    override fun getTickFlow(): SharedFlow<Tick> = tickFlow
+
+    override fun getRefreshFlow(): SharedFlow<Unit> = refreshFlow
 
     override fun onCreate() {
         super.onCreate()
@@ -103,7 +137,7 @@ class MetronomeService : LifecycleService() {
         NotificationManagerCompat.from(this)
             .createNotificationChannel(buildPlaybackNotificationChannel())
 
-        metronome = Metronome(this, lifecycle) { publishTick(it) }
+        metronome = Metronome(this, lifecycle) { tickFlow.tryEmit(it) }
         metronome?.beats = beats
         metronome?.subdivisions = subdivisions
         metronome?.gaps = gaps
@@ -209,31 +243,14 @@ class MetronomeService : LifecycleService() {
         }
     }
 
-    private fun publishTick(tick: Tick) {
-        Intent(ACTION_TICK)
-            .apply { setPackage(packageName) }
-            .apply { putExtra(EXTRA_TICK, tick) }
-            .let { sendBroadcast(it) }
-    }
-
     private fun performStop() {
         Log.d(TAG, "Received stop command")
         playing = false
-        Intent(ACTION_REFRESH)
-            .apply { setPackage(packageName) }
-            .let { sendBroadcast(it) }
+        refreshFlow.tryEmit(Unit)
     }
 
 
     inner class LocalBinder : Binder() {
-        fun getService(): MetronomeService = this@MetronomeService
-    }
-
-
-    companion object {
-        const val ACTION_STOP = "com.bobek.metronome.intent.action.STOP"
-        const val ACTION_REFRESH = "com.bobek.metronome.intent.action.REFRESH"
-        const val ACTION_TICK = "com.bobek.metronome.intent.action.TICK"
-        const val EXTRA_TICK = "com.bobek.metronome.intent.extra.TICK"
+        fun getService(): IMetronomeService = this@MetronomeService
     }
 }

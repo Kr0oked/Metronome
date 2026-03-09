@@ -16,19 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.data
+package com.bobek.metronome.domain
 
-data class Beats(val value: Int = DEFAULT_VALUE) {
+import androidx.annotation.StringRes
 
-    init {
-        require(value in valueRange) { "value must be between $MIN_VALUE and $MAX_VALUE but was $value" }
-    }
+interface PreferenceChoice {
+    @get:StringRes
+    val labelResourceId: Int
 
-    companion object {
-        const val MIN_VALUE = 1
-        const val MAX_VALUE = 8
-        const val DEFAULT_VALUE = 4
-
-        val valueRange = MIN_VALUE..MAX_VALUE
-    }
+    val preferenceValue: String
 }

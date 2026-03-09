@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,19 @@
 
 package com.bobek.metronome.data
 
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.app.AppCompatDelegate.NightMode
-import com.bobek.metronome.preference.PreferenceConstants
+import androidx.annotation.StringRes
+import com.bobek.metronome.R
+import com.bobek.metronome.domain.PreferenceChoice
+import com.bobek.metronome.settings.PreferenceConstants
 
-enum class AppNightMode(@NightMode val systemValue: Int, val preferenceValue: String) {
+enum class AppNightMode(
+    @StringRes override val labelResourceId: Int,
+    override val preferenceValue: String
+) : PreferenceChoice {
 
-    FOLLOW_SYSTEM(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM, PreferenceConstants.NIGHT_MODE_VALUE_FOLLOW_SYSTEM),
-    NO(AppCompatDelegate.MODE_NIGHT_NO, PreferenceConstants.NIGHT_MODE_VALUE_NO),
-    YES(AppCompatDelegate.MODE_NIGHT_YES, PreferenceConstants.NIGHT_MODE_VALUE_YES);
+    FOLLOW_SYSTEM(R.string.night_mode_follow_system, PreferenceConstants.NIGHT_MODE_VALUE_FOLLOW_SYSTEM),
+    NO(R.string.night_mode_no, PreferenceConstants.NIGHT_MODE_VALUE_NO),
+    YES(R.string.night_mode_yes, PreferenceConstants.NIGHT_MODE_VALUE_YES);
 
     companion object {
         fun forPreferenceValue(preferenceValue: String): AppNightMode {

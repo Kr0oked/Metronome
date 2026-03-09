@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,11 @@
 
 package com.bobek.metronome.data
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class Tick(val beat: Int, val type: TickType, val gap: Boolean) : Parcelable {
+data class Tick(val beat: Int, val type: TickType, val gap: Boolean) {
 
     init {
-        require(beat in Beats.MIN..Beats.MAX) { "beat must be between ${Beats.MIN} and ${Beats.MAX} but was $beat" }
+        require(beat in Beats.MIN_VALUE..Beats.MAX_VALUE) {
+            "beat must be between ${Beats.MIN_VALUE} and ${Beats.MAX_VALUE} but was $beat"
+        }
     }
 }

@@ -16,19 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.data
+package com.bobek.metronome.ui
 
-data class Beats(val value: Int = DEFAULT_VALUE) {
-
-    init {
-        require(value in valueRange) { "value must be between $MIN_VALUE and $MAX_VALUE but was $value" }
-    }
-
-    companion object {
-        const val MIN_VALUE = 1
-        const val MAX_VALUE = 8
-        const val DEFAULT_VALUE = 4
-
-        val valueRange = MIN_VALUE..MAX_VALUE
-    }
+object TestConstants {
+    const val LOADING_INDICATOR = "loading_indicator"
+    const val CONTENT = "content"
+    const val BEATS_SLIDER = "beats_slider"
+    const val BEATS_EDIT = "beats_edit"
+    const val SUBDIVISIONS_SLIDER = "subdivisions_slider"
+    const val SUBDIVISIONS_EDIT = "subdivisions_edit"
+    const val TEMPO_SLIDER = "tempo_slider"
+    const val TEMPO_EDIT = "tempo_edit"
+    const val TEMPO_MARKING_TEXT = "tempo_marking_text"
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2024 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,15 @@ import java.util.SortedSet
 
 data class Gaps(val value: SortedSet<Int> = sortedSetOf()) {
 
-    operator fun plus(gap: Int): Gaps = Gaps(value.plus(gap).toSortedSet())
-    operator fun minus(gap: Int): Gaps = Gaps(value.minus(gap).toSortedSet())
+    init {
+        value.forEach { Beats(it) }
+    }
+
+    fun toggle(gap: Int): Gaps {
+        return if (value.contains(gap)) {
+            Gaps(value.minus(gap).toSortedSet())
+        } else {
+            Gaps(value.plus(gap).toSortedSet())
+        }
+    }
 }
