@@ -22,8 +22,8 @@
     <dimen name="root_layout_padding">8dp</dimen>
     <dimen name="general_spacing">4dp</dimen>
     <dimen name="tick_visualization_size">32dp</dimen>
-    <dimen name="button_width">128dp</dimen>
-    <dimen name="button_height">96dp</dimen>
-    <dimen name="button_corner_shape">28dp</dimen>
-    <dimen name="button_icon_size">32dp</dimen>
+    <dimen name="button_width">72dp</dimen>
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="button_corner_shape">16dp</dimen>
+    <dimen name="button_icon_size">24dp</dimen>
 </resources>
