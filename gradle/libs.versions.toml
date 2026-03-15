@@ -1,10 +1,10 @@
 [versions]
-activityCompose = "1.12.4"
+activityCompose = "1.13.0"
 agp = "9.1.0"
-composeBom = "2026.02.01"
+composeBom = "2026.03.00"
 composeIcons = "1.7.8"
-coreKtx = "1.17.0"
-datastore = "1.2.0"
+coreKtx = "1.18.0"
+datastore = "1.2.1"
 espressoCore = "3.7.0"
 guava = "33.5.0-android"
 hilt = "2.59.2"
@@ -56,6 +56,6 @@ screengrab = { group = "tools.fastlane", name = "screengrab", version.ref = "scr
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt"}
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

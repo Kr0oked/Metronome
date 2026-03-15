@@ -28,6 +28,7 @@ import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasProgressBarRangeInfo
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performSemanticsAction
@@ -45,6 +46,10 @@ abstract class AbstractAndroidTest {
 
     @get:Rule
     var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
+
+    protected fun waitUntilContentIsDisplayed() {
+        composeTestRule.waitUntil(timeoutMillis = 15_000L) { onContent().isDisplayed() }
+    }
 
     protected fun verifyTempoMarking(@StringRes resourceId: Int) {
         val expectedText = composeTestRule.activity.getString(resourceId)
