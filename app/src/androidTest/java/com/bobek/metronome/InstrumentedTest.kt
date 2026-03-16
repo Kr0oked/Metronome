@@ -23,10 +23,16 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.filters.LargeTest
+import org.junit.Before
 import org.junit.Test
 
 @LargeTest
 class InstrumentedTest : AbstractAndroidTest() {
+
+    @Before
+    fun setup() {
+        waitUntilContentIsDisplayed()
+    }
 
     @Test
     fun contentVisible() {

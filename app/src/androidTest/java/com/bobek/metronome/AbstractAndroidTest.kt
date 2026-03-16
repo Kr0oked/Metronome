@@ -49,6 +49,7 @@ abstract class AbstractAndroidTest {
 
     protected fun waitUntilContentIsDisplayed() {
         composeTestRule.waitUntil(timeoutMillis = 15_000L) { onContent().isDisplayed() }
+        composeTestRule.waitForIdle()
     }
 
     protected fun verifyTempoMarking(@StringRes resourceId: Int) {
