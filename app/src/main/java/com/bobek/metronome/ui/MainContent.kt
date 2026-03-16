@@ -27,7 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -86,10 +86,10 @@ fun MainContent(
                 )
             }
             composable("licenses") {
-                val context = LocalContext.current
+                val resources = LocalResources.current
                 val licenses by produceState(initialValue = emptyList()) {
                     value = withContext(Dispatchers.IO) {
-                        context.resources
+                        resources
                             .openRawResource(R.raw.third_party_license_metadata)
                             .use(OssLicensesParser::parseMetadata)
                             .sortedBy { it.libraryName }
@@ -106,15 +106,15 @@ fun MainContent(
             }
             composable("license/{libraryName}") { backStackEntry ->
                 val libraryName = Uri.decode(backStackEntry.arguments?.getString("libraryName") ?: "")
-                val context = LocalContext.current
+                val resources = LocalResources.current
                 val licenseContent by produceState(initialValue = "", key1 = libraryName) {
                     value = withContext(Dispatchers.IO) {
-                        val metadata = context.resources
+                        val metadata = resources
                             .openRawResource(R.raw.third_party_license_metadata)
                             .use(OssLicensesParser::parseMetadata)
                             .find { it.libraryName == libraryName }
                         metadata?.let {
-                            context.resources
+                            resources
                                 .openRawResource(R.raw.third_party_licenses)
                                 .use { stream -> OssLicensesParser.parseLicense(it, stream).licenseContent }
                         } ?: ""
