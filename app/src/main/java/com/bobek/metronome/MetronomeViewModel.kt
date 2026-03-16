@@ -275,6 +275,9 @@ class MetronomeViewModel @Inject constructor(
         this.metronomeService = metronomeService
         connectedFlow.value = metronomeService != null
 
+        serviceFlowJobs.forEach { it.cancel() }
+        serviceFlowJobs = emptyList()
+
         metronomeService?.let {
             setupFlowsFromMetronomeService(metronomeService)
 
@@ -287,7 +290,6 @@ class MetronomeViewModel @Inject constructor(
     }
 
     private fun setupFlowsFromMetronomeService(metronomeService: IMetronomeService) {
-        serviceFlowJobs.forEach { it.cancel() }
         serviceFlowJobs = listOf(
             viewModelScope.launch {
                 metronomeService.getTickFlow().collect { tickFlow.tryEmit(it) }
