@@ -110,7 +110,7 @@ fun SettingsScreen(
                 )
 
                 ListItem(
-                    headlineContent = { Text(stringResource(R.string.sound_square_wave)) },
+                    headlineContent = { Text(stringResource(R.string.sound)) },
                     supportingContent = { Text(stringResource(sound.labelResourceId)) },
                     modifier = Modifier.clickable { showSoundDialog = true }
                 )

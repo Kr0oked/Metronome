@@ -34,16 +34,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.bobek.metronome.settings.SettingsRepository
 import com.bobek.metronome.ui.MainContent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 private const val TAG = "MainActivity"
@@ -61,28 +58,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "Lifecycle: onCreate")
         super.onCreate(savedInstanceState)
-        setupStrategyToStopNoLongerNeededService()
         enableEdgeToEdge()
         setContent {
             MainContent(viewModel)
         }
     }
 
-    private fun setupStrategyToStopNoLongerNeededService() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.DESTROYED)
-            {
-                if (!viewModel.getPlayingFlow().value) {
-                    stopService(Intent(baseContext, MetronomeService::class.java))
-                }
-            }
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-            runBlocking {
+            lifecycleScope.launch {
                 handlePostNotificationsPermission()
             }
         }
@@ -146,6 +131,13 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         unbindService(metronomeServiceConnection)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!viewModel.getPlayingFlow().value) {
+            stopService(Intent(baseContext, MetronomeService::class.java))
+        }
     }
 
     private fun registerPostNotificationsPermissionRequest() =

@@ -66,7 +66,7 @@ fun TickVisualization(
 
     val hapticFeedback = LocalHapticFeedback.current
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(state.viewModel) {
         state.viewModel.getTickFlow().collect { tick ->
             if (tick.beat == state.beatsValue && tick.type != TickType.SUB) {
                 blinking = true

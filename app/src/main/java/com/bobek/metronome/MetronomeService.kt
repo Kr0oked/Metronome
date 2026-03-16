@@ -180,10 +180,10 @@ class MetronomeService : LifecycleService(), IMetronomeService {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         Log.d(TAG, "Lifecycle: onDestroy")
         playing = false
         metronome = null
+        super.onDestroy()
     }
 
     private fun startMetronome() {

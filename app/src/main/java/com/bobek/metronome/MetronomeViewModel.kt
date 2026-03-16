@@ -30,15 +30,16 @@ import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 private const val TAP_WINDOW_MILLIS = 5_000L
@@ -103,8 +104,10 @@ class MetronomeViewModel @Inject constructor(
 
     private var metronomeService: IMetronomeService? = null
 
+    private var serviceFlowJobs: List<Job> = emptyList()
+
     init {
-        runBlocking {
+        viewModelScope.launch {
             initFromSettings()
         }
 
@@ -112,13 +115,14 @@ class MetronomeViewModel @Inject constructor(
         setupFlowsToSettings()
     }
 
-    private suspend fun initFromSettings(): Unit? {
+    private suspend fun initFromSettings() {
         settingsRepository.getBeats().firstOrNull()?.let { beatsFlow.value = it }
         settingsRepository.getSubdivisions().firstOrNull()?.let { subdivisionsFlow.value = it }
         settingsRepository.getGaps().firstOrNull()?.let { gapsFlow.value = it }
         settingsRepository.getTempo().firstOrNull()?.let { tempoFlow.value = it }
         settingsRepository.getEmphasizeFirstBeat().firstOrNull()?.let { emphasizeFirstBeatFlow.value = it }
-        return settingsRepository.getSound().firstOrNull()?.let { soundFlow.value = it }
+        settingsRepository.getSound().firstOrNull()?.let { soundFlow.value = it }
+        settingsRepository.getNightMode().firstOrNull()?.let { nightModeFlow.value = it }
     }
 
     private fun setupFlowsToMetronomeService() {
@@ -147,31 +151,31 @@ class MetronomeViewModel @Inject constructor(
 
     private fun setupFlowsToSettings() {
         viewModelScope.launch {
-            beatsFlow.debounce(SETTINGS_DEBOUNCE_MILLIS)
+            beatsFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
                 .collect { settingsRepository.setBeats(it) }
         }
         viewModelScope.launch {
-            subdivisionsFlow.debounce(SETTINGS_DEBOUNCE_MILLIS)
+            subdivisionsFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
                 .collect { settingsRepository.setSubdivisions(it) }
         }
         viewModelScope.launch {
-            gapsFlow.debounce(SETTINGS_DEBOUNCE_MILLIS)
+            gapsFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
                 .collect { settingsRepository.setGaps(it) }
         }
         viewModelScope.launch {
-            tempoFlow.debounce(SETTINGS_DEBOUNCE_MILLIS)
+            tempoFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
                 .collect { settingsRepository.setTempo(it) }
         }
         viewModelScope.launch {
-            emphasizeFirstBeatFlow.debounce(SETTINGS_DEBOUNCE_MILLIS)
+            emphasizeFirstBeatFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
                 .collect { settingsRepository.setEmphasizeFirstBeat(it) }
         }
         viewModelScope.launch {
-            soundFlow.debounce(SETTINGS_DEBOUNCE_MILLIS)
+            soundFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
                 .collect { settingsRepository.setSound(it) }
         }
         viewModelScope.launch {
-            nightModeFlow.debounce(SETTINGS_DEBOUNCE_MILLIS)
+            nightModeFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
                 .collect { settingsRepository.setNightMode(it) }
         }
     }
@@ -229,10 +233,10 @@ class MetronomeViewModel @Inject constructor(
         taps.removeAll { currentTimeMillis - it > TAP_WINDOW_MILLIS }
     }
 
-    private fun averageTapIntervalInMillis(): Int? = taps
+    private fun averageTapIntervalInMillis(): Long? = taps
         .zipWithNext { a, b -> b - a }
         .average()
-        .toInt()
+        .toLong()
         .takeIf { it > 0 }
 
     override fun getEmphasizeFirstBeatFlow(): StateFlow<Boolean> = emphasizeFirstBeatFlow
@@ -283,13 +287,15 @@ class MetronomeViewModel @Inject constructor(
     }
 
     private fun setupFlowsFromMetronomeService(metronomeService: IMetronomeService) {
-        viewModelScope.launch {
-            metronomeService.getTickFlow().collect { tickFlow.tryEmit(it) }
-        }
-
-        viewModelScope.launch {
-            metronomeService.getRefreshFlow().collect { updateViewModel(metronomeService) }
-        }
+        serviceFlowJobs.forEach { it.cancel() }
+        serviceFlowJobs = listOf(
+            viewModelScope.launch {
+                metronomeService.getTickFlow().collect { tickFlow.tryEmit(it) }
+            },
+            viewModelScope.launch {
+                metronomeService.getRefreshFlow().collect { updateViewModel(metronomeService) }
+            }
+        )
     }
 
     private fun updateViewModel(metronomeService: IMetronomeService) {

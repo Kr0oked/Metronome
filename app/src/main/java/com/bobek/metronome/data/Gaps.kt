@@ -23,7 +23,11 @@ import java.util.SortedSet
 data class Gaps(val value: SortedSet<Int> = sortedSetOf()) {
 
     init {
-        value.forEach { Beats(it) }
+        value.forEach {
+            require(it in Beats.valueRange) {
+                "gap index must be between ${Beats.MIN_VALUE} and ${Beats.MAX_VALUE} but was $it"
+            }
+        }
     }
 
     fun toggle(gap: Int): Gaps {

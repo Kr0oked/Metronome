@@ -18,7 +18,7 @@
 
 package com.bobek.metronome.ui
 
-import android.annotation.SuppressLint
+import android.net.Uri
 import android.view.WindowManager
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -26,7 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.navigation.compose.NavHost
@@ -43,10 +43,11 @@ import com.bobek.metronome.ui.metronome.MetronomeScreen
 import com.bobek.metronome.ui.settings.SettingsScreen
 import com.bobek.metronome.ui.theme.AppTheme
 import de.philipp_bobek.oss_licenses_parser.OssLicensesParser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 @PreviewScreenSizes
-@SuppressLint("LocalContextResourcesRead")
 fun MainContent(
     viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = true)
 ) {
@@ -86,35 +87,38 @@ fun MainContent(
             }
             composable("licenses") {
                 val context = LocalContext.current
-                val licenses = remember {
-                    context.resources
-                        .openRawResource(R.raw.third_party_license_metadata)
-                        .use(OssLicensesParser::parseMetadata)
-                        .sortedBy { it.libraryName }
+                val licenses by produceState(initialValue = emptyList()) {
+                    value = withContext(Dispatchers.IO) {
+                        context.resources
+                            .openRawResource(R.raw.third_party_license_metadata)
+                            .use(OssLicensesParser::parseMetadata)
+                            .sortedBy { it.libraryName }
+                    }
                 }
 
                 ThirdPartyLicensesScreen(
                     licenses = licenses,
                     onBackClick = { navController.popBackStack() },
                     onLicenseClick = { metadata ->
-                        navController.navigate("license/${metadata.libraryName}")
+                        navController.navigate("license/${Uri.encode(metadata.libraryName)}")
                     }
                 )
             }
             composable("license/{libraryName}") { backStackEntry ->
-                val libraryName = backStackEntry.arguments?.getString("libraryName") ?: ""
+                val libraryName = Uri.decode(backStackEntry.arguments?.getString("libraryName") ?: "")
                 val context = LocalContext.current
-                val licenseContent = remember(libraryName) {
-                    val metadata = context.resources
-                        .openRawResource(R.raw.third_party_license_metadata)
-                        .use(OssLicensesParser::parseMetadata)
-                        .find { it.libraryName == libraryName }
-
-                    metadata?.let {
-                        context.resources
-                            .openRawResource(R.raw.third_party_licenses)
-                            .use { stream -> OssLicensesParser.parseLicense(it, stream).licenseContent }
-                    } ?: ""
+                val licenseContent by produceState(initialValue = "", key1 = libraryName) {
+                    value = withContext(Dispatchers.IO) {
+                        val metadata = context.resources
+                            .openRawResource(R.raw.third_party_license_metadata)
+                            .use(OssLicensesParser::parseMetadata)
+                            .find { it.libraryName == libraryName }
+                        metadata?.let {
+                            context.resources
+                                .openRawResource(R.raw.third_party_licenses)
+                                .use { stream -> OssLicensesParser.parseLicense(it, stream).licenseContent }
+                        } ?: ""
+                    }
                 }
 
                 ThirdPartyLicenseScreen(

@@ -50,7 +50,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -540,12 +539,10 @@ private fun TempoActionButton(
     }
 }
 
-@Stable
 @Composable
 private fun metronomeButtonShape(): RoundedCornerShape =
     RoundedCornerShape(dimensionResource(R.dimen.button_corner_shape))
 
-@Stable
 @Composable
 private fun Modifier.metronomeButtonSize(): Modifier = this
     .widthIn(Dp.Unspecified, dimensionResource(R.dimen.button_width))
