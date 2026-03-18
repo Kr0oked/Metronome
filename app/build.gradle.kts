@@ -81,6 +81,11 @@ android {
     }
 }
 
+// Workaround for https://github.com/google/play-services-plugins/issues/356
+tasks.matching { it.name.endsWith("OssLicensesCleanUp") }.configureEach {
+    dependsOn(tasks.matching { it.name.endsWith("OssDependencyTask") })
+}
+
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
