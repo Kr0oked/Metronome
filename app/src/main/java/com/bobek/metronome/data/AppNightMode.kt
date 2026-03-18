@@ -33,12 +33,11 @@ enum class AppNightMode(
     YES(R.string.night_mode_yes, PreferenceConstants.NIGHT_MODE_VALUE_YES);
 
     companion object {
-        fun forPreferenceValue(preferenceValue: String): AppNightMode {
-            return when (preferenceValue) {
+        fun forPreferenceValue(preferenceValue: String): AppNightMode =
+            when (preferenceValue) {
                 PreferenceConstants.NIGHT_MODE_VALUE_NO -> NO
                 PreferenceConstants.NIGHT_MODE_VALUE_YES -> YES
                 else -> FOLLOW_SYSTEM
             }
-        }
     }
 }

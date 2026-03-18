@@ -34,7 +34,6 @@ import com.bobek.metronome.data.Sound
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
-import com.bobek.metronome.data.TickType
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -42,7 +41,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 
 private const val TAG = "Metronome"
-private const val SAMPLE_RATE_IN_HZ = 48_000
 private const val SILENCE_CHUNK_SIZE = 8_000
 
 class Metronome(
@@ -137,7 +135,7 @@ class Metronome(
             Log.v(TAG, "Skipped gap for $tick")
         } else {
             val tickSound = soundProvider.getTickSound(tick.type, sound)
-            val periodSize = calculatePeriodSize()
+            val periodSize = calculatePeriodSize(tempo.value, subdivisions.value)
 
             sizeWritten += writeNextAudioData(track, tickSound, periodSize, sizeWritten)
             Log.v(TAG, "Wrote tick sound for $tick")
@@ -152,7 +150,7 @@ class Metronome(
     private suspend fun writeSilenceUntilPeriodFinished(track: AudioTrack, previousSizeWritten: Int) {
         var sizeWritten = previousSizeWritten
         while (true) {
-            val periodSize = calculatePeriodSize()
+            val periodSize = calculatePeriodSize(tempo.value, subdivisions.value)
             if (sizeWritten >= periodSize) {
                 break
             }
@@ -163,27 +161,14 @@ class Metronome(
         }
     }
 
-    private fun getCurrentTick(tickCount: Long) =
-        Tick(getCurrentBeat(tickCount), getCurrentTickType(tickCount), isCurrentTickGap(tickCount))
-
-    private fun getCurrentBeat(tickCount: Long) = (((tickCount / subdivisions.value) % beats.value) + 1).toInt()
-
-    private fun getCurrentTickType(tickCount: Long): TickType {
-        return when {
-            isStrongTick(tickCount) -> TickType.STRONG
-            isWeakTick(tickCount) -> TickType.WEAK
-            else -> TickType.SUB
-        }
+    private fun getCurrentTick(tickCount: Long): Tick {
+        val beat = getCurrentBeat(tickCount, beats.value, subdivisions.value)
+        return Tick(
+            beat = beat,
+            type = getCurrentTickType(tickCount, beats.value, subdivisions.value, emphasizeFirstBeat),
+            gap = isGap(beat, gaps.value)
+        )
     }
-
-    private fun isStrongTick(tickCount: Long) =
-        emphasizeFirstBeat && (tickCount % (beats.value * subdivisions.value) == 0L)
-
-    private fun isWeakTick(tickCount: Long) = tickCount % subdivisions.value == 0L
-
-    private fun isCurrentTickGap(tickCount: Long) = gaps.value.contains(getCurrentBeat(tickCount))
-
-    private fun calculatePeriodSize() = 60 * SAMPLE_RATE_IN_HZ / tempo.value / subdivisions.value
 
     private fun writeNextAudioData(track: AudioTrack, data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
         val size = calculateAudioSizeToWriteNext(data, periodSize, sizeWritten)
