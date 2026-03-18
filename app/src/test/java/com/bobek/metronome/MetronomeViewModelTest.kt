@@ -44,6 +44,8 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 private const val DEBOUNCE_MILLIS = 1_000L
 
@@ -63,8 +65,10 @@ class MetronomeViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel(settingsRepository: SettingsRepository = FakeSettingsRepository()): MetronomeViewModel =
-        MetronomeViewModel(settingsRepository)
+    private fun createViewModel(
+        settingsRepository: SettingsRepository = FakeSettingsRepository(),
+        clock: Clock = FakeClock()
+    ): MetronomeViewModel = MetronomeViewModel(settingsRepository, clock)
 
     // --- Initial state ---
 
@@ -209,13 +213,51 @@ class MetronomeViewModelTest {
     }
 
     @Test
-    fun twoTapsChangeTempo() {
-        val viewModel = createViewModel()
+    fun twoTapsCalculateTempo() {
+        val clock = FakeClock()
+        val viewModel = createViewModel(clock = clock)
+        clock.time = 0
         viewModel.tapTempo()
-        Thread.sleep(200)
+        clock.time = 500
         viewModel.tapTempo()
-        // Just assert tempo changed; exact value depends on real elapsed time
-        assertTrue(viewModel.getTempoFlow().value.value in Tempo.MIN_VALUE..Tempo.MAX_VALUE)
+        // 60_000 / 500 = 120 BPM
+        assertEquals(Tempo(120), viewModel.getTempoFlow().value)
+    }
+
+    @Test
+    fun tapTempoClampedAtMax() {
+        val clock = FakeClock()
+        val viewModel = createViewModel(clock = clock)
+        clock.time = 0
+        viewModel.tapTempo()
+        clock.time = 1
+        viewModel.tapTempo()
+        // 60_000 / 1 = 60_000 BPM → clamped
+        assertEquals(Tempo.MAX_VALUE, viewModel.getTempoFlow().value.value)
+    }
+
+    @Test
+    fun tapTempoClampedAtMin() {
+        val clock = FakeClock()
+        val viewModel = createViewModel(clock = clock)
+        clock.time = 0
+        viewModel.tapTempo()
+        clock.time = 4_000
+        viewModel.tapTempo()
+        // 60_000 / 4_000 = 15 BPM → clamped
+        assertEquals(Tempo.MIN_VALUE, viewModel.getTempoFlow().value.value)
+    }
+
+    @Test
+    fun tapTempoIgnoresOldTapsOutsideWindow() {
+        val clock = FakeClock()
+        val viewModel = createViewModel(clock = clock)
+        clock.time = 0
+        viewModel.tapTempo()
+        clock.time = 6_000 // outside 5-second window
+        viewModel.tapTempo()
+        // Only one tap within the window → no interval → tempo unchanged
+        assertEquals(Tempo(), viewModel.getTempoFlow().value)
     }
 
     // --- startStop ---
@@ -402,6 +444,11 @@ private class FakeSettingsRepository(
 
     override fun getPostNotificationsPermissionRequested(): Flow<Boolean> = postNotificationsFlow
     override suspend fun setPostNotificationsPermissionRequested(postNotificationsPermissionRequested: Boolean) {}
+}
+
+private class FakeClock : Clock {
+    var time = 0L
+    override fun now(): Instant = Instant.fromEpochMilliseconds(time)
 }
 
 private class FakeMetronomeService(

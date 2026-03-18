@@ -28,6 +28,7 @@ import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
+import kotlin.time.Clock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -74,7 +75,8 @@ interface IMetronomeViewModel {
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class MetronomeViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val clock: Clock
 ) : ViewModel(), IMetronomeViewModel {
 
     private val beatsFlow = MutableStateFlow(Beats())
@@ -215,7 +217,7 @@ class MetronomeViewModel @Inject constructor(
     }
 
     override fun tapTempo() {
-        val currentTimeMillis = System.currentTimeMillis()
+        val currentTimeMillis = clock.now().toEpochMilliseconds()
         pruneOldTaps(currentTimeMillis)
         taps.add(currentTimeMillis)
 
