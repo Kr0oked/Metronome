@@ -28,7 +28,7 @@ import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
-import kotlin.time.Clock
+import kotlin.time.TimeSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -76,7 +76,7 @@ interface IMetronomeViewModel {
 @HiltViewModel
 class MetronomeViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val clock: Clock
+    timeSource: TimeSource
 ) : ViewModel(), IMetronomeViewModel {
 
     private val beatsFlow = MutableStateFlow(Beats())
@@ -101,6 +101,8 @@ class MetronomeViewModel @Inject constructor(
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+
+    private val startMark = timeSource.markNow()
 
     private val taps = ArrayDeque<Long>()
 
@@ -217,9 +219,9 @@ class MetronomeViewModel @Inject constructor(
     }
 
     override fun tapTempo() {
-        val currentTimeMillis = clock.now().toEpochMilliseconds()
-        pruneOldTaps(currentTimeMillis)
-        taps.add(currentTimeMillis)
+        val elapsedMillis = startMark.elapsedNow().inWholeMilliseconds
+        pruneOldTaps(elapsedMillis)
+        taps.add(elapsedMillis)
 
         val averageIntervalMillis = averageTapIntervalInMillis() ?: return
         val tempoValue = (MILLIS_PER_MINUTE / averageIntervalMillis).toInt()
@@ -231,8 +233,8 @@ class MetronomeViewModel @Inject constructor(
         }
     }
 
-    private fun pruneOldTaps(currentTimeMillis: Long) {
-        taps.removeAll { currentTimeMillis - it > TAP_WINDOW_MILLIS }
+    private fun pruneOldTaps(elapsedMillis: Long) {
+        taps.removeAll { elapsedMillis - it > TAP_WINDOW_MILLIS }
     }
 
     private fun averageTapIntervalInMillis(): Long? = taps

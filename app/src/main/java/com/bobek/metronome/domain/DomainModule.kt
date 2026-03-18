@@ -23,7 +23,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import kotlin.time.Clock
+import kotlin.time.TimeSource
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -31,5 +31,5 @@ object DomainModule {
 
     @Provides
     @Singleton
-    fun provideClock(): Clock = Clock.System
+    fun provideTimeSource(): TimeSource = TimeSource.Monotonic
 }
