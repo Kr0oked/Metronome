@@ -1,0 +1,2 @@
+- Neugestaltung der Benutzeroberfläche mit Material Design 3
+- Übersetzung für Finnisch und Lingala wurde hinzugefügt
