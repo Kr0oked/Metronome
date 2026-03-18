@@ -2,11 +2,8 @@
 <resources>
     <string name="metronome">Metronome</string>
     <string name="beats_label">Beats</string>
-    <string name="beats_slider_description">Slider to set the beats</string>
     <string name="subdivisions_label">Subdivisions</string>
-    <string name="subdivisions_slider_description">Slider to set the subdivisions</string>
     <string name="tempo_label">Tempo in BPM</string>
-    <string name="tempo_slider_description">Slider to set the tempo in BPM</string>
     <string name="start_stop_button_description">Starts or stops the metronome</string>
     <string name="tap_tempo_button_description">Tap multiple times to set the tempo</string>
     <string name="increment_tempo_button_description">Increments the tempo</string>
@@ -23,6 +20,7 @@
     <string name="night_mode_follow_system">Follow system</string>
     <string name="night_mode_no">Light</string>
     <string name="night_mode_yes">Dark</string>
+    <string name="sound">Sound</string>
     <string name="sound_square_wave">Hard beep</string>
     <string name="sound_sine_wave">Soft beep</string>
     <string name="sound_risset_drum">Synth drum</string>
@@ -36,7 +34,6 @@
     <string name="version">Version</string>
     <string name="request_notifications_permission_rationale_title">We need permission to post notifications</string>
     <string name="request_notifications_permission_rationale_message">This app wants to post a notification as long as the metronome is running. You can then easily stop the metronome even if the app is running in the background.</string>
-    <string name="loading_indicator_description">Visual indicator that the app is currently loading content</string>
     <string name="ok">OK</string>
     <string name="no_thanks">No thanks</string>
     <string name="tempo_marking_largo">Largo</string>

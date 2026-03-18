@@ -9,11 +9,14 @@ locales([
   'de-DE',
   'en-US',
   'es-ES',
+  'fi-FI',
   'fr-FR',
-  'iw-IL'
+  'iw-IL',
+  'ln',
   'pt-BR',
   'ru-RU',
   'ta-IN',
+  'tr-TR',
   'zh-CN'
 ])
 

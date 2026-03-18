@@ -2,11 +2,8 @@
 <resources>
     <string name="metronome">Metronomi</string>
     <string name="beats_label">Iskut</string>
-    <string name="beats_slider_description">Liukusäädin iskujen asettamiseen</string>
     <string name="subdivisions_label">Iskujen alajako</string>
-    <string name="subdivisions_slider_description">Liukusäädin iskujen alajaon asettamiseen</string>
     <string name="tempo_label">Tempo (iskua/min)</string>
-    <string name="tempo_slider_description">Liukusäädin tempon (iskua/min) asettamiseen</string>
     <string name="start_stop_button_description">Käynnistää tai pysäyttää metronomin</string>
     <string name="tap_tempo_button_description">Napauta useamman kerran tempon asettamiseksi</string>
     <string name="increment_tempo_button_description">Nopeuttaa tempoa</string>
@@ -36,7 +33,6 @@
     <string name="version">Versio</string>
     <string name="request_notifications_permission_rationale_title">Tarvitsemme luvan ilmoitusten näyttämiseen</string>
     <string name="request_notifications_permission_rationale_message">Tämä sovellus haluaa näyttää ilmoituksen niin kauan kuin metronomi on käynnissä. Voit sitten helposti pysäyttää metronomin, vaikka sovellus olisi käynnissä taustalla.</string>
-    <string name="loading_indicator_description">Visuaalinen ilmaisin sisällön lataamiselle</string>
     <string name="ok">OK</string>
     <string name="no_thanks">Ei kiitos</string>
     <string name="tempo_marking_largo">Largo</string>

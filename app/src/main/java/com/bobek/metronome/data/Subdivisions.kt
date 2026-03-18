@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2022 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,17 @@
 
 package com.bobek.metronome.data
 
-import androidx.databinding.InverseMethod
-
-data class Subdivisions(val value: Int = DEFAULT) {
+data class Subdivisions(val value: Int = DEFAULT_VALUE) {
 
     init {
-        require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
+        require(value in valueRange) { "value must be between $MIN_VALUE and $MAX_VALUE but was $value" }
     }
 
     companion object {
-        const val MIN = 1
-        const val MAX = 4
-        const val DEFAULT = 1
+        const val MIN_VALUE = 1
+        const val MAX_VALUE = 4
+        const val DEFAULT_VALUE = 1
 
-        @InverseMethod("floatToSubdivisions")
-        @JvmStatic
-        fun subdivisionsToFloat(subdivisions: Subdivisions): Float = subdivisions.value.toFloat()
-
-        @JvmStatic
-        fun floatToSubdivisions(float: Float): Subdivisions = Subdivisions(float.toInt())
+        val valueRange = MIN_VALUE..MAX_VALUE
     }
 }
