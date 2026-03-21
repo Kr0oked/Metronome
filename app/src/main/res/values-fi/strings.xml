@@ -2,7 +2,7 @@
 <resources>
     <string name="metronome">Metronomi</string>
     <string name="beats_label">Iskut</string>
-    <string name="subdivisions_label">Iskujen alajako</string>
+    <string name="subdivisions_label">Jako</string>
     <string name="tempo_label">Tempo (iskua/min)</string>
     <string name="start_stop_button_description">Käynnistää tai pysäyttää metronomin</string>
     <string name="tap_tempo_button_description">Napauta useamman kerran tempon asettamiseksi</string>
@@ -43,4 +43,5 @@
     <string name="tempo_marking_allegro">Allegro</string>
     <string name="tempo_marking_presto">Presto</string>
     <string name="tempo_marking_prestissimo">Prestissimo</string>
+    <string name="sound">Ääni</string>
 </resources>
