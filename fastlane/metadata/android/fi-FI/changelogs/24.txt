@@ -1,0 +1,2 @@
+- Uusittu UI Material Design 3:lla
+- Lisätty suomi ja lingala
