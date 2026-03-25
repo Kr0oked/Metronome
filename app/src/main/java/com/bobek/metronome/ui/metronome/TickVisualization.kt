@@ -22,7 +22,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -98,6 +100,7 @@ fun TickVisualization(
                 modifier = Modifier
                     .aspectRatio(1f)
                     .fillMaxSize()
+                    .clip(CircleShape)
                     .semantics {
                         contentDescription = description
                     }
