@@ -82,7 +82,7 @@ fun TickVisualization(
 
     val backgroundColor by animateColorAsState(
         targetValue = when {
-            blinking -> MaterialTheme.colorScheme.primary
+            blinking -> MaterialTheme.colorScheme.error
             isGap -> MaterialTheme.colorScheme.surfaceVariant
             else -> MaterialTheme.colorScheme.tertiaryContainer
         },
