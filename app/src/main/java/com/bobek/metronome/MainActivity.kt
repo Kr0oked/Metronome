@@ -64,6 +64,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        startAndBindToMetronomeService()
+    }
+
+    private fun startAndBindToMetronomeService() {
+        Intent(this, MetronomeService::class.java).also { service ->
+            startService(service)
+            bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
@@ -71,7 +83,6 @@ class MainActivity : ComponentActivity() {
                 handlePostNotificationsPermission()
             }
         }
-        startAndBindToMetronomeService()
     }
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
@@ -80,9 +91,6 @@ class MainActivity : ComponentActivity() {
             startPostNotificationsPermissionRequestWorkflow()
         }
     }
-
-    private suspend fun neverRequestedPostNotificationsPermission(): Boolean =
-        settingsRepository.getPostNotificationsPermissionRequested().first().not()
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun postNotificationsPermissionNotGranted() =
@@ -121,15 +129,8 @@ class MainActivity : ComponentActivity() {
         postNotificationsPermissionRequest.launch(POST_NOTIFICATIONS)
     }
 
-    private fun startAndBindToMetronomeService() {
-        Intent(this, MetronomeService::class.java).also { service ->
-            startService(service)
-            bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         unbindService(metronomeServiceConnection)
     }
 
