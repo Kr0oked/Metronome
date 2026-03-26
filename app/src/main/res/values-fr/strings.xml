@@ -43,4 +43,5 @@
     <string name="request_notifications_permission_rationale_message">Cette appli veut afficher une notification aussi longtemps que le métronome sera en marche. Vous pourrez ensuite facilement arrêter le métronome même si l\'appli marche en arrière-plan.</string>
     <string name="tempo_marking_larghetto">Larghetto</string>
     <string name="tempo_marking_moderato">Moderato</string>
+    <string name="sound">Son</string>
 </resources>
