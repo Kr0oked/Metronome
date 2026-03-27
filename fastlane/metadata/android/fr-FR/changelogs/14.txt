@@ -1,0 +1,1 @@
+- Meilleure prise en charge des différentes tailles d'écran

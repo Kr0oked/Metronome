@@ -1,0 +1,3 @@
+- Arrêt du service devenu inutile
+- Ajout de la traduction française
+- Amélioration de la traduction hébraïque

@@ -1,0 +1,2 @@
+- Correction d'un plantage de l'application sur Android 14
+- Correction du bouton d'arrêt dans les notifications sur Android 14

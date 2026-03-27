@@ -1,0 +1,2 @@
+- Réglage du tempo par pression de bouton
+- Correction d'un problème de traduction russe

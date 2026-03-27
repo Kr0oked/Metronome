@@ -1,0 +1,6 @@
+- Mise à jour vers Android 16
+- Ajout de trois nouveaux sons
+- Ajout de la traduction en hébreu
+- Correction d'un bug dans la fonction de clignotement
+- Correction d'un bug empêchant le démarrage du service en arrière-plan
+- Correction d'un bug lors de l'ouverture des licences open source
