@@ -28,8 +28,8 @@ import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
-import kotlin.time.TimeSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import kotlin.time.TimeSource
 
 private const val TAP_WINDOW_MILLIS = 5_000L
 private const val MILLIS_PER_MINUTE = 60_000L
@@ -72,8 +72,8 @@ interface IMetronomeViewModel {
     fun setMetronomeService(metronomeService: IMetronomeService?)
 }
 
-@OptIn(FlowPreview::class)
 @HiltViewModel
+@OptIn(FlowPreview::class)
 class MetronomeViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     timeSource: TimeSource
@@ -184,28 +184,28 @@ class MetronomeViewModel @Inject constructor(
         }
     }
 
-    override fun getBeatsFlow(): StateFlow<Beats> = beatsFlow
+    override fun getBeatsFlow() = beatsFlow
 
     override fun setBeats(beats: Beats) {
-        this.beatsFlow.value = beats
+        beatsFlow.value = beats
     }
 
-    override fun getSubdivisionsFlow(): StateFlow<Subdivisions> = subdivisionsFlow
+    override fun getSubdivisionsFlow() = subdivisionsFlow
 
     override fun setSubdivisions(subdivisions: Subdivisions) {
-        this.subdivisionsFlow.value = subdivisions
+        subdivisionsFlow.value = subdivisions
     }
 
-    override fun getGapsFlow(): StateFlow<Gaps> = gapsFlow
+    override fun getGapsFlow() = gapsFlow
 
     override fun setGaps(gaps: Gaps) {
-        this.gapsFlow.value = gaps
+        gapsFlow.value = gaps
     }
 
-    override fun getTempoFlow(): StateFlow<Tempo> = tempoFlow
+    override fun getTempoFlow() = tempoFlow
 
     override fun setTempo(tempo: Tempo) {
-        this.tempoFlow.value = tempo
+        tempoFlow.value = tempo
     }
 
     override fun changeTempo(delta: Int) {
@@ -243,37 +243,37 @@ class MetronomeViewModel @Inject constructor(
         .toLong()
         .takeIf { it > 0 }
 
-    override fun getEmphasizeFirstBeatFlow(): StateFlow<Boolean> = emphasizeFirstBeatFlow
+    override fun getEmphasizeFirstBeatFlow() = emphasizeFirstBeatFlow
 
     override fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) {
-        this.emphasizeFirstBeatFlow.value = emphasizeFirstBeat
+        emphasizeFirstBeatFlow.value = emphasizeFirstBeat
     }
 
-    override fun getSoundFlow(): StateFlow<Sound> = soundFlow
+    override fun getSoundFlow() = soundFlow
 
     override fun setSound(sound: Sound) {
-        this.soundFlow.value = sound
+        soundFlow.value = sound
     }
 
-    override fun getNightModeFlow(): StateFlow<AppNightMode> = nightModeFlow
+    override fun getNightModeFlow() = nightModeFlow
 
     override fun setNightMode(nightMode: AppNightMode) {
-        this.nightModeFlow.value = nightMode
+        nightModeFlow.value = nightMode
     }
 
-    override fun getPlayingFlow(): StateFlow<Boolean> = playingFlow
+    override fun getPlayingFlow() = playingFlow
 
     override fun setPlaying(playing: Boolean) {
-        this.playingFlow.value = playing
+        playingFlow.value = playing
     }
 
     override fun startStop() {
-        this.playingFlow.value = this.playingFlow.value.not()
+        playingFlow.value = playingFlow.value.not()
     }
 
-    override fun getConnectedFlow(): StateFlow<Boolean> = connectedFlow
+    override fun getConnectedFlow() = connectedFlow
 
-    override fun getTickFlow(): SharedFlow<Tick> = tickFlow
+    override fun getTickFlow() = tickFlow
 
     override fun setMetronomeService(metronomeService: IMetronomeService?) {
         this.metronomeService = metronomeService
@@ -336,26 +336,26 @@ class ComposeMetronomeViewModel(
     val playing: Boolean = true,
     val connected: Boolean = true
 ) : IMetronomeViewModel {
-    override fun getBeatsFlow(): StateFlow<Beats> = MutableStateFlow(beats)
+    override fun getBeatsFlow() = MutableStateFlow(beats)
     override fun setBeats(beats: Beats) = Unit
-    override fun getSubdivisionsFlow(): StateFlow<Subdivisions> = MutableStateFlow(subdivisions)
+    override fun getSubdivisionsFlow() = MutableStateFlow(subdivisions)
     override fun setSubdivisions(subdivisions: Subdivisions) = Unit
-    override fun getGapsFlow(): StateFlow<Gaps> = MutableStateFlow(gaps)
+    override fun getGapsFlow() = MutableStateFlow(gaps)
     override fun setGaps(gaps: Gaps) = Unit
-    override fun getTempoFlow(): StateFlow<Tempo> = MutableStateFlow(tempo)
+    override fun getTempoFlow() = MutableStateFlow(tempo)
     override fun setTempo(tempo: Tempo) = Unit
     override fun changeTempo(delta: Int) = Unit
     override fun tapTempo() = Unit
-    override fun getEmphasizeFirstBeatFlow(): StateFlow<Boolean> = MutableStateFlow(emphasizeFirstBeat)
+    override fun getEmphasizeFirstBeatFlow() = MutableStateFlow(emphasizeFirstBeat)
     override fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) = Unit
-    override fun getSoundFlow(): StateFlow<Sound> = MutableStateFlow(sound)
+    override fun getSoundFlow() = MutableStateFlow(sound)
     override fun setSound(sound: Sound) = Unit
-    override fun getNightModeFlow(): StateFlow<AppNightMode> = MutableStateFlow(nightMode)
+    override fun getNightModeFlow() = MutableStateFlow(nightMode)
     override fun setNightMode(nightMode: AppNightMode) = Unit
-    override fun getPlayingFlow(): StateFlow<Boolean> = MutableStateFlow(playing)
+    override fun getPlayingFlow() = MutableStateFlow(playing)
     override fun setPlaying(playing: Boolean) = Unit
     override fun startStop() = Unit
-    override fun getConnectedFlow(): StateFlow<Boolean> = MutableStateFlow(connected)
-    override fun getTickFlow(): SharedFlow<Tick> = MutableSharedFlow()
+    override fun getConnectedFlow() = MutableStateFlow(connected)
+    override fun getTickFlow() = MutableSharedFlow<Tick>()
     override fun setMetronomeService(metronomeService: IMetronomeService?) = Unit
 }

@@ -28,10 +28,8 @@ import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
@@ -418,33 +416,33 @@ private class FakeSettingsRepository(
     var writtenTempo: Tempo? = null
         private set
 
-    override fun getBeats(): Flow<Beats> = beatsFlow
+    override fun getBeats() = beatsFlow
     override suspend fun setBeats(beats: Beats) {
         beatsWritten = true
         writtenBeats = beats
     }
 
-    override fun getSubdivisions(): Flow<Subdivisions> = subdivisionsFlow
+    override fun getSubdivisions() = subdivisionsFlow
     override suspend fun setSubdivisions(subdivisions: Subdivisions) {}
 
-    override fun getGaps(): Flow<Gaps> = gapsFlow
+    override fun getGaps() = gapsFlow
     override suspend fun setGaps(gaps: Gaps) {}
 
-    override fun getTempo(): Flow<Tempo> = tempoFlow
+    override fun getTempo() = tempoFlow
     override suspend fun setTempo(tempo: Tempo) {
         writtenTempo = tempo
     }
 
-    override fun getEmphasizeFirstBeat(): Flow<Boolean> = emphasizeFirstBeatFlow
+    override fun getEmphasizeFirstBeat() = emphasizeFirstBeatFlow
     override suspend fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) {}
 
-    override fun getSound(): Flow<Sound> = soundFlow
+    override fun getSound() = soundFlow
     override suspend fun setSound(sound: Sound) {}
 
-    override fun getNightMode(): Flow<AppNightMode> = nightModeFlow
+    override fun getNightMode() = nightModeFlow
     override suspend fun setNightMode(nightMode: AppNightMode) {}
 
-    override fun getPostNotificationsPermissionRequested(): Flow<Boolean> = postNotificationsFlow
+    override fun getPostNotificationsPermissionRequested() = postNotificationsFlow
     override suspend fun setPostNotificationsPermissionRequested(postNotificationsPermissionRequested: Boolean) {}
 }
 
@@ -472,6 +470,6 @@ private class FakeMetronomeService(
     val tickFlow = MutableSharedFlow<Tick>()
     val refreshFlow = MutableSharedFlow<Unit>()
 
-    override fun getTickFlow(): SharedFlow<Tick> = tickFlow
-    override fun getRefreshFlow(): SharedFlow<Unit> = refreshFlow
+    override fun getTickFlow() = tickFlow
+    override fun getRefreshFlow() = refreshFlow
 }

@@ -55,8 +55,8 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-@Preview(widthDp = 40)
 @Composable
+@Preview(widthDp = 40)
 fun TickVisualization(
     @PreviewParameter(TickVisualizationStateProvider::class) state: TickVisualizationState,
     modifier: Modifier = Modifier,

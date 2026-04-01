@@ -31,7 +31,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 private const val PREFERENCES_NAME = "settings"
 private const val SHARED_PREFERENCES_NAME = "com.bobek.metronome_preferences"

@@ -16,11 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.domain
+package com.bobek.metronome.data
 
 import androidx.annotation.StringRes
 
 interface PreferenceChoice {
+
     @get:StringRes
     val labelResourceId: Int
 

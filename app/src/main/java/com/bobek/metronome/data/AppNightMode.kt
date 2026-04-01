@@ -20,7 +20,6 @@ package com.bobek.metronome.data
 
 import androidx.annotation.StringRes
 import com.bobek.metronome.R
-import com.bobek.metronome.domain.PreferenceChoice
 import com.bobek.metronome.settings.PreferenceConstants
 
 enum class AppNightMode(

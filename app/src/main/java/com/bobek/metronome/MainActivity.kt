@@ -34,14 +34,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bobek.metronome.settings.SettingsRepository
 import com.bobek.metronome.ui.MainContent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 private const val TAG = "MainActivity"
 
@@ -92,9 +93,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private suspend fun neverRequestedPostNotificationsPermission(): Boolean =
+        settingsRepository.getPostNotificationsPermissionRequested().first().not()
+
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun postNotificationsPermissionNotGranted() =
-        checkSelfPermission(POST_NOTIFICATIONS) == PERMISSION_DENIED
+        ContextCompat.checkSelfPermission(this,POST_NOTIFICATIONS) == PERMISSION_DENIED
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun startPostNotificationsPermissionRequestWorkflow() {

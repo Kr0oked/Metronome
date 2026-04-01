@@ -51,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -175,17 +176,8 @@ fun SettingsScreen(
     }
 
     if (showSoundDialog) {
-        SingleChoiceDialog(
-            SingleChoiceDialogState(
-                title = stringResource(R.string.sound),
-                entries = Sound.entries,
-                currentValue = sound.preferenceValue
-            ),
-            onValueSelected = { newValue ->
-                viewModel.setSound(newValue)
-                @Suppress("AssignedValueIsNeverRead")
-                showSoundDialog = false
-            },
+        SoundDialog(
+            viewModel = viewModel,
             onDismiss = {
                 @Suppress("AssignedValueIsNeverRead")
                 showSoundDialog = false
@@ -194,17 +186,8 @@ fun SettingsScreen(
     }
 
     if (showNightModeDialog) {
-        SingleChoiceDialog(
-            SingleChoiceDialogState(
-                title = stringResource(R.string.night_mode),
-                entries = AppNightMode.entries,
-                currentValue = nightMode.preferenceValue
-            ),
-            onValueSelected = { newValue ->
-                viewModel.setNightMode(newValue)
-                @Suppress("AssignedValueIsNeverRead")
-                showNightModeDialog = false
-            },
+        NightModeDialog(
+            viewModel = viewModel,
             onDismiss = {
                 @Suppress("AssignedValueIsNeverRead")
                 showNightModeDialog = false
@@ -237,4 +220,52 @@ private fun SettingsSection(
     Column(modifier = Modifier.padding(start = 40.dp)) {
         content()
     }
+}
+
+@Composable
+@Preview
+private fun SoundDialog(
+    viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(),
+    onDismiss: () -> Unit = {},
+) {
+    val sound by viewModel.getSoundFlow().collectAsState()
+
+    SingleChoiceDialog(
+        SingleChoiceDialogState(
+            title = stringResource(R.string.sound),
+            entries = Sound.entries,
+            currentValue = sound.preferenceValue
+        ),
+        onValueSelected = { newValue ->
+            viewModel.setSound(newValue)
+            onDismiss()
+        },
+        onDismiss = {
+            onDismiss()
+        }
+    )
+}
+
+@Composable
+@Preview
+private fun NightModeDialog(
+    viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(),
+    onDismiss: () -> Unit = {},
+) {
+    val nightMode by viewModel.getNightModeFlow().collectAsState()
+
+    SingleChoiceDialog(
+        SingleChoiceDialogState(
+            title = stringResource(R.string.night_mode),
+            entries = AppNightMode.entries,
+            currentValue = nightMode.preferenceValue
+        ),
+        onValueSelected = { newValue ->
+            viewModel.setNightMode(newValue)
+            onDismiss()
+        },
+        onDismiss = {
+            onDismiss()
+        }
+    )
 }

@@ -81,55 +81,55 @@ class MetronomeService : LifecycleService(), IMetronomeService {
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    override var beats: Beats = Beats()
+    override var beats = Beats()
         get() = metronome?.beats ?: field
         set(beats) {
             field = beats
             metronome?.beats = beats
         }
 
-    override var subdivisions: Subdivisions = Subdivisions()
+    override var subdivisions = Subdivisions()
         get() = metronome?.subdivisions ?: field
         set(subdivisions) {
             field = subdivisions
             metronome?.subdivisions = subdivisions
         }
 
-    override var gaps: Gaps = Gaps()
+    override var gaps = Gaps()
         get() = metronome?.gaps ?: field
         set(gaps) {
             field = gaps
             metronome?.gaps = gaps
         }
 
-    override var tempo: Tempo = Tempo()
+    override var tempo = Tempo()
         get() = metronome?.tempo ?: field
         set(tempo) {
             field = tempo
             metronome?.tempo = tempo
         }
 
-    override var emphasizeFirstBeat: Boolean = true
+    override var emphasizeFirstBeat = true
         get() = metronome?.emphasizeFirstBeat ?: field
         set(emphasizeFirstBeat) {
             field = emphasizeFirstBeat
             metronome?.emphasizeFirstBeat = emphasizeFirstBeat
         }
 
-    override var sound: Sound = Sound.SQUARE_WAVE
+    override var sound = Sound.SQUARE_WAVE
         get() = metronome?.sound ?: field
         set(sound) {
             field = sound
             metronome?.sound = sound
         }
 
-    override var playing: Boolean
+    override var playing
         get() = metronome?.playing == true
         set(playing) = if (playing) startMetronome() else stopMetronome()
 
-    override fun getTickFlow(): SharedFlow<Tick> = tickFlow
+    override fun getTickFlow() = tickFlow
 
-    override fun getRefreshFlow(): SharedFlow<Unit> = refreshFlow
+    override fun getRefreshFlow() = refreshFlow
 
     override fun onCreate() {
         super.onCreate()

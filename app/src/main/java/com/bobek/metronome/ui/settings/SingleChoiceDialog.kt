@@ -41,8 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.bobek.metronome.data.Sound
-import com.bobek.metronome.domain.PreferenceChoice
+import com.bobek.metronome.data.AppNightMode
+import com.bobek.metronome.data.PreferenceChoice
 
 @Composable
 @Preview
@@ -100,12 +100,12 @@ data class SingleChoiceDialogState<T : PreferenceChoice>(
     val currentValue: String,
 )
 
-private class SingleChoiceDialogStateProvider : PreviewParameterProvider<SingleChoiceDialogState<Sound>> {
-    override val values: Sequence<SingleChoiceDialogState<Sound>> = sequenceOf(
+private class SingleChoiceDialogStateProvider : PreviewParameterProvider<SingleChoiceDialogState<AppNightMode>> {
+    override val values: Sequence<SingleChoiceDialogState<AppNightMode>> = sequenceOf(
         SingleChoiceDialogState(
             title = "The title",
-            entries = Sound.entries,
-            currentValue = Sound.SQUARE_WAVE.preferenceValue
+            entries = AppNightMode.entries,
+            currentValue = AppNightMode.FOLLOW_SYSTEM.preferenceValue
         )
     )
 }

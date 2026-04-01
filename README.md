@@ -43,4 +43,5 @@ Translations can be added on [Weblate](https://hosted.weblate.org/engage/metrono
 
 ## License
 
-The project is licensed under the GNU GPL v3. You can find the license text in the [LICENSE](LICENSE) file.
+The project is licensed under the GNU GPL v3.
+You can find the license text in the [LICENSE](LICENSE) file.
