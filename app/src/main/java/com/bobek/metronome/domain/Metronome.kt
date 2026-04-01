@@ -22,6 +22,7 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioManager
+import android.media.AudioTimestamp
 import android.media.AudioTrack
 import android.util.Log
 import androidx.lifecycle.Lifecycle
@@ -37,12 +38,57 @@ import com.bobek.metronome.data.Tick
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 
 private const val TAG = "Metronome"
+
+/**
+ * Maximum number of PCM float frames written per silence-fill call.
+ *
+ * Silence is written in chunks rather than one large write so that the coroutine can yield between chunks, allowing
+ * tempo/subdivision changes to take effect mid-period without waiting for the entire remaining silence to drain through
+ * the [AudioTrack] buffer.
+ */
 private const val SILENCE_CHUNK_SIZE = 8_000
 
+/**
+ * Core metronome engine.
+ *
+ * Audio is produced by writing PCM FLOAT mono frames at [SAMPLE_RATE_IN_HZ] (48 kHz) to a streaming [AudioTrack]. The
+ * engine runs a continuous coroutine ([metronomeLoop]) on [Dispatchers.IO] that fills the track one *tick period* at a
+ * time.
+ *
+ * ## Tick period
+ * A tick period is the fixed-length block of audio belonging to a single subdivision tick. Its length in frames is:
+ * ```
+ * periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisions
+ * ```
+ * For example, at 120 BPM with 2 subdivisions the period is 12 000 frames (= 250 ms).
+ *
+ * Each period consists of:
+ * 1. **Tick sound** — the preloaded PCM sample for the tick's type (STRONG / WEAK / SUB), written at the start of the
+ *    period. Gap beats skip this part entirely.
+ * 2. **Silence** — zero-valued frames that pad the rest of the period up to `periodSize` so that the next tick starts
+ *    at the correct moment.
+ *
+ * ## Size / frame accounting
+ * All "size" variables throughout this class count **PCM float frames** (= samples for mono audio), *not* bytes. One
+ * frame equals one `Float` value (4 bytes).
+ *
+ * ## Tick notification timing
+ * To keep the UI beat visualization in sync with the audible click, notifications are scheduled against
+ * [AudioTimestamp] rather than fired immediately. The timestamp gives the wall-clock nanosecond at which a known frame
+ * position will reach the speaker; from that the coroutine derives how far in the future the *first frame* of the
+ * current period will be presented and delays the [MetronomeTickListener.onTick] call by exactly that amount.
+ *
+ * @param context Used to load audio assets via [SoundProvider].
+ * @param lifecycle Scopes the internal coroutines; the engine is automatically cleaned up when the lifecycle is
+ *   destroyed.
+ * @param tickListener Callback fired (on the main dispatcher) once per tick, timed to coincide with the audible
+ *   click.
+ */
 class Metronome(
     context: Context,
     override val lifecycle: Lifecycle,
@@ -50,6 +96,8 @@ class Metronome(
 ) : LifecycleOwner {
 
     private val soundProvider = SoundProvider(context)
+
+    /** Pre-allocated silent PCM float buffer reused for every silence-fill write. */
     private val silence = FloatArray(SILENCE_CHUNK_SIZE)
 
     private var metronomeJob: Job? = null
@@ -86,14 +134,23 @@ class Metronome(
         Log.i(TAG, "Started metronome job")
     }
 
+    /**
+     * Main audio loop. Runs until canceled (i.e. [stop] is called).
+     *
+     * Creates a single [AudioTrack] for the entire playback session and repeatedly calls [writeTickPeriod] to advance
+     * `totalFramesWritten` — the running total of PCM frames pushed into the track since playback started. This counter
+     * is needed by [scheduleTickNotification] to calculate how far ahead of the current playback position the *next*
+     * tick sound begins.
+     */
     private suspend fun metronomeLoop() {
         val track = getNewAudioTrack()
         track.play()
 
         try {
             var tickCount = 0L
+            var totalFramesWritten = 0L
             while (true) {
-                writeTickPeriod(track, tickCount)
+                totalFramesWritten = writeTickPeriod(track, tickCount, totalFramesWritten)
                 tickCount++
             }
         } catch (_: CancellationException) {
@@ -105,6 +162,13 @@ class Metronome(
         }
     }
 
+    /**
+     * Creates a streaming [AudioTrack] configured for 48 kHz mono PCM FLOAT output.
+     *
+     * The hardware buffer is sized to [AudioTrack.getMinBufferSize] — the smallest value that avoids underruns under
+     * normal conditions. Streaming mode ([AudioTrack.MODE_STREAM]) means the app feeds audio data continuously via
+     * [AudioTrack.write] rather than loading a fixed clip up front.
+     */
     private fun getNewAudioTrack(): AudioTrack {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_MEDIA)
@@ -126,7 +190,23 @@ class Metronome(
         )
     }
 
-    private suspend fun writeTickPeriod(track: AudioTrack, tickCount: Long) {
+    /**
+     * Writes one complete tick period to [track] and returns the updated cumulative frame count.
+     *
+     * A period has exactly `calculatePeriodSize(tempo, subdivisions)` frames. The method first writes the tick sound
+     * (unless the tick is a gap), then pads the remainder with silence via [writeSilenceUntilPeriodFinished].
+     *
+     * @param tickCount Zero-based sequential index of this tick across the entire playback session. Used to derive
+     *   beat position and tick type.
+     * @param totalFramesWritten Cumulative PCM frames written to [track] before this period. Passed to
+     *   [scheduleTickNotification] so it can calculate the presentation timestamp of this period's first frame.
+     * @return The updated cumulative frame count: `totalFramesWritten + sizeWritten`, where `sizeWritten` is the total
+     *   frames for this period (tick sound + silence). Because tempo or subdivisions may change while silence is being
+     *   filled, `periodSize` is re-evaluated on each iteration inside [writeSilenceUntilPeriodFinished], so the actual
+     *   increment equals the period size that was in effect when the tick sound was written plus the silence that was
+     *   added to reach the (possibly re-evaluated) boundary.
+     */
+    private suspend fun writeTickPeriod(track: AudioTrack, tickCount: Long, totalFramesWritten: Long): Long {
         var sizeWritten = 0
 
         val tick = getCurrentTick(tickCount)
@@ -141,14 +221,68 @@ class Metronome(
             Log.v(TAG, "Wrote tick sound for $tick")
         }
 
-        tickListener.onTick(tick)
+        scheduleTickNotification(track, tick, totalFramesWritten)
         yield()
 
-        writeSilenceUntilPeriodFinished(track, sizeWritten)
+        sizeWritten += writeSilenceUntilPeriodFinished(track, sizeWritten)
+        return totalFramesWritten + sizeWritten
     }
 
-    private suspend fun writeSilenceUntilPeriodFinished(track: AudioTrack, previousSizeWritten: Int) {
+    /**
+     * Schedules a [MetronomeTickListener.onTick] call to fire at the moment this tick's audio will actually be heard
+     * by the user.
+     *
+     * [AudioTrack.getTimestamp] returns the wall-clock time ([AudioTimestamp.nanoTime]) at which a specific frame
+     * ([AudioTimestamp.framePosition]) reached (or will reach) the audio hardware output. From that anchor the
+     * presentation time of `totalFramesWritten` — i.e. the first frame of the current period — is extrapolated:
+     * ```
+     * presentationDelayNanos = timestamp.nanoTime - now
+     *                        + (totalFramesWritten - timestamp.framePosition) * nanosPerFrame
+     * ```
+     * If the timestamp is unavailable (returns `false`, common at the very start of playback) the notification is
+     * fired immediately.
+     *
+     * @param totalFramesWritten Cumulative frames written to [track] up to (but not including) this period — i.e. the
+     *   frame index where this period's first sample will be played.
+     */
+    private fun scheduleTickNotification(track: AudioTrack, tick: Tick, totalFramesWritten: Long) {
+        val audioTimestamp = AudioTimestamp()
+        val presentationDelayMillis = if (track.getTimestamp(audioTimestamp)) {
+            val nanosPerFrame = 1_000_000_000L / SAMPLE_RATE_IN_HZ
+            val presentationDelayNanos = audioTimestamp.nanoTime - System.nanoTime() +
+                    (totalFramesWritten - audioTimestamp.framePosition) * nanosPerFrame
+            presentationDelayNanos / 1_000_000
+        } else {
+            0L
+        }.coerceAtLeast(0L)
+
+        if (presentationDelayMillis == 0L) {
+            tickListener.onTick(tick)
+        } else {
+            lifecycleScope.launch {
+                delay(presentationDelayMillis)
+                tickListener.onTick(tick)
+            }
+        }
+        Log.v(TAG, "Scheduled tick notification for $tick with delay ${presentationDelayMillis}ms")
+    }
+
+    /**
+     * Fills the rest of the current tick period with silence by looping until the total number of frames written for
+     * this period reaches `periodSize`.
+     *
+     * Silence is written in chunks of at most [SILENCE_CHUNK_SIZE] frames, with a [yield] after each chunk. This gives
+     * the coroutine dispatcher a chance to pick up tempo/subdivision changes between chunks so that the period boundary
+     * is re-evaluated with fresh values.
+     *
+     * @param previousSizeWritten Frames already written for this period before silence filling began (i.e. the tick
+     *   sound size, or 0 for a gap).
+     * @return The number of silence frames written — *not* the total period size. The caller adds this to
+     *   `previousSizeWritten` to advance `totalFramesWritten`.
+     */
+    private suspend fun writeSilenceUntilPeriodFinished(track: AudioTrack, previousSizeWritten: Int): Int {
         var sizeWritten = previousSizeWritten
+
         while (true) {
             val periodSize = calculatePeriodSize(tempo.value, subdivisions.value)
             if (sizeWritten >= periodSize) {
@@ -159,6 +293,8 @@ class Metronome(
             Log.v(TAG, "Wrote silence")
             yield()
         }
+
+        return sizeWritten - previousSizeWritten
     }
 
     private fun getCurrentTick(tickCount: Long): Tick {
@@ -170,17 +306,38 @@ class Metronome(
         )
     }
 
+    /**
+     * Writes the next slice of [data] into [track], capped so that the total written for this period never exceeds
+     * `periodSize`.
+     *
+     * @param sizeWritten Frames already written in this period before this call.
+     * @return The number of frames actually written (≤ `data.size` and ≤ `periodSize - sizeWritten`).
+     */
     private fun writeNextAudioData(track: AudioTrack, data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
         val size = calculateAudioSizeToWriteNext(data, periodSize, sizeWritten)
         writeAudio(track, data, size)
         return size
     }
 
+    /**
+     * Returns how many frames from [data] should be written in this call.
+     *
+     * The result is `min(data.size, periodSize - sizeWritten)`, ensuring the write never overshoots the period
+     * boundary.
+     */
     private fun calculateAudioSizeToWriteNext(data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
         val sizeLeft = periodSize - sizeWritten
         return if (data.size > sizeLeft) sizeLeft else data.size
     }
 
+    /**
+     * Writes [size] frames from [data] to [track] using [AudioTrack.WRITE_BLOCKING].
+     *
+     * Blocking mode means the call parks the calling thread until the hardware buffer has room for the data, which is
+     * the primary back-pressure mechanism keeping the audio loop from running ahead of the speaker.
+     *
+     * @throws IllegalStateException if [AudioTrack.write] returns an error code.
+     */
     private fun writeAudio(track: AudioTrack, data: FloatArray, size: Int) {
         val result = track.write(data, 0, size, AudioTrack.WRITE_BLOCKING)
         if (result < 0) {
