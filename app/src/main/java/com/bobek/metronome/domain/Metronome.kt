@@ -232,39 +232,47 @@ class Metronome(
      * Schedules a [MetronomeTickListener.onTick] call to fire at the moment this tick's audio will actually be heard
      * by the user.
      *
-     * [AudioTrack.getTimestamp] returns the wall-clock time ([AudioTimestamp.nanoTime]) at which a specific frame
-     * ([AudioTimestamp.framePosition]) reached (or will reach) the audio hardware output. From that anchor the
-     * presentation time of `totalFramesWritten` — i.e. the first frame of the current period — is extrapolated:
-     * ```
-     * presentationDelayNanos = timestamp.nanoTime - now
-     *                        + (totalFramesWritten - timestamp.framePosition) * nanosPerFrame
-     * ```
-     * If the timestamp is unavailable (returns `false`, common at the very start of playback) the notification is
-     * fired immediately.
+     * The presentation delay is calculated via [calculatePresentationDelayMillis]. If it is zero (timestamp not yet
+     * available at the very start of playback) the notification is fired immediately; otherwise a coroutine delay is
+     * used.
      *
      * @param totalFramesWritten Cumulative frames written to [track] up to (but not including) this period — i.e. the
      *   frame index where this period's first sample will be played.
      */
     private fun scheduleTickNotification(track: AudioTrack, tick: Tick, totalFramesWritten: Long) {
-        val audioTimestamp = AudioTimestamp()
-        val presentationDelayMillis = if (track.getTimestamp(audioTimestamp)) {
-            val nanosPerFrame = 1_000_000_000L / SAMPLE_RATE_IN_HZ
-            val presentationDelayNanos = audioTimestamp.nanoTime - System.nanoTime() +
-                    (totalFramesWritten - audioTimestamp.framePosition) * nanosPerFrame
-            presentationDelayNanos / 1_000_000
-        } else {
-            0L
-        }.coerceAtLeast(0L)
+        val delayMillis = calculatePresentationDelayMillis(track, totalFramesWritten)
 
-        if (presentationDelayMillis == 0L) {
+        if (delayMillis == 0L) {
             tickListener.onTick(tick)
         } else {
             lifecycleScope.launch {
-                delay(presentationDelayMillis)
+                delay(delayMillis)
                 tickListener.onTick(tick)
             }
         }
-        Log.v(TAG, "Scheduled tick notification for $tick with delay ${presentationDelayMillis}ms")
+        Log.v(TAG, "Scheduled tick notification for $tick with delay ${delayMillis}ms")
+    }
+
+    /**
+     * Returns how many milliseconds from now the first frame at `totalFramesWritten` will be presented by the audio
+     * hardware.
+     *
+     * Uses [AudioTrack.getTimestamp] to anchor the calculation to a known frame/time pair, then extrapolates forward
+     * to `totalFramesWritten`:
+     * ```
+     * delayNanos = (totalFramesWritten - timestamp.framePosition) * nanosPerFrame - (now - timestamp.nanoTime)
+     * ```
+     * Returns 0 if the timestamp is not yet available (common at the very start of playback).
+     */
+    private fun calculatePresentationDelayMillis(track: AudioTrack, totalFramesWritten: Long): Long {
+        val audioTimestamp = AudioTimestamp()
+        if (!track.getTimestamp(audioTimestamp)) return 0L
+
+        val nanosPerFrame = 1_000_000_000L / SAMPLE_RATE_IN_HZ
+        val timestampAgeNanos = System.nanoTime() - audioTimestamp.nanoTime
+        val framesAheadOfTimestamp = totalFramesWritten - audioTimestamp.framePosition
+        val delayNanos = framesAheadOfTimestamp * nanosPerFrame - timestampAgeNanos
+        return (delayNanos / 1_000_000).coerceAtLeast(0L)
     }
 
     /**
@@ -277,24 +285,22 @@ class Metronome(
      *
      * @param previousSizeWritten Frames already written for this period before silence filling began (i.e. the tick
      *   sound size, or 0 for a gap).
-     * @return The number of silence frames written — *not* the total period size. The caller adds this to
-     *   `previousSizeWritten` to advance `totalFramesWritten`.
+     * @return The number of silence frames written.
      */
     private suspend fun writeSilenceUntilPeriodFinished(track: AudioTrack, previousSizeWritten: Int): Int {
-        var sizeWritten = previousSizeWritten
+        var silenceWritten = 0
 
         while (true) {
             val periodSize = calculatePeriodSize(tempo.value, subdivisions.value)
-            if (sizeWritten >= periodSize) {
-                break
-            }
+            val totalWritten = previousSizeWritten + silenceWritten
+            if (totalWritten >= periodSize) break
 
-            sizeWritten += writeNextAudioData(track, silence, periodSize, sizeWritten)
+            silenceWritten += writeNextAudioData(track, silence, periodSize, totalWritten)
             Log.v(TAG, "Wrote silence")
             yield()
         }
 
-        return sizeWritten - previousSizeWritten
+        return silenceWritten
     }
 
     private fun getCurrentTick(tickCount: Long): Tick {
@@ -314,20 +320,9 @@ class Metronome(
      * @return The number of frames actually written (≤ `data.size` and ≤ `periodSize - sizeWritten`).
      */
     private fun writeNextAudioData(track: AudioTrack, data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
-        val size = calculateAudioSizeToWriteNext(data, periodSize, sizeWritten)
+        val size = minOf(data.size, periodSize - sizeWritten)
         writeAudio(track, data, size)
         return size
-    }
-
-    /**
-     * Returns how many frames from [data] should be written in this call.
-     *
-     * The result is `min(data.size, periodSize - sizeWritten)`, ensuring the write never overshoots the period
-     * boundary.
-     */
-    private fun calculateAudioSizeToWriteNext(data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
-        val sizeLeft = periodSize - sizeWritten
-        return if (data.size > sizeLeft) sizeLeft else data.size
     }
 
     /**
