@@ -26,10 +26,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Help
-import androidx.compose.material.icons.filled.DisplaySettings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -84,7 +80,7 @@ fun SettingsScreen(
                 title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                        Icon(painter = painterResource(R.drawable.ic_arrow_back), contentDescription = null)
                     }
                 }
             )
@@ -98,7 +94,9 @@ fun SettingsScreen(
         ) {
             SettingsSection(
                 title = stringResource(R.string.metronome),
-                icon = { Icon(painter = painterResource(R.drawable.ic_metronome), contentDescription = null) }
+                icon = {
+                    Icon(painter = painterResource(R.drawable.ic_metronome), contentDescription = null)
+                }
             ) {
                 ListItem(
                     headlineContent = { Text(stringResource(R.string.emphasize_first_beat)) },
@@ -120,7 +118,9 @@ fun SettingsScreen(
             HorizontalDivider()
             SettingsSection(
                 title = stringResource(R.string.display),
-                icon = { Icon(Icons.Filled.DisplaySettings, contentDescription = null) }
+                icon = {
+                    Icon(painter = painterResource(R.drawable.ic_display_settings), contentDescription = null)
+                }
             ) {
                 ListItem(
                     headlineContent = { Text(stringResource(R.string.night_mode)) },
@@ -132,7 +132,9 @@ fun SettingsScreen(
             HorizontalDivider()
             SettingsSection(
                 title = stringResource(R.string.about),
-                icon = { Icon(Icons.AutoMirrored.Filled.Help, contentDescription = null) }
+                icon = {
+                    Icon(painter = painterResource(R.drawable.ic_help), contentDescription = null)
+                }
             ) {
                 ListItem(
                     headlineContent = { Text(stringResource(R.string.author)) },

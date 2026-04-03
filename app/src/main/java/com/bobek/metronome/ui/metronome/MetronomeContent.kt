@@ -35,11 +35,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -59,7 +54,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -422,8 +417,14 @@ private fun StartStopButton(
         modifier = modifier,
         shape = metronomeButtonShape()
     ) {
+        val painter = if (playing) {
+            painterResource(R.drawable.ic_pause)
+        } else {
+            painterResource(R.drawable.ic_play_arrow)
+        }
+
         Icon(
-            imageVector = if (playing) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+            painter = painter,
             contentDescription = stringResource(R.string.start_stop_button_description),
             modifier = Modifier.size(iconSize)
         )
@@ -461,10 +462,10 @@ private fun IncrementTempoButton(
     iconSize: Dp = Dp.Unspecified
 ) {
     TempoActionButton(
-        modifier = modifier,
-        imageVector = Icons.Filled.Add,
+        painter = painterResource(R.drawable.ic_add),
         iconSize = iconSize,
         contentDescription = stringResource(R.string.increment_tempo_button_description),
+        modifier = modifier,
         onClick = { viewModel.changeTempo(1) },
         onLongClick = { viewModel.changeTempo(10) }
     )
@@ -477,10 +478,10 @@ private fun DecrementTempoButton(
     iconSize: Dp = Dp.Unspecified
 ) {
     TempoActionButton(
-        modifier = modifier,
-        imageVector = Icons.Filled.Remove,
+        painter = painterResource(R.drawable.ic_remove),
         iconSize = iconSize,
         contentDescription = stringResource(R.string.decrement_tempo_button_description),
+        modifier = modifier,
         onClick = { viewModel.changeTempo(-1) },
         onLongClick = { viewModel.changeTempo(-10) }
     )
@@ -488,7 +489,7 @@ private fun DecrementTempoButton(
 
 @Composable
 private fun TempoActionButton(
-    imageVector: ImageVector,
+    painter: Painter,
     iconSize: Dp,
     contentDescription: String,
     modifier: Modifier = Modifier,
@@ -532,7 +533,7 @@ private fun TempoActionButton(
         interactionSource = interactionSource
     ) {
         Icon(
-            imageVector = imageVector,
+            painter = painter,
             contentDescription = contentDescription,
             modifier = Modifier.size(iconSize)
         )
