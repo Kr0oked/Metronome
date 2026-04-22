@@ -37,7 +37,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.bobek.metronome"
+        applicationId = "be.newpage.metronome"
         minSdk = 24
         targetSdk = 36
         versionCode = 24
