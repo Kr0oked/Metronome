@@ -103,9 +103,10 @@ fun SettingsScreen(
                     trailingContent = {
                         Switch(
                             checked = emphasizeFirstBeat,
-                            onCheckedChange = { viewModel.setEmphasizeFirstBeat(it) }
+                            onCheckedChange = null
                         )
-                    }
+                    },
+                    modifier = Modifier.clickable { viewModel.setEmphasizeFirstBeat(!emphasizeFirstBeat) }
                 )
 
                 ListItem(
