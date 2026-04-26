@@ -1,0 +1,3 @@
+- Moyenne de la vitesse de frappe
+- Ajout de la traduction portugaise
+- Ajout de la traduction turque

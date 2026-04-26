@@ -1,0 +1,2 @@
+- Interface utilisateur repensée avec Material Design 3
+- Ajout des traductions en finnois et en lingala

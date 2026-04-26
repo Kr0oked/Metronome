@@ -1,0 +1,2 @@
+- Marges de mise en page corrigé en mode bord à bord
+- Traduction chinoise améliorée

@@ -1,0 +1,1 @@
+- Correction d'une erreur de communication entre le service en arrière-plan et l'interface utilisateur

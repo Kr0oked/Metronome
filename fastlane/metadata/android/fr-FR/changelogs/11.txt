@@ -1,0 +1,2 @@
+- Ajout d'une vue pour afficher les licences tierces
+- Ajout de la traduction en portugais brésilien

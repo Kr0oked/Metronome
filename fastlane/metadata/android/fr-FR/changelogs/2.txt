@@ -1,0 +1,2 @@
+- Le métronome est désormais précis et sans à-coups.
+- Fonctionnalité de tap tempo améliorée.

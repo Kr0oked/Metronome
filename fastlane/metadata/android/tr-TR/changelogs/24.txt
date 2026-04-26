@@ -1,0 +1,2 @@
+- Kullanıcı arayüzü Material Tasarım 3 ile yeniden tasarlandı
+- Fince ve Lingala dillerine çeviriler eklendi

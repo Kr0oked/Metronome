@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metronome">Momeder</string>
+    <string name="beats_label">Talmoù</string>
+    <string name="subdivisions_label">Is-talmoù</string>
+    <string name="tempo_label">Tempo e BPM</string>
+    <string name="start_stop_button_description">Loc\'hañ hag ehanañ ar momeder</string>
+    <string name="tap_tempo_button_description">Skoit en ul lusk evit reiñ ul lusk</string>
+    <string name="increment_tempo_button_description">Kreskiñ an tempo</string>
+    <string name="decrement_tempo_button_description">Digreskiñ an tempo</string>
+    <string name="tick_visualization_image_description">Diskwel an tik-tik</string>
+    <string name="notification_channel_playback_name">Lenn</string>
+    <string name="notification_channel_playback_description">Momeder o lenn bremañ</string>
+    <string name="notification_playback_title">O lenn emañ ar momeder</string>
+    <string name="notification_playback_action_stop_title">Paouez</string>
+    <string name="settings">Arventennoù</string>
+    <string name="emphasize_first_beat">Stambouc\'h war an talm kentañ</string>
+    <string name="display">Diskwel</string>
+    <string name="night_mode">Tem</string>
+    <string name="night_mode_follow_system">Heuliañ arventennoù ar sistem</string>
+    <string name="night_mode_no">Sklaer</string>
+    <string name="night_mode_yes">Teñval</string>
+    <string name="sound">Son</string>
+    <string name="sound_square_wave">Bip kreñv</string>
+    <string name="sound_sine_wave">Bip skañv</string>
+    <string name="sound_risset_drum">Taboulinoù sintetek</string>
+    <string name="sound_pluck">Kloc\'h</string>
+    <string name="about">Diwar-benn</string>
+    <string name="author">Aozer</string>
+    <string name="license">Aotreoù</string>
+    <string name="third_party_licenses">Aotreoù trede</string>
+    <string name="third_party_licenses_summary">Aotreoù al levraouegoù open source enklozet</string>
+    <string name="source_code">Kod Mammenn</string>
+    <string name="version">Stumm</string>
+    <string name="request_notifications_permission_rationale_title">Ezhomm hon eus eus hoc\'h aotre evit embann ho kemennoù</string>
+    <string name="request_notifications_permission_rationale_message">An arload-mañ a fell dezhañ diskouez ur c\'hemenn keit ha ma \'z a en-dro ar momeder. Posupl e vo deoc\'h goude-se paouez ar momeder ha pa \'z afe en-dro ar momeder en drekleur.</string>
+    <string name="ok">Mat eo</string>
+    <string name="no_thanks">Ket, avat</string>
+    <string name="tempo_marking_largo">Largo</string>
+    <string name="tempo_marking_larghetto">Larghetto</string>
+    <string name="tempo_marking_adagio">Adagio</string>
+    <string name="tempo_marking_andante">Andante</string>
+    <string name="tempo_marking_moderato">Moderato</string>
+    <string name="tempo_marking_allegro">Allegro</string>
+    <string name="tempo_marking_presto">Presto</string>
+    <string name="tempo_marking_prestissimo">Prestissimo</string>
+</resources>

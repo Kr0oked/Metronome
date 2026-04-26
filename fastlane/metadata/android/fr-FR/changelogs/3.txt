@@ -1,0 +1,5 @@
+- Design Material 3
+- Boutons pour augmenter et diminuer le tempo
+- Nouvelles icônes pour le mode nuit
+- Option pour accentuer le premier temps
+- Mémorisation des préférences de l'application

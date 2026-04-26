@@ -1,0 +1,4 @@
+- Traduction tchèque
+- Paramètres améliorés
+- Justification des autorisations
+- Accessibilité améliorée
