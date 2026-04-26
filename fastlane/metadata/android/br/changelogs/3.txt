@@ -1,5 +1,0 @@
-- Material 3 design
-- Boutonioù evit kreskiñ ha digreskiñ an tempo
-- Ikonioù evit ar mod teñval
-- Dibarzhioù evit pouezañ war an talm kentañ
-- Derc'hel soñj eus arventennoù an arload
