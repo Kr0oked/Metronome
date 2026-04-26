@@ -33,13 +33,13 @@ java {
 android {
     namespace = "com.bobek.metronome"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {
         applicationId = "com.bobek.metronome"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 24
         versionName = "2.0.0"
 
