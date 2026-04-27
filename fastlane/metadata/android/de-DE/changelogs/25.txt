@@ -1,0 +1,3 @@
+- Absturz beim Starten des Metronoms im Hintergrund behoben
+- Fehler behoben, bei dem Tick-Benachrichtigungen nicht mit dem Audio synchron waren
+- Tick-Visualisierung verbessert

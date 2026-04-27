@@ -1,0 +1,3 @@
+- Fixed crash when starting the metronome from the background
+- Fixed tick notifications being out of sync with the audio
+- Improved tick visualization
