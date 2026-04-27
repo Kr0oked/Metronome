@@ -335,7 +335,7 @@ class MetronomeViewModelTest {
 
         // Emitting from the old service should not affect the viewModel (jobs were cancelled)
         service1.beats = Beats(8)
-        service1.refreshFlow.emit(Unit)
+        service1.getRefreshFlow().emit(Unit)
 
         // viewModel should still reflect service2's values, not service1's
         assertEquals(service2.beats, viewModel.getBeatsFlow().value)
@@ -467,8 +467,8 @@ private class FakeMetronomeService(
     override var playing: Boolean = false
 ) : IMetronomeService {
 
-    val tickFlow = MutableSharedFlow<Tick>()
-    val refreshFlow = MutableSharedFlow<Unit>()
+    private val tickFlow = MutableSharedFlow<Tick>()
+    private val refreshFlow = MutableSharedFlow<Unit>()
 
     override fun getTickFlow() = tickFlow
     override fun getRefreshFlow() = refreshFlow
