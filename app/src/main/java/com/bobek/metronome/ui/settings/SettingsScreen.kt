@@ -18,7 +18,10 @@
 
 package com.bobek.metronome.ui.settings
 
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,6 +60,8 @@ import com.bobek.metronome.IMetronomeViewModel
 import com.bobek.metronome.R
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Sound
+
+private const val TAG = "SettingsScreen"
 
 @Composable
 @PreviewScreenSizes
@@ -142,7 +147,7 @@ fun SettingsScreen(
                     supportingContent = { Text(stringResource(R.string.author_name)) },
                     modifier = Modifier.clickable {
                         val intent = Intent(Intent.ACTION_VIEW, "mailto:philipp.bobek@mailbox.org".toUri())
-                        context.startActivity(intent)
+                        context.startActivitySafely(intent)
                     }
                 )
 
@@ -151,7 +156,7 @@ fun SettingsScreen(
                     supportingContent = { Text(stringResource(R.string.license_name)) },
                     modifier = Modifier.clickable {
                         val intent = Intent(Intent.ACTION_VIEW, "https://www.gnu.org/licenses/gpl-3.0.txt".toUri())
-                        context.startActivity(intent)
+                        context.startActivitySafely(intent)
                     }
                 )
 
@@ -166,7 +171,7 @@ fun SettingsScreen(
                     supportingContent = { Text(stringResource(R.string.source_code_name)) },
                     modifier = Modifier.clickable {
                         val intent = Intent(Intent.ACTION_VIEW, "https://github.com/Kr0oked/Metronome".toUri())
-                        context.startActivity(intent)
+                        context.startActivitySafely(intent)
                     }
                 )
 
@@ -271,4 +276,12 @@ private fun NightModeDialog(
             onDismiss()
         }
     )
+}
+
+private fun Context.startActivitySafely(intent: Intent) {
+    try {
+        startActivity(intent)
+    } catch (_: ActivityNotFoundException) {
+        Log.d(TAG, "No activity found to handle intent: $intent")
+    }
 }
