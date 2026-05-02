@@ -52,6 +52,7 @@
 
         <service
                 android:name=".MetronomeService"
+                android:exported="false"
                 android:foregroundServiceType="mediaPlayback" />
 
     </application>

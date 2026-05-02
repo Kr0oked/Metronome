@@ -146,18 +146,18 @@ class MetronomeService : LifecycleService(), IMetronomeService {
     }
 
     private fun buildPlaybackNotificationChannel() = NotificationChannelCompat
-        .Builder(NOTIFICATION_CHANNEL_PLAYBACK_ID, NotificationManagerCompat.IMPORTANCE_DEFAULT)
+        .Builder(NOTIFICATION_CHANNEL_PLAYBACK_ID, NotificationManagerCompat.IMPORTANCE_LOW)
         .setName(getString(R.string.notification_channel_playback_name))
         .setDescription(getString(R.string.notification_channel_playback_description))
-        .setImportance(NotificationManagerCompat.IMPORTANCE_HIGH)
         .build()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         Log.d(TAG, "Lifecycle: onStartCommand")
         if (intent?.action == ACTION_STOP) {
             performStop()
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder {
