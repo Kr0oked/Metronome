@@ -57,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.platform.testTag
@@ -354,6 +355,7 @@ private fun ControlSection(
     editTestTag: String = "",
     markingTestTag: String = ""
 ) {
+    val fontScale = LocalDensity.current.fontScale
     var text by rememberSaveable { mutableStateOf(value.toString()) }
 
     var previousValue by rememberSaveable { mutableIntStateOf(value) }
@@ -388,7 +390,7 @@ private fun ControlSection(
                 }
             },
             modifier = Modifier
-                .width(72.dp)
+                .width((72 * fontScale.coerceAtLeast(1f)).dp)
                 .padding(start = dimensionResource(R.dimen.general_spacing))
                 .testTag(editTestTag),
             textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
