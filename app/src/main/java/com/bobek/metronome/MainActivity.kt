@@ -67,14 +67,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        startAndBindToMetronomeService()
-    }
-
-    private fun startAndBindToMetronomeService() {
-        Intent(this, MetronomeService::class.java).also { service ->
-            startService(service)
-            bindService(service, metronomeServiceConnection, BIND_AUTO_CREATE or BIND_ABOVE_CLIENT)
-        }
+        bindService(
+            Intent(this, MetronomeService::class.java),
+            metronomeServiceConnection,
+            BIND_AUTO_CREATE or BIND_ABOVE_CLIENT
+        )
     }
 
     override fun onResume() {
@@ -98,7 +95,7 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun postNotificationsPermissionNotGranted() =
-        ContextCompat.checkSelfPermission(this,POST_NOTIFICATIONS) == PERMISSION_DENIED
+        ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PERMISSION_DENIED
 
     @RequiresApi(VERSION_CODES.TIRAMISU)
     private fun startPostNotificationsPermissionRequestWorkflow() {

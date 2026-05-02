@@ -31,6 +31,7 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
@@ -68,8 +69,6 @@ interface IMetronomeService {
 class MetronomeService : LifecycleService(), IMetronomeService {
 
     private var metronome: Metronome? = null
-
-    private var bound = false
 
     private val tickFlow = MutableSharedFlow<Tick>(
         extraBufferCapacity = 1,
@@ -164,19 +163,16 @@ class MetronomeService : LifecycleService(), IMetronomeService {
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)
         Log.d(TAG, "Lifecycle: onBind")
-        bound = true
         return LocalBinder()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         Log.d(TAG, "Lifecycle: onUnbind")
-        bound = false
         return true
     }
 
     override fun onRebind(intent: Intent?) {
         Log.d(TAG, "Lifecycle: onRebind")
-        bound = true
     }
 
     override fun onDestroy() {
@@ -188,6 +184,7 @@ class MetronomeService : LifecycleService(), IMetronomeService {
 
     private fun startMetronome() {
         Log.i(TAG, "Start metronome")
+        ContextCompat.startForegroundService(this, Intent(this, MetronomeService::class.java))
         metronome?.playing = true
         startForegroundNotification()
     }
@@ -228,19 +225,12 @@ class MetronomeService : LifecycleService(), IMetronomeService {
         Log.i(TAG, "Stop metronome")
         metronome?.playing = false
         stopForegroundNotification()
-        stopNoLongerNeededService()
+        stopSelf()
     }
 
     private fun stopForegroundNotification() {
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         Log.d(TAG, "Foreground service stopped")
-    }
-
-    private fun stopNoLongerNeededService() {
-        if (!bound) {
-            Log.d(TAG, "Stop no longer needed service")
-            stopSelf()
-        }
     }
 
     private fun performStop() {
