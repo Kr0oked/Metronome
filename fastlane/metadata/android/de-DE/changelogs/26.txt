@@ -1,0 +1,3 @@
+- Abschneiden des Tempo-Eingabefeldes bei großen Schriftgrößen behoben
+- Absturz beim Öffnen von Links auf Geräten ohne Browser oder E-Mail-App behoben
+- Benachrichtigungsverhalten verbessert

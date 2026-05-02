@@ -1,0 +1,3 @@
+- Fixed tempo input field clipping at large font sizes
+- Fixed crash when opening links on devices without a browser or email app
+- Improved notification behavior
