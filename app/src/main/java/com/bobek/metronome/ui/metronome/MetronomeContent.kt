@@ -79,6 +79,7 @@ import com.bobek.metronome.ui.TestConstants
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.ceil
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 @PreviewScreenSizes
@@ -361,7 +362,6 @@ private fun ControlSection(
     var previousValue by rememberSaveable { mutableIntStateOf(value) }
     if (value != previousValue) {
         text = value.toString()
-        @Suppress("AssignedValueIsNeverRead")
         previousValue = value
     }
 
@@ -509,7 +509,7 @@ private fun TempoActionButton(
             when (interaction) {
                 is PressInteraction.Press -> {
                     isLongClick = false
-                    delay(viewConfiguration.longPressTimeoutMillis)
+                    delay(viewConfiguration.longPressTimeoutMillis.milliseconds)
                     isLongClick = true
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                     onLongClick()

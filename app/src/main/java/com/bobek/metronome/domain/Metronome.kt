@@ -41,6 +41,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.nanoseconds
 
 private const val TAG = "Metronome"
 
@@ -232,7 +234,7 @@ class Metronome(
      * Schedules a [MetronomeTickListener.onTick] call to fire at the moment this tick's audio will actually be heard
      * by the user.
      *
-     * The presentation delay is calculated via [calculatePresentationDelayMillis]. If it is zero (timestamp not yet
+     * The presentation delay is calculated via [calculatePresentationDelay]. If it is zero (timestamp not yet
      * available at the very start of playback) the notification is fired immediately; otherwise a coroutine delay is
      * used.
      *
@@ -240,21 +242,21 @@ class Metronome(
      *   frame index where this period's first sample will be played.
      */
     private fun scheduleTickNotification(track: AudioTrack, tick: Tick, totalFramesWritten: Long) {
-        val delayMillis = calculatePresentationDelayMillis(track, totalFramesWritten)
+        val presentationDelay = calculatePresentationDelay(track, totalFramesWritten)
 
-        if (delayMillis == 0L) {
+        if (presentationDelay == Duration.ZERO) {
             tickListener.onTick(tick)
         } else {
             lifecycleScope.launch {
-                delay(delayMillis)
+                delay(presentationDelay)
                 tickListener.onTick(tick)
             }
         }
-        Log.v(TAG, "Scheduled tick notification for $tick with delay ${delayMillis}ms")
+        Log.v(TAG, "Scheduled tick notification for $tick with delay ${presentationDelay.inWholeMilliseconds}ms")
     }
 
     /**
-     * Returns how many milliseconds from now the first frame at `totalFramesWritten` will be presented by the audio
+     * Returns the [Duration] from now until the first frame at `totalFramesWritten` will be presented by the audio
      * hardware.
      *
      * Uses [AudioTrack.getTimestamp] to anchor the calculation to a known frame/time pair, then extrapolates forward
@@ -262,17 +264,17 @@ class Metronome(
      * ```
      * delayNanos = (totalFramesWritten - timestamp.framePosition) * nanosPerFrame - (now - timestamp.nanoTime)
      * ```
-     * Returns 0 if the timestamp is not yet available (common at the very start of playback).
+     * Returns [Duration.ZERO] if the timestamp is not yet available (common at the very start of playback).
      */
-    private fun calculatePresentationDelayMillis(track: AudioTrack, totalFramesWritten: Long): Long {
+    private fun calculatePresentationDelay(track: AudioTrack, totalFramesWritten: Long): Duration {
         val audioTimestamp = AudioTimestamp()
-        if (!track.getTimestamp(audioTimestamp)) return 0L
+        if (!track.getTimestamp(audioTimestamp)) return Duration.ZERO
 
         val nanosPerFrame = 1_000_000_000L / SAMPLE_RATE_IN_HZ
         val timestampAgeNanos = System.nanoTime() - audioTimestamp.nanoTime
         val framesAheadOfTimestamp = totalFramesWritten - audioTimestamp.framePosition
         val delayNanos = framesAheadOfTimestamp * nanosPerFrame - timestampAgeNanos
-        return (delayNanos / 1_000_000).coerceAtLeast(0L)
+        return delayNanos.nanoseconds.coerceAtLeast(Duration.ZERO)
     }
 
     /**

@@ -18,7 +18,6 @@
 
 package com.bobek.metronome.screengrab
 
-import androidx.compose.ui.test.isDisplayed
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bobek.metronome.AbstractAndroidTest

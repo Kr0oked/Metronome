@@ -44,10 +44,11 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
-private const val DEBOUNCE_MILLIS = 1_000L
+private val DEBOUNCE = 1.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MetronomeViewModelTest {
@@ -360,7 +361,7 @@ class MetronomeViewModelTest {
         val viewModel = createViewModel(settings)
 
         viewModel.setBeats(Beats(7))
-        advanceTimeBy(DEBOUNCE_MILLIS + 1)
+        advanceTimeBy(DEBOUNCE + 1.milliseconds)
 
         assertEquals(Beats(7), settings.writtenBeats)
     }
@@ -371,7 +372,7 @@ class MetronomeViewModelTest {
         val viewModel = createViewModel(settings)
 
         viewModel.setTempo(Tempo(160))
-        advanceTimeBy(DEBOUNCE_MILLIS + 1)
+        advanceTimeBy(DEBOUNCE + 1.milliseconds)
 
         assertEquals(Tempo(160), settings.writtenTempo)
     }
@@ -381,7 +382,7 @@ class MetronomeViewModelTest {
         val settings = FakeSettingsRepository()
         createViewModel(settings)
 
-        advanceTimeBy(DEBOUNCE_MILLIS + 1)
+        advanceTimeBy(DEBOUNCE + 1.milliseconds)
 
         // drop(1) means the initial StateFlow emission must not trigger a write
         assertFalse(settings.beatsWritten)

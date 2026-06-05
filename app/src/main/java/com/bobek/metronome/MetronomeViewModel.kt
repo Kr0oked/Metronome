@@ -41,11 +41,13 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
-private const val TAP_WINDOW_MILLIS = 5_000L
-private const val MILLIS_PER_MINUTE = 60_000L
-private const val SETTINGS_DEBOUNCE_MILLIS = 1_000L
+private val TAP_WINDOW = 5.seconds
+private val SETTINGS_DEBOUNCE = 1.seconds
 
 interface IMetronomeViewModel {
     fun getBeatsFlow(): StateFlow<Beats>
@@ -104,7 +106,7 @@ class MetronomeViewModel @Inject constructor(
 
     private val startMark = timeSource.markNow()
 
-    private val taps = ArrayDeque<Long>()
+    private val taps = ArrayDeque<Duration>()
 
     private var metronomeService: IMetronomeService? = null
 
@@ -155,31 +157,31 @@ class MetronomeViewModel @Inject constructor(
 
     private fun setupFlowsToSettings() {
         viewModelScope.launch {
-            beatsFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
+            beatsFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
                 .collect { settingsRepository.setBeats(it) }
         }
         viewModelScope.launch {
-            subdivisionsFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
+            subdivisionsFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
                 .collect { settingsRepository.setSubdivisions(it) }
         }
         viewModelScope.launch {
-            gapsFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
+            gapsFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
                 .collect { settingsRepository.setGaps(it) }
         }
         viewModelScope.launch {
-            tempoFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
+            tempoFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
                 .collect { settingsRepository.setTempo(it) }
         }
         viewModelScope.launch {
-            emphasizeFirstBeatFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
+            emphasizeFirstBeatFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
                 .collect { settingsRepository.setEmphasizeFirstBeat(it) }
         }
         viewModelScope.launch {
-            soundFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
+            soundFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
                 .collect { settingsRepository.setSound(it) }
         }
         viewModelScope.launch {
-            nightModeFlow.drop(1).debounce(SETTINGS_DEBOUNCE_MILLIS)
+            nightModeFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
                 .collect { settingsRepository.setNightMode(it) }
         }
     }
@@ -219,12 +221,12 @@ class MetronomeViewModel @Inject constructor(
     }
 
     override fun tapTempo() {
-        val elapsedMillis = startMark.elapsedNow().inWholeMilliseconds
-        pruneOldTaps(elapsedMillis)
-        taps.add(elapsedMillis)
+        val elapsed = startMark.elapsedNow()
+        pruneOldTaps(elapsed)
+        taps.add(elapsed)
 
-        val averageIntervalMillis = averageTapIntervalInMillis() ?: return
-        val tempoValue = (MILLIS_PER_MINUTE / averageIntervalMillis).toInt()
+        val averageInterval = averageTapInterval() ?: return
+        val tempoValue = (1.minutes / averageInterval).toInt()
 
         tempoFlow.value = when {
             tempoValue > Tempo.MAX_VALUE -> Tempo(Tempo.MAX_VALUE)
@@ -233,15 +235,16 @@ class MetronomeViewModel @Inject constructor(
         }
     }
 
-    private fun pruneOldTaps(elapsedMillis: Long) {
-        taps.removeAll { elapsedMillis - it > TAP_WINDOW_MILLIS }
+    private fun pruneOldTaps(elapsed: Duration) {
+        taps.removeAll { elapsed - it > TAP_WINDOW }
     }
 
-    private fun averageTapIntervalInMillis(): Long? = taps
-        .zipWithNext { a, b -> b - a }
-        .average()
-        .toLong()
-        .takeIf { it > 0 }
+    private fun averageTapInterval(): Duration? {
+        val intervals = taps.zipWithNext { a, b -> b - a }
+        return intervals
+            .reduceOrNull { acc, d -> acc + d }
+            ?.div(intervals.size)
+    }
 
     override fun getEmphasizeFirstBeatFlow() = emphasizeFirstBeatFlow
 

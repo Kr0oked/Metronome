@@ -187,7 +187,6 @@ fun SettingsScreen(
         SoundDialog(
             viewModel = viewModel,
             onDismiss = {
-                @Suppress("AssignedValueIsNeverRead")
                 showSoundDialog = false
             }
         )
@@ -197,7 +196,6 @@ fun SettingsScreen(
         NightModeDialog(
             viewModel = viewModel,
             onDismiss = {
-                @Suppress("AssignedValueIsNeverRead")
                 showNightModeDialog = false
             }
         )
