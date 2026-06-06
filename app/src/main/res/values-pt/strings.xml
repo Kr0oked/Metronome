@@ -38,4 +38,6 @@
     <string name="tempo_marking_prestissimo">Prestissimo</string>
     <string name="third_party_licenses">Licenças de terceiros</string>
     <string name="third_party_licenses_summary">Licenças de bibliotecas de código aberto incluídas</string>
+    <string name="display">Ecrã</string>
+    <string name="sound">Som</string>
 </resources>
