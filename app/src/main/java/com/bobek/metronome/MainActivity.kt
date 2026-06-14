@@ -57,7 +57,6 @@ class MainActivity : ComponentActivity() {
     lateinit var settingsRepository: SettingsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "Lifecycle: onCreate")
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
