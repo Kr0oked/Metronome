@@ -33,13 +33,13 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.bobek.metronome.ComposeMetronomeViewModel
-import com.bobek.metronome.IMetronomeViewModel
 import com.bobek.metronome.R
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.ui.licenses.ThirdPartyLicenseScreen
 import com.bobek.metronome.ui.licenses.ThirdPartyLicenseScreenState
 import com.bobek.metronome.ui.licenses.ThirdPartyLicensesScreen
+import com.bobek.metronome.ui.metronome.ComposeMetronomeViewModel
+import com.bobek.metronome.ui.metronome.IMetronomeViewModel
 import com.bobek.metronome.ui.metronome.MetronomeScreen
 import com.bobek.metronome.ui.settings.SettingsScreen
 import com.bobek.metronome.ui.theme.AppTheme
@@ -55,11 +55,12 @@ private val MANUAL_LICENSE_RESOURCES = mapOf(
 @Composable
 @PreviewScreenSizes
 fun MainContent(
-    viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = true)
+    appViewModel: IAppViewModel = ComposeAppViewModel(),
+    metronomeViewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = true)
 ) {
     val navController = rememberNavController()
-    val nightMode by viewModel.getNightModeFlow().collectAsState()
-    val playing by viewModel.getPlayingFlow().collectAsState()
+    val nightMode by appViewModel.getNightModeFlow().collectAsState()
+    val playing by metronomeViewModel.getPlayingFlow().collectAsState()
 
     val isDarkTheme = when (nightMode) {
         AppNightMode.NO -> false
@@ -80,13 +81,14 @@ fun MainContent(
         NavHost(navController = navController, startDestination = "metronome") {
             composable("metronome") {
                 MetronomeScreen(
-                    viewModel = viewModel,
+                    viewModel = metronomeViewModel,
                     onSettingsClick = { navController.navigate("settings") }
                 )
             }
             composable("settings") {
                 SettingsScreen(
-                    viewModel = viewModel,
+                    appViewModel = appViewModel,
+                    metronomeViewModel = metronomeViewModel,
                     onBackClick = { navController.popBackStack() },
                     onThirdPartyLicensesClick = { navController.navigate("licenses") }
                 )

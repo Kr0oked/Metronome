@@ -37,7 +37,9 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bobek.metronome.settings.SettingsRepository
+import com.bobek.metronome.ui.AppViewModel
 import com.bobek.metronome.ui.MainContent
+import com.bobek.metronome.ui.metronome.MetronomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
@@ -49,7 +51,8 @@ private const val TAG = "MainActivity"
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MetronomeViewModel by viewModels()
+    private val appViewModel: AppViewModel by viewModels()
+    private val metronomeViewModel: MetronomeViewModel by viewModels()
     private val postNotificationsPermissionRequest = registerPostNotificationsPermissionRequest()
     private val metronomeServiceConnection = MetronomeServiceConnection()
 
@@ -60,7 +63,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MainContent(viewModel)
+            MainContent(appViewModel, metronomeViewModel)
         }
     }
 
@@ -136,7 +139,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!viewModel.getPlayingFlow().value) {
+        if (!metronomeViewModel.getPlayingFlow().value) {
             stopService(Intent(baseContext, MetronomeService::class.java))
         }
     }
@@ -154,14 +157,14 @@ class MainActivity : ComponentActivity() {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             if (service is MetronomeService.LocalBinder) {
-                viewModel.setMetronomeService(service.getService())
+                metronomeViewModel.setMetronomeService(service.getService())
             } else {
                 Log.w(TAG, "Unexpected service binder type: ${service::class.qualifiedName}")
             }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
-            viewModel.setMetronomeService(null)
+            metronomeViewModel.setMetronomeService(null)
         }
     }
 }

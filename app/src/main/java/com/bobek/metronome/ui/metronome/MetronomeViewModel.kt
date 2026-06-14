@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome
+package com.bobek.metronome.ui.metronome
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bobek.metronome.data.AppNightMode
+import com.bobek.metronome.IMetronomeService
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Sound
@@ -64,8 +64,6 @@ interface IMetronomeViewModel {
     fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean)
     fun getSoundFlow(): StateFlow<Sound>
     fun setSound(sound: Sound)
-    fun getNightModeFlow(): StateFlow<AppNightMode>
-    fun setNightMode(nightMode: AppNightMode)
     fun getPlayingFlow(): StateFlow<Boolean>
     fun setPlaying(playing: Boolean)
     fun startStop()
@@ -92,8 +90,6 @@ class MetronomeViewModel @Inject constructor(
     private val emphasizeFirstBeatFlow = MutableStateFlow(true)
 
     private val soundFlow = MutableStateFlow(Sound.SQUARE_WAVE)
-
-    private val nightModeFlow = MutableStateFlow(AppNightMode.FOLLOW_SYSTEM)
 
     private val playingFlow = MutableStateFlow(false)
 
@@ -128,7 +124,6 @@ class MetronomeViewModel @Inject constructor(
         settingsRepository.getTempo().firstOrNull()?.let { tempoFlow.value = it }
         settingsRepository.getEmphasizeFirstBeat().firstOrNull()?.let { emphasizeFirstBeatFlow.value = it }
         settingsRepository.getSound().firstOrNull()?.let { soundFlow.value = it }
-        settingsRepository.getNightMode().firstOrNull()?.let { nightModeFlow.value = it }
     }
 
     private fun setupFlowsToMetronomeService() {
@@ -179,10 +174,6 @@ class MetronomeViewModel @Inject constructor(
         viewModelScope.launch {
             soundFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
                 .collect { settingsRepository.setSound(it) }
-        }
-        viewModelScope.launch {
-            nightModeFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
-                .collect { settingsRepository.setNightMode(it) }
         }
     }
 
@@ -258,12 +249,6 @@ class MetronomeViewModel @Inject constructor(
         soundFlow.value = sound
     }
 
-    override fun getNightModeFlow() = nightModeFlow
-
-    override fun setNightMode(nightMode: AppNightMode) {
-        nightModeFlow.value = nightMode
-    }
-
     override fun getPlayingFlow() = playingFlow
 
     override fun setPlaying(playing: Boolean) {
@@ -335,7 +320,6 @@ class ComposeMetronomeViewModel(
     val tempo: Tempo = Tempo(90),
     val emphasizeFirstBeat: Boolean = true,
     val sound: Sound = Sound.SQUARE_WAVE,
-    val nightMode: AppNightMode = AppNightMode.FOLLOW_SYSTEM,
     val playing: Boolean = true,
     val connected: Boolean = true
 ) : IMetronomeViewModel {
@@ -353,8 +337,6 @@ class ComposeMetronomeViewModel(
     override fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) = Unit
     override fun getSoundFlow() = MutableStateFlow(sound)
     override fun setSound(sound: Sound) = Unit
-    override fun getNightModeFlow() = MutableStateFlow(nightMode)
-    override fun setNightMode(nightMode: AppNightMode) = Unit
     override fun getPlayingFlow() = MutableStateFlow(playing)
     override fun setPlaying(playing: Boolean) = Unit
     override fun startStop() = Unit

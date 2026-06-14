@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome
+package com.bobek.metronome.ui.metronome
 
+import com.bobek.metronome.IMetronomeService
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
@@ -80,8 +81,7 @@ class MetronomeViewModelTest {
             subdivisions = Subdivisions(3),
             tempo = Tempo(120),
             emphasizeFirstBeat = false,
-            sound = Sound.SINE_WAVE,
-            nightMode = AppNightMode.YES
+            sound = Sound.SINE_WAVE
         )
         val viewModel = createViewModel(settings)
 
@@ -90,7 +90,6 @@ class MetronomeViewModelTest {
         assertEquals(Tempo(120), viewModel.getTempoFlow().value)
         assertFalse(viewModel.getEmphasizeFirstBeatFlow().value)
         assertEquals(Sound.SINE_WAVE, viewModel.getSoundFlow().value)
-        assertEquals(AppNightMode.YES, viewModel.getNightModeFlow().value)
     }
 
     @Test
@@ -155,13 +154,6 @@ class MetronomeViewModelTest {
         val viewModel = createViewModel()
         viewModel.setSound(Sound.PLUCK)
         assertEquals(Sound.PLUCK, viewModel.getSoundFlow().value)
-    }
-
-    @Test
-    fun setNightModeUpdatesFlow() {
-        val viewModel = createViewModel()
-        viewModel.setNightMode(AppNightMode.NO)
-        assertEquals(AppNightMode.NO, viewModel.getNightModeFlow().value)
     }
 
     @Test
@@ -397,8 +389,7 @@ private class FakeSettingsRepository(
     gaps: Gaps = Gaps(),
     tempo: Tempo = Tempo(),
     emphasizeFirstBeat: Boolean = true,
-    sound: Sound = Sound.SQUARE_WAVE,
-    nightMode: AppNightMode = AppNightMode.FOLLOW_SYSTEM
+    sound: Sound = Sound.SQUARE_WAVE
 ) : SettingsRepository {
 
     private val beatsFlow = MutableStateFlow(beats)
@@ -407,7 +398,6 @@ private class FakeSettingsRepository(
     private val tempoFlow = MutableStateFlow(tempo)
     private val emphasizeFirstBeatFlow = MutableStateFlow(emphasizeFirstBeat)
     private val soundFlow = MutableStateFlow(sound)
-    private val nightModeFlow = MutableStateFlow(nightMode)
     private val postNotificationsFlow = MutableStateFlow(false)
 
     var beatsWritten = false
@@ -440,7 +430,7 @@ private class FakeSettingsRepository(
     override fun getSound() = soundFlow
     override suspend fun setSound(sound: Sound) {}
 
-    override fun getNightMode() = nightModeFlow
+    override fun getNightMode() = MutableStateFlow(AppNightMode.FOLLOW_SYSTEM)
     override suspend fun setNightMode(nightMode: AppNightMode) {}
 
     override fun getPostNotificationsPermissionRequested() = postNotificationsFlow

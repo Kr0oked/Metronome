@@ -55,11 +55,13 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.bobek.metronome.BuildConfig
-import com.bobek.metronome.ComposeMetronomeViewModel
-import com.bobek.metronome.IMetronomeViewModel
+import com.bobek.metronome.ui.metronome.ComposeMetronomeViewModel
+import com.bobek.metronome.ui.metronome.IMetronomeViewModel
 import com.bobek.metronome.R
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Sound
+import com.bobek.metronome.ui.ComposeAppViewModel
+import com.bobek.metronome.ui.IAppViewModel
 
 private const val TAG = "SettingsScreen"
 
@@ -67,14 +69,15 @@ private const val TAG = "SettingsScreen"
 @PreviewScreenSizes
 @OptIn(ExperimentalMaterial3Api::class)
 fun SettingsScreen(
-    viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(),
+    appViewModel: IAppViewModel = ComposeAppViewModel(),
+    metronomeViewModel: IMetronomeViewModel = ComposeMetronomeViewModel(),
     onBackClick: () -> Unit = {},
     onThirdPartyLicensesClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    val emphasizeFirstBeat by viewModel.getEmphasizeFirstBeatFlow().collectAsState()
-    val sound by viewModel.getSoundFlow().collectAsState()
-    val nightMode by viewModel.getNightModeFlow().collectAsState()
+    val emphasizeFirstBeat by metronomeViewModel.getEmphasizeFirstBeatFlow().collectAsState()
+    val sound by metronomeViewModel.getSoundFlow().collectAsState()
+    val nightMode by appViewModel.getNightModeFlow().collectAsState()
 
     var showSoundDialog by rememberSaveable { mutableStateOf(false) }
     var showNightModeDialog by rememberSaveable { mutableStateOf(false) }
@@ -111,7 +114,7 @@ fun SettingsScreen(
                             onCheckedChange = null
                         )
                     },
-                    modifier = Modifier.clickable { viewModel.setEmphasizeFirstBeat(!emphasizeFirstBeat) }
+                    modifier = Modifier.clickable { metronomeViewModel.setEmphasizeFirstBeat(!emphasizeFirstBeat) }
                 )
 
                 ListItem(
@@ -185,7 +188,7 @@ fun SettingsScreen(
 
     if (showSoundDialog) {
         SoundDialog(
-            viewModel = viewModel,
+            viewModel = metronomeViewModel,
             onDismiss = {
                 showSoundDialog = false
             }
@@ -194,7 +197,7 @@ fun SettingsScreen(
 
     if (showNightModeDialog) {
         NightModeDialog(
-            viewModel = viewModel,
+            viewModel = appViewModel,
             onDismiss = {
                 showNightModeDialog = false
             }
@@ -255,7 +258,7 @@ private fun SoundDialog(
 @Composable
 @Preview
 private fun NightModeDialog(
-    viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(),
+    viewModel: IAppViewModel = ComposeAppViewModel(),
     onDismiss: () -> Unit = {},
 ) {
     val nightMode by viewModel.getNightModeFlow().collectAsState()
