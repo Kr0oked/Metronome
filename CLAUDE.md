@@ -39,13 +39,14 @@ Google Play deployment additionally requires `ANDROID_JSON_KEY_FILE`.
 
 ## Architecture
 
-The app follows MVVM with a foreground service for audio playback:
+The app follows MVVM in a single-Activity Compose setup with a foreground service for audio playback:
 
 - **`MetronomeApplication`** — Hilt entry point
-- **`MainActivity`** — Single Compose activity; binds to `MetronomeService`, handles `POST_NOTIFICATIONS` permission
-  (Android 13+)
-- **`MetronomeViewModel`** — All UI state via `StateFlow`; tap tempo (5-second window); debounced settings writes
-  (1 second); communicates with bound service
+- **`MainActivity`** — Single Compose activity; hosts `AppViewModel` and `MetronomeViewModel`; binds to
+  `MetronomeService`, handles `POST_NOTIFICATIONS` permission (Android 13+)
+- **`AppViewModel`** — Night mode preference via `StateFlow`; reads from `SettingsRepository`
+- **`MetronomeViewModel`** — All metronome UI state via `StateFlow`; tap tempo (5-second window); communicates with
+  bound service; loaded from `SettingsRepository` on init
 - **`MetronomeService`** — Foreground service managing the `Metronome` engine; local binder for IPC with Activity
 
 ### Key Packages
@@ -70,7 +71,7 @@ Settings changes are debounced 1 second before being written to DataStore.
 - **DI:** Hilt + KSP
 - **Persistence:** DataStore Preferences
 - **Audio:** Android `AudioTrack` (PCM FLOAT, 48kHz)
-- **Build:** AGP 9.1.0, Kotlin 2.3.x, Java 11 toolchain
+- **Build:** AGP 9.x, Kotlin 2.3.x, Java 11 toolchain
 - **Testing:** JUnit4, Compose UI Test, kotlinx-coroutines-test, Fastlane Screengrab
 
 ## Branch Notes
