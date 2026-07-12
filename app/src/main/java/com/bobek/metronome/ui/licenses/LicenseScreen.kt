@@ -40,14 +40,14 @@ import com.bobek.metronome.R
 @Composable
 @PreviewScreenSizes
 @OptIn(ExperimentalMaterial3Api::class)
-fun ThirdPartyLicenseScreen(
-    @PreviewParameter(ThirdPartyLicenseScreenStateProvider::class) state: ThirdPartyLicenseScreenState,
+fun LicenseScreen(
+    @PreviewParameter(LicenseScreenStateProvider::class) state: LicenseScreenState,
     onBackClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.libraryName) },
+                title = { Text(state.title) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(painter = painterResource(R.drawable.ic_arrow_back), contentDescription = null)
@@ -67,13 +67,13 @@ fun ThirdPartyLicenseScreen(
     }
 }
 
-data class ThirdPartyLicenseScreenState(
-    val libraryName: String,
+data class LicenseScreenState(
+    val title: String,
     val licenseContent: String
 )
 
-private class ThirdPartyLicenseScreenStateProvider : PreviewParameterProvider<ThirdPartyLicenseScreenState> {
-    override val values: Sequence<ThirdPartyLicenseScreenState> = sequenceOf(
-        ThirdPartyLicenseScreenState(libraryName = "The library name", licenseContent = "The license content")
+private class LicenseScreenStateProvider : PreviewParameterProvider<LicenseScreenState> {
+    override val values: Sequence<LicenseScreenState> = sequenceOf(
+        LicenseScreenState(title = "The license title", licenseContent = "The license content")
     )
 }
