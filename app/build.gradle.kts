@@ -21,7 +21,14 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.licensee)
     id("com.google.android.gms.oss-licenses-plugin")
+}
+
+licensee {
+    allow("Apache-2.0")
+    allow("BSD-3-Clause")
+    allow("LGPL-3.0-or-later")
 }
 
 java {
