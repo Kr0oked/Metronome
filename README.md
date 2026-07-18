@@ -4,9 +4,9 @@
 
 # Metronome
 
-### Simple and beautiful metronome for Android
+### A simple and elegant metronome for Android
 
-This project is intended to offer a simple and good-looking metronome for Android.
+A clean, focused metronome app that keeps time without getting in your way.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
 alt="Get it on F-Droid"
@@ -25,10 +25,10 @@ height="80">](https://github.com/Kr0oked/Metronome/releases/latest)
 * Adjustable beats and subdivisions
 * Beat visualization
 * Tap tempo
-* Light and Dark theme
+* Light and dark theme
 * No advertisements
 * No trackers
-* No annoyance
+* No unnecessary permissions
 
 ## Screenshots
 
@@ -37,11 +37,11 @@ height="80">](https://github.com/Kr0oked/Metronome/releases/latest)
 
 ## Translations
 
-Translations can be added on [Weblate](https://hosted.weblate.org/engage/metronome/).
+Help translate the app into your language on [Weblate](https://hosted.weblate.org/engage/metronome/).
 
 [![Translation status](https://hosted.weblate.org/widget/metronome/multi-auto.svg)](https://hosted.weblate.org/engage/metronome/)
 
 ## License
 
-The project is licensed under the GNU GPL v3.
-You can find the license text in the [LICENSE](LICENSE) file.
+This project is licensed under the GNU GPL v3.
+See the [LICENSE](LICENSE) file for the full license text.

@@ -1,14 +1,14 @@
 You’ll get exactly what you expect.
-A simple and beautiful metronome that you can use to practice music.
+A simple and elegant metronome that you can use to practice music.
 
 Features:
 * Adjustable beats and subdivisions
 * Beat visualization
 * Gap ticks
 * Tap tempo
-* Light and Dark theme
+* Light and dark theme
 * No advertisements
 * No trackers
-* No annoyance
+* No unnecessary permissions
 
 Have fun!
