@@ -21,7 +21,9 @@ package com.bobek.metronome
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.filters.LargeTest
 import org.junit.Before
 import org.junit.Test
@@ -42,6 +44,12 @@ class InstrumentedTest : AbstractAndroidTest() {
 
     @Test
     fun initialState() {
+        onTopBarTitle().assertIsDisplayed()
+        onSettingsButton().assertIsDisplayed()
+    }
+
+    @Test
+    fun initialMetronomeState() {
         onBeatsSlider().setProgress(4f)
         onSubdivisionsSlider().setProgress(1f)
         onTempoSlider().setProgress(80f)
@@ -191,5 +199,64 @@ class InstrumentedTest : AbstractAndroidTest() {
 
         onTempoSlider().setProgress(252f)
         verifyTempoMarking(R.string.tempo_marking_prestissimo)
+    }
+
+    @Test
+    fun navigatingToSettingsAndBackShowsMetronomeScreenAgain() {
+        onSettingsButton().performClick()
+        composeTestRule.waitForIdle()
+        onTopBarTitle(R.string.settings).assertIsDisplayed()
+
+        pressBack()
+        composeTestRule.waitForIdle()
+        onTopBarTitle().assertIsDisplayed()
+    }
+
+    @Test
+    fun changingNightModeUpdatesSelectedTheme() {
+        openSettings()
+
+        onNightModeOption(R.string.night_mode_follow_system).assertIsDisplayed()
+
+        selectNightMode(R.string.night_mode_yes)
+        onNightModeOption(R.string.night_mode_yes).assertIsDisplayed()
+
+        selectNightMode(R.string.night_mode_follow_system)
+        onNightModeOption(R.string.night_mode_follow_system).assertIsDisplayed()
+    }
+
+    @Test
+    fun navigatingToLicenseShowsGplLicenseTextAndBackReturnsToSettings() {
+        openSettings()
+
+        onLicenseListItem().performClick()
+        composeTestRule.waitForIdle()
+
+        onTopBarTitle(R.string.license_name).assertIsDisplayed()
+        waitUntilTextExists("GNU GENERAL PUBLIC LICENSE")
+
+        pressBack()
+        composeTestRule.waitForIdle()
+        onTopBarTitle(R.string.settings).assertIsDisplayed()
+    }
+
+    @Test
+    fun navigatingToThirdPartyLicenseShowsApacheLicenseForMaterialSymbols() {
+        openSettings()
+
+        onThirdPartyLicensesListItem().performClick()
+        composeTestRule.waitForIdle()
+        onTopBarTitle(R.string.third_party_licenses).assertIsDisplayed()
+
+        scrollToListItem("Material Symbols")
+        onListItem("Material Symbols").performClick()
+        composeTestRule.waitForIdle()
+
+        onTopBarTitle("Material Symbols").assertIsDisplayed()
+        waitUntilTextExists("Apache License")
+
+        pressBack()
+        composeTestRule.waitForIdle()
+        onTopBarTitle(R.string.third_party_licenses).assertIsDisplayed()
     }
 }
