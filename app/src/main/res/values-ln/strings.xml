@@ -43,4 +43,5 @@
     <string name="source_code">Kɔ́́de ya ebandela</string>
     <string name="request_notifications_permission_rationale_title">Tozalí na mpósá ya ndíngisa na yɔ̌ mpô na kolakisa mayébísí</string>
     <string name="request_notifications_permission_rationale_message">Etámbuisi óyo elingí kosakola liyébísí nzókandé etámbwisa ezalí kosála. Na nsima, okokí kopekisa etámbwisa na pɛtɛ nyɔ́nsɔ átâ sɔ́kí etámbuisi yangó ezalí kosála na nsima.</string>
+    <string name="sound">Lokito</string>
 </resources>
