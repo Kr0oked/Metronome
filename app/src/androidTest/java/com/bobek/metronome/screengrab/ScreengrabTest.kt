@@ -18,9 +18,14 @@
 
 package com.bobek.metronome.screengrab
 
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
-import com.bobek.metronome.AbstractAndroidTest
+import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Subdivisions
+import com.bobek.metronome.data.Tempo
+import com.bobek.metronome.ui.MainContent
+import com.bobek.metronome.ui.metronome.ComposeMetronomeViewModel
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -31,7 +36,10 @@ import tools.fastlane.screengrab.cleanstatusbar.CleanStatusBar
 import tools.fastlane.screengrab.locale.LocaleTestRule
 
 @LargeTest
-class ScreengrabTest : AbstractAndroidTest() {
+class ScreengrabTest {
+
+    @get:Rule
+    val composeTestRule = createComposeRule()
 
     @Rule
     @JvmField
@@ -44,11 +52,18 @@ class ScreengrabTest : AbstractAndroidTest() {
 
         Screengrab.setDefaultScreenshotStrategy(UiAutomatorScreenshotStrategy())
 
-        waitUntilContentIsDisplayed()
-
-        onBeatsSlider().setProgress(4f)
-        onSubdivisionsSlider().setProgress(1f)
-        onTempoSlider().setProgress(80f)
+        composeTestRule.setContent {
+            MainContent(
+                metronomeViewModel = ComposeMetronomeViewModel(
+                    beats = Beats(),
+                    subdivisions = Subdivisions(),
+                    tempo = Tempo(),
+                    emphasizeFirstBeat = true,
+                    playing = false,
+                    connected = true
+                )
+            )
+        }
         composeTestRule.waitForIdle()
 
         Screengrab.screenshot(screenshotName)
