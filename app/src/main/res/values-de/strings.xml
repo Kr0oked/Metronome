@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of Metronome.
+  ~ Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Metronome is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="metronome">Metronom</string>
     <string name="beats_label">Schläge</string>
@@ -8,8 +27,8 @@
     <string name="tap_tempo_button_description">Mehrmals antippen um das Tempo zu setzen</string>
     <string name="increment_tempo_button_description">Erhöht das Tempo</string>
     <string name="decrement_tempo_button_description">Verringert das Tempo</string>
-    <string name="tick_visualization_image_description">Visulisierung des Schlags</string>
-    <string name="notification_channel_playback_name">Wiederagbe</string>
+    <string name="tick_visualization_image_description">Visualisierung des Schlags</string>
+    <string name="notification_channel_playback_name">Wiedergabe</string>
     <string name="notification_channel_playback_description">Momentane Metronom Wiedergabe</string>
     <string name="notification_playback_title">Metronom läuft</string>
     <string name="notification_playback_action_stop_title">Stopp</string>
@@ -26,7 +45,7 @@
     <string name="sound_risset_drum">Synth Trommel</string>
     <string name="sound_pluck">Zupfen</string>
     <string name="about">Über die App</string>
-    <string name="author">Author</string>
+    <string name="author">Autor</string>
     <string name="license">Lizenz</string>
     <string name="third_party_licenses">Drittanbieter-Lizenzen</string>
     <string name="third_party_licenses_summary">Lizenzen von enthaltenen Open-Source-Bibliotheken</string>

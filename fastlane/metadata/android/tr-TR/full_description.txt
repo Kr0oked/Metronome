@@ -1,14 +1,14 @@
 Tam olarak beklediğiniz şeyi bulacaksınız.
-Müzik yapmak için kullanabileceğiniz basit ve güzel bir metronom.
+Müzik çalışmak için kullanabileceğiniz basit ve zarif bir metronom.
 
 Özellikler:
 * Ayarlanabilir vuruşlar ve altbölümler
-* Vuruş görselleştirilmesi
-* Boşluk tikleri
-* Dokunuş temposu
+* Vuruş görselleştirmesi
+* Sessiz vuruşlar
+* Dokunarak tempo ayarlama
 * Aydınlık ve karanlık tema
 * Reklam yok
 * Takipçi yok
-* Rahatsızlık yok!
+* Gereksiz izin yok
 
 İyi eğlenceler!

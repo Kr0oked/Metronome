@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of Metronome.
+  ~ Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Metronome is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="metronome">节拍器</string>
     <string name="beats_label">拍子</string>
@@ -40,4 +59,8 @@
     <string name="tempo_marking_presto">Presto</string>
     <string name="tempo_marking_prestissimo">Prestissimo</string>
     <string name="sound">音色</string>
+    <string name="sound_square_wave">强烈哔声</string>
+    <string name="sound_sine_wave">柔和哔声</string>
+    <string name="sound_risset_drum">合成鼓声</string>
+    <string name="sound_pluck">拨弦声</string>
 </resources>

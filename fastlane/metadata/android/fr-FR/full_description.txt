@@ -1,14 +1,14 @@
 Vous aurez exactement ce à quoi vous vous attendez.
-Un beau et simple métronome que vous pouvez utiliser pour votre entraînement musical.
+Un métronome simple et élégant que vous pouvez utiliser pour votre entraînement musical.
 
-Fonctionnalités :
-* Rythmes ajustables et sous-divisions
-* Visualisation rythmique
-* Mise en valeur des intervalles
-* Tapez le rythme au doigt
-* Thème clair ou sombre
-* Aucune pub
+Fonctionnalités :
+* Temps et sous-divisions ajustables
+* Visualisation des temps
+* Temps silencieux
+* Tempo au toucher
+* Thème clair et sombre
+* Aucune publicité
 * Aucun traqueur
-* Aucune nuisance
+* Aucune permission superflue
 
-Amusez-vous bien !
+Amusez-vous bien !

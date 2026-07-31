@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of Metronome.
+  ~ Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Metronome is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="metronome">메트로놈</string>
+    <string name="beats_label">박자</string>
+    <string name="subdivisions_label">세분화</string>
+    <string name="tempo_label">템포 (BPM)</string>
+    <string name="start_stop_button_description">메트로놈을 시작하거나 정지합니다</string>
+    <string name="tap_tempo_button_description">여러 번 탭하여 템포를 설정하세요</string>
+    <string name="increment_tempo_button_description">템포를 높입니다</string>
+    <string name="decrement_tempo_button_description">템포를 낮춥니다</string>
+    <string name="tick_visualization_image_description">박자 시각화</string>
+    <string name="notification_channel_playback_name">재생</string>
+    <string name="notification_channel_playback_description">현재 메트로놈 재생</string>
+    <string name="notification_playback_title">메트로놈이 재생 중입니다</string>
+    <string name="notification_playback_action_stop_title">정지</string>
+    <string name="settings">설정</string>
+    <string name="emphasize_first_beat">첫 박자 강조</string>
+    <string name="display">화면</string>
+    <string name="night_mode">테마</string>
+    <string name="night_mode_follow_system">시스템 설정 따르기</string>
+    <string name="night_mode_no">밝게</string>
+    <string name="night_mode_yes">어둡게</string>
+    <string name="sound">소리</string>
+    <string name="sound_square_wave">강한 비프음</string>
+    <string name="sound_sine_wave">부드러운 비프음</string>
+    <string name="sound_risset_drum">신스 드럼</string>
+    <string name="sound_pluck">튕기는 소리</string>
+    <string name="about">정보</string>
+    <string name="author">개발자</string>
+    <string name="license">라이선스</string>
+    <string name="third_party_licenses">제3자 라이선스</string>
+    <string name="third_party_licenses_summary">포함된 오픈 소스 라이브러리의 라이선스</string>
+    <string name="source_code">소스 코드</string>
+    <string name="version">버전</string>
+    <string name="request_notifications_permission_rationale_title">알림을 게시하려면 권한이 필요합니다</string>
+    <string name="request_notifications_permission_rationale_message">이 앱은 메트로놈이 작동하는 동안 알림을 표시하려고 합니다. 앱이 백그라운드에서 실행 중이어도 메트로놈을 쉽게 정지할 수 있습니다.</string>
+    <string name="ok">확인</string>
+    <string name="no_thanks">괜찮습니다</string>
+    <string name="tempo_marking_largo">Largo</string>
+    <string name="tempo_marking_larghetto">Larghetto</string>
+    <string name="tempo_marking_adagio">Adagio</string>
+    <string name="tempo_marking_andante">Andante</string>
+    <string name="tempo_marking_moderato">Moderato</string>
+    <string name="tempo_marking_allegro">Allegro</string>
+    <string name="tempo_marking_presto">Presto</string>
+    <string name="tempo_marking_prestissimo">Prestissimo</string>
+</resources>

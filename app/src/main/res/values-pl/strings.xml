@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of Metronome.
+  ~ Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Metronome is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="metronome">Metronom</string>
+    <string name="beats_label">Uderzenia</string>
+    <string name="subdivisions_label">Podziały</string>
+    <string name="tempo_label">Tempo w BPM</string>
+    <string name="start_stop_button_description">Uruchamia lub zatrzymuje metronom</string>
+    <string name="tap_tempo_button_description">Stuknij kilka razy, aby ustawić tempo</string>
+    <string name="increment_tempo_button_description">Zwiększa tempo</string>
+    <string name="decrement_tempo_button_description">Zmniejsza tempo</string>
+    <string name="tick_visualization_image_description">Wizualizacja uderzeń</string>
+    <string name="notification_channel_playback_name">Odtwarzanie</string>
+    <string name="notification_channel_playback_description">Bieżące odtwarzanie metronomu</string>
+    <string name="notification_playback_title">Metronom gra</string>
+    <string name="notification_playback_action_stop_title">Zatrzymaj</string>
+    <string name="settings">Ustawienia</string>
+    <string name="emphasize_first_beat">Podkreśl pierwsze uderzenie</string>
+    <string name="display">Wyświetlanie</string>
+    <string name="night_mode">Motyw</string>
+    <string name="night_mode_follow_system">Zgodnie z systemem</string>
+    <string name="night_mode_no">Jasny</string>
+    <string name="night_mode_yes">Ciemny</string>
+    <string name="sound">Dźwięk</string>
+    <string name="sound_square_wave">Ostry sygnał</string>
+    <string name="sound_sine_wave">Miękki sygnał</string>
+    <string name="sound_risset_drum">Syntetyczny bęben</string>
+    <string name="sound_pluck">Szarpnięcie</string>
+    <string name="about">O aplikacji</string>
+    <string name="author">Autor</string>
+    <string name="license">Licencja</string>
+    <string name="third_party_licenses">Licencje stron trzecich</string>
+    <string name="third_party_licenses_summary">Licencje dołączonych bibliotek open source</string>
+    <string name="source_code">Kod źródłowy</string>
+    <string name="version">Wersja</string>
+    <string name="request_notifications_permission_rationale_title">Potrzebujemy uprawnienia do wysyłania powiadomień</string>
+    <string name="request_notifications_permission_rationale_message">Ta aplikacja chce wyświetlać powiadomienie, dopóki metronom działa. Dzięki temu możesz łatwo zatrzymać metronom, nawet gdy aplikacja działa w tle.</string>
+    <string name="ok">OK</string>
+    <string name="no_thanks">Nie, dziękuję</string>
+    <string name="tempo_marking_largo">Largo</string>
+    <string name="tempo_marking_larghetto">Larghetto</string>
+    <string name="tempo_marking_adagio">Adagio</string>
+    <string name="tempo_marking_andante">Andante</string>
+    <string name="tempo_marking_moderato">Moderato</string>
+    <string name="tempo_marking_allegro">Allegro</string>
+    <string name="tempo_marking_presto">Presto</string>
+    <string name="tempo_marking_prestissimo">Prestissimo</string>
+</resources>

@@ -6,7 +6,7 @@ Inhalt:
 * Visualisierung der Schläge
 * Lücken spielen
 * Tempo setzen durch Antippen
-* Light und Dark Theme
+* Helles und dunkles Design
 * Keine Werbung
 * Keine Tracker
 * Keine unnötigen Berechtigungen

@@ -1,12 +1,14 @@
-Dostanete přesně, co chcete.
-Prostý a hezký metronom, který můžete použít k cvičení hudby.
+Dostanete přesně to, co očekáváte.
+Jednoduchý a elegantní metronom, který můžete použít k procvičování hudby.
 
 Funkce:
 * Nastavitelné doby a subdivize
 * Vizualizace dob
-* Nastavení tempa klikáním
-* Automatický tmavý režim
+* Tiché doby
+* Nastavení tempa klepáním
+* Světlý a tmavý motiv
 * Žádné reklamy
-* Žádné obtěžování
+* Žádné sledování
+* Žádná zbytečná oprávnění
 
-Užívejte!
+Užijte si to!

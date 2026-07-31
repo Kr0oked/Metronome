@@ -1,14 +1,14 @@
 Saat juuri sen mitä odotatkin.
-Yksinkertainen ja kaunis metronomi, jota voit käyttää musiikin harjoitteluun.
+Yksinkertainen ja tyylikäs metronomi, jota voit käyttää musiikin harjoitteluun.
 
 Ominaisuudet:
-* Säädettävät iskut ja iskujen jakaminen
+* Säädettävät iskut ja niiden jako
 * Iskujen visualisointi
 * Hiljaiset iskut
-* Tempon syöttäminen naputtamalla
+* Tempon asettaminen napauttamalla
 * Vaalea ja tumma teema
 * Ei mainoksia
-* Ei seuraimia
-* Ei tuskastumista
+* Ei seurantaa
+* Ei tarpeettomia käyttöoikeuksia
 
 Pidä hauskaa!

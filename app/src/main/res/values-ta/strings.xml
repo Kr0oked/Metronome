@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of Metronome.
+  ~ Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Metronome is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="tempo_marking_adagio">Adagio</string>
-    <string name="tempo_marking_andante">ஆண்டன்டே</string>
-    <string name="tempo_marking_moderato">மிதமான</string>
-    <string name="tempo_marking_allegro">அலெக்ரோ</string>
-    <string name="tempo_marking_presto">பிரச்டோ</string>
-    <string name="tempo_marking_prestissimo">மிக விரைவில்</string>
+    <string name="tempo_marking_andante">Andante</string>
+    <string name="tempo_marking_moderato">Moderato</string>
+    <string name="tempo_marking_allegro">Allegro</string>
+    <string name="tempo_marking_presto">Presto</string>
+    <string name="tempo_marking_prestissimo">Prestissimo</string>
     <string name="metronome">மெட்ரோனோம்</string>
     <string name="beats_label">துடிப்புகள்</string>
     <string name="subdivisions_label">துணைப்பிரிவுகள்</string>
@@ -37,6 +56,11 @@
     <string name="request_notifications_permission_rationale_message">இந்த பயன்பாடு மெட்ரோனோம் இயங்கும் வரை அறிவிப்பை இடுகையிட விரும்புகிறது. பயன்பாடு பின்னணியில் இயங்கினாலும் நீங்கள் எளிதாக மெட்ரோனோமை நிறுத்தலாம்.</string>
     <string name="ok">சரி</string>
     <string name="no_thanks">நன்றி இல்லை</string>
-    <string name="tempo_marking_largo">லார்கோ</string>
-    <string name="tempo_marking_larghetto">லார்எட்டோ</string>
+    <string name="tempo_marking_largo">Largo</string>
+    <string name="tempo_marking_larghetto">Larghetto</string>
+    <string name="sound">ஒலி</string>
+    <string name="sound_square_wave">உரத்த பீப்</string>
+    <string name="sound_sine_wave">மென்மையான பீப்</string>
+    <string name="sound_risset_drum">செயற்கை மேளம்</string>
+    <string name="sound_pluck">மீட்டல்</string>
 </resources>

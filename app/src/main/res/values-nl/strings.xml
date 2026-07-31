@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of Metronome.
+  ~ Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Metronome is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="start_stop_button_description">Start of stopt de metronoom</string>
     <string name="tap_tempo_button_description">Tik meerdere keren om het tempo in te stellen</string>
@@ -13,9 +32,10 @@
     <string name="emphasize_first_beat">Benadruk eerste tel</string>
     <string name="display">Weergave</string>
     <string name="night_mode">Thema</string>
-    <string name="night_mode_follow_system">Volg system</string>
+    <string name="night_mode_follow_system">Volg systeem</string>
     <string name="night_mode_no">Licht</string>
     <string name="night_mode_yes">Donker</string>
+    <string name="sound">Geluid</string>
     <string name="sound_square_wave">Harde piep</string>
     <string name="sound_sine_wave">Zachte piep</string>
     <string name="sound_risset_drum">Synth drum</string>

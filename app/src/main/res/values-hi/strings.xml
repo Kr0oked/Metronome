@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of Metronome.
+  ~ Copyright (C) 2026 Philipp Bobek <philipp.bobek@mailbox.org>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Metronome is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="metronome">मेट्रोनोम</string>
+    <string name="beats_label">बीट्स</string>
+    <string name="subdivisions_label">उपविभाजन</string>
+    <string name="tempo_label">टेम्पो (BPM में)</string>
+    <string name="start_stop_button_description">मेट्रोनोम शुरू या बंद करता है</string>
+    <string name="tap_tempo_button_description">टेम्पो सेट करने के लिए कई बार टैप करें</string>
+    <string name="increment_tempo_button_description">टेम्पो बढ़ाता है</string>
+    <string name="decrement_tempo_button_description">टेम्पो घटाता है</string>
+    <string name="tick_visualization_image_description">बीट का दृश्यांकन</string>
+    <string name="notification_channel_playback_name">प्लेबैक</string>
+    <string name="notification_channel_playback_description">वर्तमान मेट्रोनोम प्लेबैक</string>
+    <string name="notification_playback_title">मेट्रोनोम चल रहा है</string>
+    <string name="notification_playback_action_stop_title">रोकें</string>
+    <string name="settings">सेटिंग्स</string>
+    <string name="emphasize_first_beat">पहली बीट पर ज़ोर दें</string>
+    <string name="display">डिस्प्ले</string>
+    <string name="night_mode">थीम</string>
+    <string name="night_mode_follow_system">सिस्टम अनुसार</string>
+    <string name="night_mode_no">हल्का</string>
+    <string name="night_mode_yes">गहरा</string>
+    <string name="sound">ध्वनि</string>
+    <string name="sound_square_wave">तेज़ बीप</string>
+    <string name="sound_sine_wave">हल्की बीप</string>
+    <string name="sound_risset_drum">सिंथ ड्रम</string>
+    <string name="sound_pluck">तार खींचना</string>
+    <string name="about">ऐप के बारे में</string>
+    <string name="author">लेखक</string>
+    <string name="license">लाइसेंस</string>
+    <string name="third_party_licenses">तृतीय-पक्ष लाइसेंस</string>
+    <string name="third_party_licenses_summary">शामिल ओपन सोर्स लाइब्रेरी के लाइसेंस</string>
+    <string name="source_code">सोर्स कोड</string>
+    <string name="version">संस्करण</string>
+    <string name="request_notifications_permission_rationale_title">हमें सूचनाएं भेजने की अनुमति चाहिए</string>
+    <string name="request_notifications_permission_rationale_message">यह ऐप तब तक सूचना दिखाना चाहता है जब तक मेट्रोनोम चल रहा है। इससे आप ऐप के बैकग्राउंड में चलने पर भी आसानी से मेट्रोनोम को रोक सकते हैं।</string>
+    <string name="ok">ठीक है</string>
+    <string name="no_thanks">नहीं धन्यवाद</string>
+    <string name="tempo_marking_largo">Largo</string>
+    <string name="tempo_marking_larghetto">Larghetto</string>
+    <string name="tempo_marking_adagio">Adagio</string>
+    <string name="tempo_marking_andante">Andante</string>
+    <string name="tempo_marking_moderato">Moderato</string>
+    <string name="tempo_marking_allegro">Allegro</string>
+    <string name="tempo_marking_presto">Presto</string>
+    <string name="tempo_marking_prestissimo">Prestissimo</string>
+</resources>

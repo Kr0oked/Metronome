@@ -1,13 +1,14 @@
 Você terá exatamente o que espera.
-Um metrônomo simples e bonito que você pode usar para praticar música.
+Um metrônomo simples e elegante que você pode usar para praticar música.
 
 Características:
 * Batidas e subdivisões ajustáveis
-* Visualização de batida
-* Toque no ritmo
+* Visualização da batida
+* Batidas silenciosas
+* Toque para definir o tempo
 * Tema claro e escuro
 * Sem anúncios
 * Sem rastreadores
-* Sem aborrecimentos
+* Sem permissões desnecessárias
 
 Divirta-se!
