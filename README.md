@@ -35,12 +35,6 @@ height="80">](https://github.com/Kr0oked/Metronome/releases/latest)
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Screenshot Night" height="500"/>
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="Screenshot Day" height="500"/>
 
-## Translations
-
-Help translate the app into your language on [Weblate](https://hosted.weblate.org/engage/metronome/).
-
-[![Translation status](https://hosted.weblate.org/widget/metronome/multi-auto.svg)](https://hosted.weblate.org/engage/metronome/)
-
 ## License
 
 This project is licensed under the GNU GPL v3.

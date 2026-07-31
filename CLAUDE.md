@@ -79,8 +79,3 @@ Settings changes are debounced 1 second before being written to DataStore.
 ## Branch Notes
 
 `master` is the main branch used for releases and PRs.
-
-## Translations
-
-Translations are managed via Weblate. Do not manually edit `strings.xml` files in locale-specific resource directories —
-changes come in through automated PRs from Weblate.
