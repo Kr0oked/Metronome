@@ -1,10 +1,37 @@
 default_platform(:android)
 
+ANDROID_SDK_ROOT_PATH = ENV["ANDROID_SDK_ROOT"] || ENV["ANDROID_HOME"] || File.expand_path("~/Android/Sdk")
+EMULATOR_BIN = File.join(ANDROID_SDK_ROOT_PATH, "emulator", "emulator")
+ADB_BIN = File.join(ANDROID_SDK_ROOT_PATH, "platform-tools", "adb")
+AVDMANAGER_BIN = File.join(ANDROID_SDK_ROOT_PATH, "cmdline-tools", "latest", "bin", "avdmanager")
+SDKMANAGER_BIN = File.join(ANDROID_SDK_ROOT_PATH, "cmdline-tools", "latest", "bin", "sdkmanager")
+AVD_BASE_DEVICE = "pixel"
+AVD_SYSTEM_IMAGE = "system-images;android-37.0;google_apis;x86_64"
+# Android 17 (API 37) emulators require at least 4GB of RAM.
+AVD_RAM_SIZE_MB = 4096
+
+SCREENSHOT_EMULATORS = [
+  { avd: "Screenshots_Phone", port: 5554, device_type: "phone", lcd_width: 1080, lcd_height: 1920, lcd_density: 480 },
+  { avd: "Screenshots_SevenInch", port: 5556, device_type: "sevenInch", lcd_width: 1440, lcd_height: 2560, lcd_density: 480 },
+  { avd: "Screenshots_TenInch", port: 5558, device_type: "tenInch", lcd_width: 2160, lcd_height: 3840, lcd_density: 480 }
+].map { |device| device.merge(serial: "emulator-#{device[:port]}") }.freeze
+
+TEST_EMULATOR = { avd: "Test_Phone", port: 5560, serial: "emulator-5560" }.freeze
+
 platform :android do
   desc "Runs all the tests"
   lane :test do
     gradle(task: "test")
-    gradle(task: "connectedAndroidTest")
+
+    ensure_sdk_command_line_tools_available
+    ensure_system_image_installed
+    create_avd_if_missing(TEST_EMULATOR)
+    boot_emulator(TEST_EMULATOR)
+    begin
+      gradle(task: "connectedAndroidTest")
+    ensure
+      shutdown_emulator(TEST_EMULATOR)
+    end
   end
 
   desc "Build a new APK"
@@ -40,46 +67,103 @@ platform :android do
     )
   end
 
-  desc "Grab phone screenshot 1"
-  lane :grab_screen_phone_1 do
-   gradle(task: 'assemble', build_type: 'Debug')
-   gradle(task: 'assemble', build_type: 'AndroidTest')
-   screengrab(launch_arguments: ['screenshotName 1'], device_type: 'phone', clear_previous_screenshots: true)
+  desc "Grab phone screenshots"
+  lane :grab_screen_phone do
+    capture_device_screenshots(device_type: "phone")
   end
 
-  desc "Grab phone screenshot 2"
-  lane :grab_screen_phone_2 do
-   gradle(task: 'assemble', build_type: 'Debug')
-   gradle(task: 'assemble', build_type: 'AndroidTest')
-   screengrab(launch_arguments: ['screenshotName 2'], device_type: 'phone')
+  desc "Grab seven inch screenshots"
+  lane :grab_screen_seven_inch do
+    capture_device_screenshots(device_type: "sevenInch")
   end
 
-  desc "Grab seven inch screenshot 1"
-  lane :grab_screen_seven_inch_1 do
-   gradle(task: 'assemble', build_type: 'Debug')
-   gradle(task: 'assemble', build_type: 'AndroidTest')
-   screengrab(launch_arguments: ['screenshotName 1'], device_type: 'sevenInch', clear_previous_screenshots: true)
+  desc "Grab ten inch screenshots"
+  lane :grab_screen_ten_inch do
+    capture_device_screenshots(device_type: "tenInch")
   end
 
-  desc "Grab seven inch screenshot 2"
-  lane :grab_screen_seven_inch_2 do
-   gradle(task: 'assemble', build_type: 'Debug')
-   gradle(task: 'assemble', build_type: 'AndroidTest')
-   screengrab(launch_arguments: ['screenshotName 2'], device_type: 'sevenInch')
+  desc "Grab all screenshots, booting each screenshot emulator in turn"
+  lane :grab_screens do
+    setup_screenshot_emulators
+    SCREENSHOT_EMULATORS.each do |emulator|
+      boot_emulator(emulator)
+      begin
+        capture_device_screenshots(device_type: emulator[:device_type], specific_device: emulator[:serial])
+      ensure
+        shutdown_emulator(emulator)
+      end
+    end
   end
 
-  desc "Grab ten inch screenshot 1"
-  lane :grab_screen_ten_inch_1 do
-   gradle(task: 'assemble', build_type: 'Debug')
-   gradle(task: 'assemble', build_type: 'AndroidTest')
-   screengrab(launch_arguments: ['screenshotName 1'], device_type: 'tenInch', clear_previous_screenshots: true)
+  desc "Create the Screenshots_* AVDs on this machine if they don't already exist"
+  lane :setup_screenshot_emulators do
+    ensure_sdk_command_line_tools_available
+    ensure_system_image_installed
+    SCREENSHOT_EMULATORS.each { |emulator| create_avd_if_missing(emulator) }
   end
 
-  desc "Grab ten inch screenshot 2"
-  lane :grab_screen_ten_inch_2 do
-   gradle(task: 'assemble', build_type: 'Debug')
-   gradle(task: 'assemble', build_type: 'AndroidTest')
-   screengrab(launch_arguments: ['screenshotName 2'], device_type: 'tenInch')
+  private_lane :ensure_sdk_command_line_tools_available do
+    unless File.exist?(AVDMANAGER_BIN) && File.exist?(SDKMANAGER_BIN)
+      UI.user_error!(
+        "avdmanager/sdkmanager not found under #{File.dirname(AVDMANAGER_BIN)}. " \
+        "Install them once via Android Studio: SDK Manager > SDK Tools tab > " \
+        "\"Android SDK Command-line Tools (latest)\"."
+      )
+    end
+  end
+
+  private_lane :ensure_system_image_installed do
+    image_dir = File.join(ANDROID_SDK_ROOT_PATH, *AVD_SYSTEM_IMAGE.split(";"))
+    unless Dir.exist?(image_dir)
+      UI.message("System image #{AVD_SYSTEM_IMAGE} not found, installing...")
+      sh("yes | \"#{SDKMANAGER_BIN}\" --licenses > /dev/null")
+      sh("\"#{SDKMANAGER_BIN}\" --install \"#{AVD_SYSTEM_IMAGE}\"")
+    end
+  end
+
+  private_lane :create_avd_if_missing do |options|
+    avd_dir = File.join(Dir.home, ".android", "avd", "#{options[:avd]}.avd")
+    unless Dir.exist?(avd_dir)
+      UI.message("Creating AVD #{options[:avd]}...")
+      sh("echo no | \"#{AVDMANAGER_BIN}\" create avd " \
+         "-n #{options[:avd]} -k \"#{AVD_SYSTEM_IMAGE}\" -d #{AVD_BASE_DEVICE} --force")
+
+      config_path = File.join(avd_dir, "config.ini")
+      sed_edits = ["-e 's/^hw.ramSize=.*/hw.ramSize=#{AVD_RAM_SIZE_MB}/'"]
+      sed_edits << "-e 's/^hw.lcd.width=.*/hw.lcd.width=#{options[:lcd_width]}/'" if options[:lcd_width]
+      sed_edits << "-e 's/^hw.lcd.height=.*/hw.lcd.height=#{options[:lcd_height]}/'" if options[:lcd_height]
+      sed_edits << "-e 's/^hw.lcd.density=.*/hw.lcd.density=#{options[:lcd_density]}/'" if options[:lcd_density]
+      sh("sed -i #{sed_edits.join(' ')} \"#{config_path}\"")
+    end
+  end
+
+  private_lane :capture_device_screenshots do |options|
+    gradle(task: "assemble", build_type: "Debug")
+    gradle(task: "assemble", build_type: "AndroidTest")
+    screengrab(
+      device_type: options[:device_type],
+      specific_device: options[:specific_device],
+      clear_previous_screenshots: true
+    )
+  end
+
+  private_lane :boot_emulator do |options|
+    serial = options[:serial]
+    UI.message("Booting #{options[:avd]} (#{serial})...")
+    sh("nohup \"#{EMULATOR_BIN}\" -avd #{options[:avd]} -port #{options[:port]} " \
+       "-no-snapshot-save > /tmp/#{options[:avd]}-emulator.log 2>&1 &")
+    sh("\"#{ADB_BIN}\" -s #{serial} wait-for-device")
+    sh("while [ \"$(\"#{ADB_BIN}\" -s #{serial} shell getprop sys.boot_completed | tr -d '\\r')\" != \"1\" ]; do sleep 2; done")
+    sh("while [ \"$(\"#{ADB_BIN}\" -s #{serial} shell getprop init.svc.bootanim | tr -d '\\r')\" != \"stopped\" ]; do sleep 2; done")
+    sh("\"#{ADB_BIN}\" -s #{serial} shell input keyevent KEYCODE_WAKEUP")
+    sh("\"#{ADB_BIN}\" -s #{serial} shell wm dismiss-keyguard")
+  end
+
+  private_lane :shutdown_emulator do |options|
+    serial = options[:serial]
+    UI.message("Shutting down #{serial}...")
+    sh("\"#{ADB_BIN}\" -s #{serial} emu kill || true")
+    sh("while \"#{ADB_BIN}\" devices | grep -q \"#{serial}\"; do sleep 1; done")
   end
 
 end

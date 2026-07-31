@@ -16,22 +16,24 @@ Package: `com.bobek.metronome`.
 # Instrumented tests (requires connected device/emulator)
 ./gradlew connectedAndroidTest
 
+# Run all tests, auto-creating/booting/shutting down a Test_Phone AVD for the instrumented ones
+bundle exec fastlane android test
+
 # Build debug APK
 ./gradlew assembleDebug
 
 # Build release APK (requires signing env vars)
-fastlane android apk
+bundle exec fastlane android apk
 
 # Run lint
 ./gradlew lint
 
-# Screenshots via Fastlane (requires device)
-fastlane android grab_screen_phone_1
-fastlane android grab_screen_phone_2
-fastlane android grab_screen_seven_inch_1
-fastlane android grab_screen_seven_inch_2
-fastlane android grab_screen_ten_inch_1
-fastlane android grab_screen_ten_inch_2
+# Screenshots via Fastlane; each lane grabs a light (1.png) and dark (2.png) shot
+bundle exec fastlane android grab_screens               # creates Screenshots_* AVDs if missing, boots each in turn
+bundle exec fastlane android setup_screenshot_emulators # just (re-)create the Screenshots_* AVDs, without grabbing screenshots
+bundle exec fastlane android grab_screen_phone          # requires a connected/already-running device
+bundle exec fastlane android grab_screen_seven_inch
+bundle exec fastlane android grab_screen_ten_inch
 ```
 
 Fastlane release builds require env vars: `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`.

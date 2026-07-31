@@ -68,8 +68,14 @@ class AppViewModel @Inject constructor(
 }
 
 class ComposeAppViewModel(
-    val nightMode: AppNightMode = AppNightMode.FOLLOW_SYSTEM
+    nightMode: AppNightMode = AppNightMode.FOLLOW_SYSTEM
 ) : IAppViewModel {
-    override fun getNightModeFlow() = MutableStateFlow(nightMode)
-    override fun setNightMode(nightMode: AppNightMode) = Unit
+
+    private val nightModeFlow = MutableStateFlow(nightMode)
+
+    override fun getNightModeFlow(): StateFlow<AppNightMode> = nightModeFlow
+
+    override fun setNightMode(nightMode: AppNightMode) {
+        nightModeFlow.value = nightMode
+    }
 }

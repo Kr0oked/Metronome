@@ -39,53 +39,45 @@ Build a new APK
 
 Deploy a new version to the Google Play
 
-### android grab_screen_phone_1
+### android grab_screen_phone
 
 ```sh
-[bundle exec] fastlane android grab_screen_phone_1
+[bundle exec] fastlane android grab_screen_phone
 ```
 
-Grab phone screenshot 1
+Grab phone screenshots
 
-### android grab_screen_phone_2
+### android grab_screen_seven_inch
 
 ```sh
-[bundle exec] fastlane android grab_screen_phone_2
+[bundle exec] fastlane android grab_screen_seven_inch
 ```
 
-Grab phone screenshot 2
+Grab seven inch screenshots
 
-### android grab_screen_seven_inch_1
+### android grab_screen_ten_inch
 
 ```sh
-[bundle exec] fastlane android grab_screen_seven_inch_1
+[bundle exec] fastlane android grab_screen_ten_inch
 ```
 
-Grab seven inch screenshot 1
+Grab ten inch screenshots
 
-### android grab_screen_seven_inch_2
+### android grab_screens
 
 ```sh
-[bundle exec] fastlane android grab_screen_seven_inch_2
+[bundle exec] fastlane android grab_screens
 ```
 
-Grab seven inch screenshot 2
+Grab all screenshots, booting each screenshot emulator in turn
 
-### android grab_screen_ten_inch_1
+### android setup_screenshot_emulators
 
 ```sh
-[bundle exec] fastlane android grab_screen_ten_inch_1
+[bundle exec] fastlane android setup_screenshot_emulators
 ```
 
-Grab ten inch screenshot 1
-
-### android grab_screen_ten_inch_2
-
-```sh
-[bundle exec] fastlane android grab_screen_ten_inch_2
-```
-
-Grab ten inch screenshot 2
+Create the Screenshots_* AVDs on this machine if they don't already exist
 
 ----
 
