@@ -47,7 +47,7 @@
     <string name="author">Tekijä</string>
     <string name="license">Ohjelmistolisenssi</string>
     <string name="third_party_licenses">Kolmansien osapuolten ohjelmistolisenssit</string>
-    <string name="third_party_licenses_summary">Käytettyjen avoimen lähdekoodin kirjastojen lisenssit</string>
+    <string name="third_party_licenses_summary">Tässä sovelluksessa käytettyjen avoimen lähdekoodin kirjastojen lisenssit.</string>
     <string name="source_code">Lähdekoodi</string>
     <string name="version">Versio</string>
     <string name="request_notifications_permission_rationale_title">Tarvitsemme luvan ilmoitusten näyttämiseen</string>

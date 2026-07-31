@@ -49,7 +49,7 @@
     <string name="author">நூலாசிரியர்</string>
     <string name="license">உரிமம்</string>
     <string name="third_party_licenses">மூன்றாம் தரப்பு உரிமங்கள்</string>
-    <string name="third_party_licenses_summary">சேர்க்கப்பட்ட திறந்த மூல நூலகங்களின் உரிமங்கள்</string>
+    <string name="third_party_licenses_summary">இந்த பயன்பாட்டில் பயன்படுத்தப்படும் திறந்த மூல நூலகங்களின் உரிமங்கள்.</string>
     <string name="source_code">மூலக் குறியீடு</string>
     <string name="version">பதிப்பு</string>
     <string name="request_notifications_permission_rationale_title">அறிவிப்புகளை இடுகையிட எங்களுக்கு இசைவு தேவை</string>

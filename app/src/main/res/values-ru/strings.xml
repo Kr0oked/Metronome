@@ -48,7 +48,7 @@
     <string name="author">Автор</string>
     <string name="license">Лицензии</string>
     <string name="third_party_licenses">Лицензии сторонних разработчиков</string>
-    <string name="third_party_licenses_summary">Лицензии используемых библиотек с открытым исходным кодом</string>
+    <string name="third_party_licenses_summary">Лицензии используемых в этом приложении библиотек с открытым исходным кодом.</string>
     <string name="source_code">Исходный код</string>
     <string name="version">Версия приложения</string>
     <string name="request_notifications_permission_rationale_title">Необходимо разрешение на публикацию уведомлений</string>

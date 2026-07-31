@@ -46,7 +46,7 @@
     <string name="author">Geliştirici</string>
     <string name="license">Lisans</string>
     <string name="third_party_licenses">Üçüncü parti lisansları</string>
-    <string name="third_party_licenses_summary">Dahil edilen açık kaynak kütüphanelerin lisansları</string>
+    <string name="third_party_licenses_summary">Bu uygulamada kullanılan açık kaynak kütüphanelerin lisansları.</string>
     <string name="source_code">Kaynak kodu</string>
     <string name="version">Sürüm</string>
     <string name="request_notifications_permission_rationale_title">Bildirim göndermek için izne ihtiyacımız var</string>

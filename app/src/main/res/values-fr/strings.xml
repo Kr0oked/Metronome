@@ -38,7 +38,7 @@
     <string name="about">À propos</string>
     <string name="author">Auteur</string>
     <string name="license">Licence</string>
-    <string name="third_party_licenses_summary">Licences des bibliothèques open source incluses</string>
+    <string name="third_party_licenses_summary">Licences des bibliothèques open source utilisées dans cette appli.</string>
     <string name="source_code">Code Source</string>
     <string name="version">Version</string>
     <string name="request_notifications_permission_rationale_title">Nous avons besoin de votre permission pour utiliser les notifications</string>

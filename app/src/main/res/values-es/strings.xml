@@ -43,7 +43,7 @@
     <string name="author">Autor</string>
     <string name="license">Licencia</string>
     <string name="third_party_licenses">Licencias de terceros</string>
-    <string name="third_party_licenses_summary">Licencias de las bibliotecas de código abierto incluidas</string>
+    <string name="third_party_licenses_summary">Licencias de las bibliotecas de código abierto utilizadas en esta aplicación.</string>
     <string name="source_code">Código fuente</string>
     <string name="version">Versión</string>
     <string name="request_notifications_permission_rationale_title">Necesitamos permisos para enviar notificaciones</string>

@@ -39,7 +39,7 @@
     <string name="about">אודות</string>
     <string name="author">יוצר</string>
     <string name="third_party_licenses">רשיונות צדדים שלישים</string>
-    <string name="third_party_licenses_summary">רישיונות של ספריות קוד פתוח בשימוש</string>
+    <string name="third_party_licenses_summary">רישיונות של ספריות הקוד הפתוח שבשימוש באפליקציה זו.</string>
     <string name="version">גירסא</string>
     <string name="request_notifications_permission_rationale_title">אנחנו צריכים אישור לשלוח התראות</string>
     <string name="ok">בסדר</string>

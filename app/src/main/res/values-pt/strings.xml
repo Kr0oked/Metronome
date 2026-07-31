@@ -56,7 +56,7 @@
     <string name="tempo_marking_presto">Presto</string>
     <string name="tempo_marking_prestissimo">Prestissimo</string>
     <string name="third_party_licenses">Licenças de terceiros</string>
-    <string name="third_party_licenses_summary">Licenças de bibliotecas de código aberto incluídas</string>
+    <string name="third_party_licenses_summary">Licenças das bibliotecas de código aberto utilizadas nesta app.</string>
     <string name="display">Ecrã</string>
     <string name="sound">Som</string>
     <string name="sound_square_wave">Bip forte</string>

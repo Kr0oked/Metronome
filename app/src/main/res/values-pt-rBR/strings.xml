@@ -62,5 +62,5 @@
     <string name="sound_risset_drum">Bateria sintética</string>
     <string name="sound_pluck">Dedilhado</string>
     <string name="third_party_licenses">Licenças de terceiros</string>
-    <string name="third_party_licenses_summary">Licenças das bibliotecas de código aberto incluídas</string>
+    <string name="third_party_licenses_summary">Licenças das bibliotecas de código aberto usadas neste aplicativo.</string>
 </resources>

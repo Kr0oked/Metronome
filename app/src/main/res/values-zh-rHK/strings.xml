@@ -43,7 +43,7 @@
     <string name="author">作者</string>
     <string name="license">授權</string>
     <string name="third_party_licenses">第三方授權</string>
-    <string name="third_party_licenses_summary">包含的開源函式庫授權</string>
+    <string name="third_party_licenses_summary">此應用程式使用的開源函式庫授權。</string>
     <string name="source_code">原始碼</string>
     <string name="version">版本</string>
     <string name="request_notifications_permission_rationale_title">我們需要權限以發送通知</string>

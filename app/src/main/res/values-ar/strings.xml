@@ -48,7 +48,7 @@
     <string name="author">المطوّر</string>
     <string name="license">الترخيص</string>
     <string name="third_party_licenses">تراخيص الجهات الخارجية</string>
-    <string name="third_party_licenses_summary">تراخيص مكتبات المصادر المفتوحة المضمّنة</string>
+    <string name="third_party_licenses_summary">تراخيص مكتبات المصادر المفتوحة المستخدمة في هذا التطبيق.</string>
     <string name="source_code">الشيفرة المصدرية</string>
     <string name="version">الإصدار</string>
     <string name="request_notifications_permission_rationale_title">نحتاج إلى إذن لإرسال الإشعارات</string>

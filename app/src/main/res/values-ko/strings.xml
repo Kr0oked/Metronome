@@ -48,7 +48,7 @@
     <string name="author">개발자</string>
     <string name="license">라이선스</string>
     <string name="third_party_licenses">제3자 라이선스</string>
-    <string name="third_party_licenses_summary">포함된 오픈 소스 라이브러리의 라이선스</string>
+    <string name="third_party_licenses_summary">이 앱에서 사용하는 오픈 소스 라이브러리의 라이선스.</string>
     <string name="source_code">소스 코드</string>
     <string name="version">버전</string>
     <string name="request_notifications_permission_rationale_title">알림을 게시하려면 권한이 필요합니다</string>

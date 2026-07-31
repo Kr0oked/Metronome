@@ -48,7 +48,7 @@
     <string name="author">作者</string>
     <string name="license">ライセンス</string>
     <string name="third_party_licenses">サードパーティライセンス</string>
-    <string name="third_party_licenses_summary">使用しているオープンソースライブラリのライセンス</string>
+    <string name="third_party_licenses_summary">このアプリで使用しているオープンソースライブラリのライセンス。</string>
     <string name="source_code">ソースコード</string>
     <string name="version">バージョン</string>
     <string name="request_notifications_permission_rationale_title">通知を送信する許可が必要です</string>

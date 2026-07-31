@@ -61,6 +61,6 @@
     <string name="tempo_marking_presto">Presto</string>
     <string name="tempo_marking_prestissimo">Prestissimo</string>
     <string name="source_code">Джерельний код</string>
-    <string name="third_party_licenses_summary">Ліцензії включених бібліотек з відкритим кодом</string>
+    <string name="third_party_licenses_summary">Ліцензії бібліотек із відкритим кодом, що використовуються в цьому застосунку.</string>
     <string name="third_party_licenses">Ліцензії третіх сторін</string>
 </resources>

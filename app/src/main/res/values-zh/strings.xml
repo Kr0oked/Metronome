@@ -43,7 +43,7 @@
     <string name="author">作者</string>
     <string name="license">许可证</string>
     <string name="third_party_licenses">第三方许可</string>
-    <string name="third_party_licenses_summary">包含的开源库的许可</string>
+    <string name="third_party_licenses_summary">此应用程序使用的开源库的许可。</string>
     <string name="source_code">源代码</string>
     <string name="version">版本</string>
     <string name="request_notifications_permission_rationale_title">我们需要权限以发送通知</string>
