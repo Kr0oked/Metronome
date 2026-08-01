@@ -102,6 +102,11 @@ platform :android do
     SCREENSHOT_EMULATORS.each { |emulator| create_avd_if_missing(emulator) }
   end
 
+  desc "Regenerate featureGraphic.png for every fastlane locale from the app icon, theme colors and translated app name"
+  lane :generate_feature_graphics do
+    sh("python3 \"#{File.join(__dir__, 'generate_feature_graphics.py')}\"")
+  end
+
   private_lane :ensure_sdk_command_line_tools_available do
     unless File.exist?(AVDMANAGER_BIN) && File.exist?(SDKMANAGER_BIN)
       UI.user_error!(

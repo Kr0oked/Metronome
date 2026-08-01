@@ -79,6 +79,14 @@ Grab all screenshots, booting each screenshot emulator in turn
 
 Create the Screenshots_* AVDs on this machine if they don't already exist
 
+### android generate_feature_graphics
+
+```sh
+[bundle exec] fastlane android generate_feature_graphics
+```
+
+Regenerate featureGraphic.png for every fastlane locale from the app icon, theme colors and translated app name
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

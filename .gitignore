@@ -11,4 +11,6 @@
 *.iml
 
 ### Fastlane ###
-fastlane/report.xml
+/fastlane/report.xml
+/fastlane/.fonts-cache
+/fastlane/__pycache__

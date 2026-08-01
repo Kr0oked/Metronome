@@ -34,6 +34,13 @@ bundle exec fastlane android setup_screenshot_emulators # just (re-)create the S
 bundle exec fastlane android grab_screen_phone          # requires a connected/already-running device
 bundle exec fastlane android grab_screen_seven_inch
 bundle exec fastlane android grab_screen_ten_inch
+
+# Regenerate fastlane/metadata/android/*/images/featureGraphic.png from the app icon,
+# app/src/main/res/values/colors.xml theme colors, and each locale's translated app name.
+# Requires python3-pillow (built with libraqm). Needed fonts are downloaded automatically
+# on first run into fastlane/.fonts-cache/ (git-ignored), so a network connection is
+# needed the first time only.
+bundle exec fastlane android generate_feature_graphics
 ```
 
 Fastlane release builds require env vars: `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`.
