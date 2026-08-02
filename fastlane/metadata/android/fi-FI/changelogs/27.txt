@@ -1,0 +1,4 @@
+- Korjattu tilapalkin kuvakkeiden väri vastaamaan sovelluksen teemaa
+- Lisätty arabian-, hindin-, italian-, japanin-, korean- ja puolankieliset käännökset
+- Lisätty perinteisen kiinan käännökset Taiwanille ja Hongkongille
+- Näytetään kolmannen osapuolen lisenssien koko teksti

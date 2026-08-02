@@ -22,6 +22,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.test.filters.LargeTest
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Beats
+import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.ui.ComposeAppViewModel
@@ -59,6 +60,7 @@ class ScreengrabTest {
                 metronomeViewModel = ComposeMetronomeViewModel(
                     beats = Beats(),
                     subdivisions = Subdivisions(),
+                    gaps = Gaps(),
                     tempo = Tempo(),
                     emphasizeFirstBeat = true,
                     playing = false,

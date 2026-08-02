@@ -1,0 +1,4 @@
+- Durum çubuğu simgelerinin uygulama temasıyla uyuşmama sorunu giderildi
+- Arapça, Hintçe, İtalyanca, Japonca, Korece ve Lehçe çevirileri eklendi
+- Tayvan ve Hong Kong için Geleneksel Çince çevirileri eklendi
+- Üçüncü parti lisanslarının tam metni gösteriliyor

@@ -1,0 +1,4 @@
+- Naprawiono ikony paska stanu, które nie pasowały do motywu aplikacji
+- Dodano tłumaczenia na arabski, hindi, włoski, japoński, koreański i polski
+- Dodano tłumaczenia na chiński tradycyjny dla Tajwanu i Hongkongu
+- Wyświetlanie pełnej treści licencji stron trzecich

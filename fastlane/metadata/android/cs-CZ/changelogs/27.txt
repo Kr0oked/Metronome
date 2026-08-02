@@ -1,0 +1,4 @@
+- Opravena barva ikon stavového řádku, která neodpovídala motivu aplikace
+- Přidány překlady do arabštiny, hindštiny, italštiny, japonštiny, korejštiny a polštiny
+- Přidány překlady do tradiční čínštiny pro Tchaj-wan a Hongkong
+- Zobrazení úplného znění licencí třetích stran

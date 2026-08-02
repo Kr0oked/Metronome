@@ -1,0 +1,4 @@
+- Statusleisten-Symbole passen sich jetzt korrekt dem Theme der App an
+- Arabische, Hindi-, Italienische, Japanische, Koreanische und Polnische Übersetzungen hinzugefügt
+- Traditionelle chinesische Übersetzungen für Taiwan und Hongkong hinzugefügt
+- Vollständige Lizenztexte für Drittanbieter-Lizenzen werden nun angezeigt

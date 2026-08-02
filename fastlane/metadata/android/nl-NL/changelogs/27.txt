@@ -1,0 +1,4 @@
+- Statusbalkpictogrammen volgen nu correct het thema van de app
+- Arabische, Hindi-, Italiaanse, Japanse, Koreaanse en Poolse vertalingen toegevoegd
+- Traditioneel Chinese vertalingen toegevoegd voor Taiwan en Hongkong
+- Volledige licentietekst van licenties van derden wordt nu getoond

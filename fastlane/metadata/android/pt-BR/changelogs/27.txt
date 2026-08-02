@@ -1,0 +1,4 @@
+- Corrigidos os ícones da barra de status que não seguiam o tema do aplicativo
+- Adicionadas traduções em árabe, hindi, italiano, japonês, coreano e polonês
+- Adicionadas traduções em chinês tradicional para Taiwan e Hong Kong
+- Exibição do texto completo das licenças de terceiros

@@ -1,0 +1,4 @@
+- Fixed status bar icons not matching the app's theme
+- Added Arabic, Hindi, Italian, Japanese, Korean and Polish translations
+- Added Traditional Chinese translations for Taiwan and Hong Kong
+- Show full license texts for third-party licenses
