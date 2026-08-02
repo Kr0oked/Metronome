@@ -35,6 +35,17 @@ height="80">](https://github.com/Kr0oked/Metronome/releases/latest)
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Screenshot Night" height="500"/>
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="Screenshot Day" height="500"/>
 
+## Contributing
+
+This is a hobby project maintained solo in my free time.
+I don't accept pull requests or merge requests.
+I'd rather spend the limited time I have working on the app itself than reviewing and integrating outside code changes.
+
+If you find a bug or have an idea, feel free to [open an issue](https://github.com/Kr0oked/Metronome/issues).
+I read all of them and appreciate the feedback, but I can't promise that any given issue will be worked on.
+
+Translations are handled by me with AI assistance and maintained directly in the repository.
+
 ## License
 
 This project is licensed under the GNU GPL v3.
