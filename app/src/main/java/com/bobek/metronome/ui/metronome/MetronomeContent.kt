@@ -24,6 +24,7 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,8 +34,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -56,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -64,9 +68,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.bobek.metronome.R
@@ -94,19 +100,13 @@ fun MetronomeContent(viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(
 @Composable
 private fun LandscapeContent(viewModel: IMetronomeViewModel) {
     Row(modifier = Modifier.fillMaxSize()) {
-        Column(
+        AdaptiveControlSections(
+            viewModel = viewModel,
             modifier = Modifier
                 .weight(2f)
                 .fillMaxSize()
-                .padding(dimensionResource(R.dimen.root_layout_padding)),
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
-            BeatsControlSection(viewModel)
-
-            SubdivisionsControlSection(viewModel)
-
-            TempoControlSection(viewModel)
-        }
+                .padding(dimensionResource(R.dimen.root_layout_padding))
+        )
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -187,8 +187,7 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(dimensionResource(R.dimen.root_layout_padding)),
-        verticalArrangement = Arrangement.SpaceBetween
+            .padding(dimensionResource(R.dimen.root_layout_padding))
     ) {
         TickVisualizationArea(
             viewModel = viewModel,
@@ -196,11 +195,10 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
             rows = 1
         )
 
-        BeatsControlSection(viewModel)
-
-        SubdivisionsControlSection(viewModel)
-
-        TempoControlSection(viewModel)
+        AdaptiveControlSections(
+            viewModel = viewModel,
+            modifier = Modifier.weight(1f)
+        )
 
         Row(
             modifier = Modifier
@@ -265,6 +263,63 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
         }
     }
 }
+
+/**
+ * Lays out the beats/subdivisions/tempo control sections spread evenly across the available
+ * height, like a plain [Column] with [Arrangement.SpaceEvenly] would. If the sections don't fit
+ * in the available height at the current font/display scale, falls back to a scrollable column
+ * with fixed spacing instead of clipping content, by first measuring the sections' natural height
+ * against the incoming constraints before deciding which layout to commit to.
+ */
+@Composable
+private fun AdaptiveControlSections(viewModel: IMetronomeViewModel, modifier: Modifier = Modifier) {
+    val scrollState = rememberScrollState()
+    val spacing = dimensionResource(R.dimen.general_spacing)
+    val sections: @Composable ColumnScope.() -> Unit = {
+        BeatsControlSection(viewModel)
+        SubdivisionsControlSection(viewModel)
+        TempoControlSection(viewModel)
+    }
+
+    SubcomposeLayout(modifier = modifier) { constraints ->
+        val naturalHeight = subcompose(AdaptiveControlSectionsSlot.Measurement) {
+            Column(
+                modifier = Modifier.clearAndSetSemantics {},
+                verticalArrangement = Arrangement.spacedBy(spacing),
+                content = sections
+            )
+        }
+            .first()
+            .measure(constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity))
+            .height
+
+        val fitsWithoutScrolling = naturalHeight <= constraints.maxHeight
+
+        val placeable = subcompose(AdaptiveControlSectionsSlot.Content) {
+            if (fitsWithoutScrolling) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceEvenly,
+                    content = sections
+                )
+            } else {
+                Column(
+                    modifier = Modifier.verticalScroll(scrollState),
+                    verticalArrangement = Arrangement.spacedBy(spacing),
+                    content = sections
+                )
+            }
+        }
+            .first()
+            .measure(constraints)
+
+        layout(placeable.width, placeable.height) {
+            placeable.placeRelative(0, 0)
+        }
+    }
+}
+
+private enum class AdaptiveControlSectionsSlot { Measurement, Content }
 
 @Composable
 private fun TickVisualizationArea(
@@ -365,9 +420,20 @@ private fun ControlSection(
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier.weight(1f)) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.general_spacing))
+            ) {
                 Text(label, style = MaterialTheme.typography.labelLarge)
-                Text(marking, style = MaterialTheme.typography.labelLarge, modifier = Modifier.testTag(markingTestTag))
+                Text(
+                    marking,
+                    style = MaterialTheme.typography.labelLarge,
+                    textAlign = TextAlign.End,
+                    maxLines = 2,
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag(markingTestTag)
+                )
             }
             Slider(
                 value = value.toFloat(),
