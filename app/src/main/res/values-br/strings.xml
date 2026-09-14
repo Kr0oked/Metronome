@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">Kreskiñ an tempo</string>
     <string name="decrement_tempo_button_description">Digreskiñ an tempo</string>
     <string name="tick_visualization_image_description">Diskwel an tik-tik</string>
+    <string name="navigate_back">Distreiñ</string>
     <string name="notification_channel_playback_name">Lenn</string>
     <string name="notification_channel_playback_description">Momeder o lenn bremañ</string>
     <string name="notification_playback_title">O lenn emañ ar momeder</string>

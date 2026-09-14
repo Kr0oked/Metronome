@@ -34,6 +34,7 @@
     <string name="increment_tempo_button_description">டெம்போவை அதிகரிக்கிறது</string>
     <string name="decrement_tempo_button_description">டெம்போவைக் குறைக்கிறது</string>
     <string name="tick_visualization_image_description">காட்சிப்படுத்தல் டிக்</string>
+    <string name="navigate_back">பின் செல்</string>
     <string name="notification_channel_playback_name">பின்னணி</string>
     <string name="notification_channel_playback_description">தற்போதைய மெட்ரோனோம் பிளேபேக்</string>
     <string name="notification_playback_title">மெட்ரோனோம் விளையாடுகிறது</string>

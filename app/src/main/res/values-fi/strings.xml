@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">Nopeuttaa tempoa</string>
     <string name="decrement_tempo_button_description">Hidastaa tempoa</string>
     <string name="tick_visualization_image_description">Iskun visualisointi</string>
+    <string name="navigate_back">Takaisin</string>
     <string name="notification_channel_playback_name">Toisto</string>
     <string name="notification_channel_playback_description">Nykyinen toisto</string>
     <string name="notification_playback_title">Metronomi on käynnissä</string>

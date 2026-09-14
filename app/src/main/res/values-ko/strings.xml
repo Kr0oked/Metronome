@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">템포를 높입니다</string>
     <string name="decrement_tempo_button_description">템포를 낮춥니다</string>
     <string name="tick_visualization_image_description">박자 시각화</string>
+    <string name="navigate_back">뒤로</string>
     <string name="notification_channel_playback_name">재생</string>
     <string name="notification_channel_playback_description">현재 메트로놈 재생</string>
     <string name="notification_playback_title">메트로놈이 재생 중입니다</string>

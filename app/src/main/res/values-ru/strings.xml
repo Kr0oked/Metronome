@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">Увеличивает темп</string>
     <string name="decrement_tempo_button_description">Уменьшает темп</string>
     <string name="tick_visualization_image_description">Визуализация тиков</string>
+    <string name="navigate_back">Назад</string>
     <string name="notification_channel_playback_name">Воспроизведение</string>
     <string name="notification_channel_playback_description">Текущее воспроизведение метронома</string>
     <string name="notification_playback_title">Метроном играет</string>

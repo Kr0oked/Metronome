@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">增加節奏</string>
     <string name="decrement_tempo_button_description">減少節奏</string>
     <string name="tick_visualization_image_description">可見滴答</string>
+    <string name="navigate_back">返回</string>
     <string name="notification_channel_playback_name">播放</string>
     <string name="notification_channel_playback_description">目前節拍器播放</string>
     <string name="notification_playback_title">節拍器正在播放</string>

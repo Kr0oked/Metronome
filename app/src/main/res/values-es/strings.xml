@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">Aumenta el tempo</string>
     <string name="decrement_tempo_button_description">Disminuye el tempo</string>
     <string name="tick_visualization_image_description">Vista de tick</string>
+    <string name="navigate_back">Atrás</string>
     <string name="notification_channel_playback_name">Reproducción</string>
     <string name="notification_channel_playback_description">Reproducción actual del metrónomo</string>
     <string name="notification_playback_title">El metrónomo está sonando</string>

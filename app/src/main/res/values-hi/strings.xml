@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">टेम्पो बढ़ाता है</string>
     <string name="decrement_tempo_button_description">टेम्पो घटाता है</string>
     <string name="tick_visualization_image_description">बीट का दृश्यांकन</string>
+    <string name="navigate_back">वापस जाएं</string>
     <string name="notification_channel_playback_name">प्लेबैक</string>
     <string name="notification_channel_playback_description">वर्तमान मेट्रोनोम प्लेबैक</string>
     <string name="notification_playback_title">मेट्रोनोम चल रहा है</string>

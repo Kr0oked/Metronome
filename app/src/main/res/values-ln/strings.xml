@@ -27,6 +27,7 @@
     <string name="increment_tempo_button_description">Kobakisa mbángu</string>
     <string name="decrement_tempo_button_description">Kolɛmbisa mbángu</string>
     <string name="tick_visualization_image_description">Komɔ́nisela eleli</string>
+    <string name="navigate_back">Kozonga nsima</string>
     <string name="notification_channel_playback_name">Botángi</string>
     <string name="notification_playback_title">Etámbwisa ezalí kobɛ́tɛ</string>
     <string name="notification_playback_action_stop_title">Kokáta</string>

@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">テンポを上げます</string>
     <string name="decrement_tempo_button_description">テンポを下げます</string>
     <string name="tick_visualization_image_description">拍の可視化</string>
+    <string name="navigate_back">戻る</string>
     <string name="notification_channel_playback_name">再生</string>
     <string name="notification_channel_playback_description">現在のメトロノームの再生</string>
     <string name="notification_playback_title">メトロノームが再生中です</string>

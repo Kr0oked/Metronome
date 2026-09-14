@@ -24,6 +24,7 @@
     <string name="increment_tempo_button_description">Verhoogt het tempo</string>
     <string name="decrement_tempo_button_description">Verlaagt het tempo</string>
     <string name="tick_visualization_image_description">Tikvisualisatie</string>
+    <string name="navigate_back">Terug</string>
     <string name="notification_channel_playback_name">Afspelen</string>
     <string name="notification_channel_playback_description">Huidige metronoomweergave</string>
     <string name="notification_playback_title">Metronoom speelt af</string>

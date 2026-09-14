@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">يزيد السرعة</string>
     <string name="decrement_tempo_button_description">يقلل السرعة</string>
     <string name="tick_visualization_image_description">تصور النبضات</string>
+    <string name="navigate_back">الرجوع للخلف</string>
     <string name="notification_channel_playback_name">التشغيل</string>
     <string name="notification_channel_playback_description">تشغيل المترونوم الحالي</string>
     <string name="notification_playback_title">المترونوم قيد التشغيل</string>

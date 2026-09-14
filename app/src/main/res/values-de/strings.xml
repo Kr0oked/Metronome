@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">Erhöht das Tempo</string>
     <string name="decrement_tempo_button_description">Verringert das Tempo</string>
     <string name="tick_visualization_image_description">Visualisierung des Schlags</string>
+    <string name="navigate_back">Zurück</string>
     <string name="notification_channel_playback_name">Wiedergabe</string>
     <string name="notification_channel_playback_description">Momentane Metronom Wiedergabe</string>
     <string name="notification_playback_title">Metronom läuft</string>

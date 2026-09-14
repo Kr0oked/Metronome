@@ -29,6 +29,7 @@
     <string name="tempo_label">Tempo en BPM</string>
     <string name="tap_tempo_button_description">Appuyez plusieurs fois pour définir le tempo</string>
     <string name="tick_visualization_image_description">Visualisation du tic-tac</string>
+    <string name="navigate_back">Retour</string>
     <string name="notification_playback_title">Le métronome est en marche</string>
     <string name="notification_playback_action_stop_title">Arrêter</string>
     <string name="decrement_tempo_button_description">Réduit le tempo</string>

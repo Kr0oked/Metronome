@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">Aumenta il tempo</string>
     <string name="decrement_tempo_button_description">Diminuisce il tempo</string>
     <string name="tick_visualization_image_description">Visualizzazione del battito</string>
+    <string name="navigate_back">Indietro</string>
     <string name="notification_channel_playback_name">Riproduzione</string>
     <string name="notification_channel_playback_description">Riproduzione corrente del metronomo</string>
     <string name="notification_playback_title">Il metronomo è in funzione</string>

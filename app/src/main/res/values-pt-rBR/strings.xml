@@ -28,6 +28,7 @@
     <string name="increment_tempo_button_description">Aumentar o tempo</string>
     <string name="decrement_tempo_button_description">Diminuir o tempo</string>
     <string name="tick_visualization_image_description">Visualização de tempo</string>
+    <string name="navigate_back">Voltar</string>
     <string name="notification_channel_playback_name">Reprodução</string>
     <string name="notification_channel_playback_description">Reprodução atual</string>
     <string name="notification_playback_title">Metrônomo está ligado</string>
