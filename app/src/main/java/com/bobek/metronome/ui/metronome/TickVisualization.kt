@@ -19,14 +19,14 @@
 package com.bobek.metronome.ui.metronome
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Box
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -62,7 +63,7 @@ fun TickVisualization(
 ) {
     val beats by state.viewModel.getBeatsFlow().collectAsState()
     val gaps by state.viewModel.getGapsFlow().collectAsState()
-    var blinking by remember { mutableStateOf(false) }
+    var blinking by remember { mutableStateOf(state.initiallyBlinking) }
 
     val hapticFeedback = LocalHapticFeedback.current
 
@@ -80,11 +81,12 @@ fun TickVisualization(
 
     val backgroundColor by animateColorAsState(
         targetValue = when {
-            blinking -> MaterialTheme.colorScheme.error
+            blinking && isGap -> MaterialTheme.colorScheme.onSurfaceVariant
+            blinking -> MaterialTheme.colorScheme.onTertiaryContainer
             isGap -> MaterialTheme.colorScheme.surfaceVariant
             else -> MaterialTheme.colorScheme.tertiaryContainer
         },
-        animationSpec = tween(durationMillis = animationDuration.inWholeMilliseconds.toInt())
+        animationSpec = if (blinking) snap() else tween(durationMillis = animationDuration.inWholeMilliseconds.toInt())
     )
 
     if (state.beatsValue <= beats.value) {
@@ -129,19 +131,40 @@ fun TickVisualization(
 
 data class TickVisualizationState(
     val viewModel: IMetronomeViewModel,
-    val beatsValue: Int
+    val beatsValue: Int,
+    val initiallyBlinking: Boolean = false
 )
 
 private class TickVisualizationStateProvider : PreviewParameterProvider<TickVisualizationState> {
     override val values: Sequence<TickVisualizationState> = sequenceOf(
-        TickVisualizationState(viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf())), beatsValue = 1),
-        TickVisualizationState(viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf(1))), beatsValue = 1)
+        TickVisualizationState(
+            viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf())),
+            beatsValue = 1,
+            initiallyBlinking = false
+        ),
+        TickVisualizationState(
+            viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf(1))),
+            beatsValue = 1,
+            initiallyBlinking = false
+        ),
+        TickVisualizationState(
+            viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf())),
+            beatsValue = 1,
+            initiallyBlinking = true
+        ),
+        TickVisualizationState(
+            viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf(1))),
+            beatsValue = 1,
+            initiallyBlinking = true
+        )
     )
 
     override fun getDisplayName(index: Int): String? =
         when (index) {
             0 -> "No gap"
             1 -> "Gap"
+            2 -> "Blinking no gap"
+            3 -> "Blinking gap"
             else -> null
         }
 }
