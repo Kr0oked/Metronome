@@ -56,6 +56,15 @@ private const val TAG = "Metronome"
 private const val SILENCE_CHUNK_SIZE = 8_000
 
 /**
+ * Number of PCM float frames of silence written to a fresh [AudioTrack] before the first tick period (50 ms).
+ *
+ * The Android audio mixer ramps a newly started track's volume up from zero over its first few milliseconds. Without
+ * a lead-in that ramp lands on the first tick sound, whose energy is concentrated in its first millisecond, making the
+ * first beat noticeably quieter than the rest. Values above [SILENCE_CHUNK_SIZE] are capped to it.
+ */
+private const val LEAD_IN_SILENCE_SIZE = SAMPLE_RATE_IN_HZ / 20
+
+/**
  * Core metronome engine.
  *
  * Audio is produced by writing PCM FLOAT mono frames at [SAMPLE_RATE_IN_HZ] (48 kHz) to a streaming [AudioTrack]. The
@@ -104,6 +113,9 @@ class Metronome(
 
     private var metronomeJob: Job? = null
 
+    /** [System.nanoTime] at which [AudioTrack.play] was called for the current playback session. */
+    private var playbackStartNanos = 0L
+
     @Volatile
     var beats: Beats = Beats()
 
@@ -143,14 +155,18 @@ class Metronome(
      * `totalFramesWritten` — the running total of PCM frames pushed into the track since playback started. This counter
      * is needed by [scheduleTickNotification] to calculate how far ahead of the current playback position the *next*
      * tick sound begins.
+     *
+     * Before the first tick period, [writeLeadInSilence] is called once; its frames are counted in `totalFramesWritten`
+     * as well so that tick notifications stay in sync with the audio.
      */
     private suspend fun metronomeLoop() {
         val track = getNewAudioTrack()
         track.play()
+        playbackStartNanos = System.nanoTime()
 
         try {
             var tickCount = 0L
-            var totalFramesWritten = 0L
+            var totalFramesWritten = writeLeadInSilence(track).toLong()
             while (true) {
                 totalFramesWritten = writeTickPeriod(track, tickCount, totalFramesWritten)
                 tickCount++
@@ -191,6 +207,16 @@ class Metronome(
             AudioManager.AUDIO_SESSION_ID_GENERATE
         )
     }
+
+    /**
+     * Writes [LEAD_IN_SILENCE_SIZE] frames of silence to a freshly started [track] and returns the number of frames
+     * written.
+     *
+     * The mixer ramps a newly started track's volume up from zero; the lead-in makes that ramp land on silence instead
+     * of on the first tick sound.
+     */
+    private fun writeLeadInSilence(track: AudioTrack): Int =
+        writeNextAudioData(track, silence, LEAD_IN_SILENCE_SIZE, 0)
 
     /**
      * Writes one complete tick period to [track] and returns the updated cumulative frame count.
@@ -234,9 +260,8 @@ class Metronome(
      * Schedules a [MetronomeTickListener.onTick] call to fire at the moment this tick's audio will actually be heard
      * by the user.
      *
-     * The presentation delay is calculated via [calculatePresentationDelay]. If it is zero (timestamp not yet
-     * available at the very start of playback) the notification is fired immediately; otherwise a coroutine delay is
-     * used.
+     * The presentation delay is calculated via [calculatePresentationDelay]. If it is zero (the tick is already due)
+     * the notification is fired immediately; otherwise a coroutine delay is used.
      *
      * @param totalFramesWritten Cumulative frames written to [track] up to (but not including) this period — i.e. the
      *   frame index where this period's first sample will be played.
@@ -262,18 +287,21 @@ class Metronome(
      * Uses [AudioTrack.getTimestamp] to anchor the calculation to a known frame/time pair, then extrapolates forward
      * to `totalFramesWritten`:
      * ```
-     * delayNanos = (totalFramesWritten - timestamp.framePosition) * nanosPerFrame - (now - timestamp.nanoTime)
+     * delayNanos = (totalFramesWritten - anchorFrame) * 1e9 / SAMPLE_RATE_IN_HZ - (now - anchorNanos)
      * ```
-     * Returns [Duration.ZERO] if the timestamp is not yet available (common at the very start of playback).
+     * If the timestamp is not yet available (common at the very start of playback), frame 0 at [playbackStartNanos]
+     * is used as the anchor instead. This ignores output latency but keeps the first tick from being notified before
+     * the lead-in silence written by [writeLeadInSilence] has played.
      */
     private fun calculatePresentationDelay(track: AudioTrack, totalFramesWritten: Long): Duration {
         val audioTimestamp = AudioTimestamp()
-        if (!track.getTimestamp(audioTimestamp)) return Duration.ZERO
+        val timestampAvailable = track.getTimestamp(audioTimestamp)
+        val anchorFrame = if (timestampAvailable) audioTimestamp.framePosition else 0L
+        val anchorNanos = if (timestampAvailable) audioTimestamp.nanoTime else playbackStartNanos
 
-        val nanosPerFrame = 1_000_000_000L / SAMPLE_RATE_IN_HZ
-        val timestampAgeNanos = System.nanoTime() - audioTimestamp.nanoTime
-        val framesAheadOfTimestamp = totalFramesWritten - audioTimestamp.framePosition
-        val delayNanos = framesAheadOfTimestamp * nanosPerFrame - timestampAgeNanos
+        val anchorAgeNanos = System.nanoTime() - anchorNanos
+        val framesAheadOfAnchor = totalFramesWritten - anchorFrame
+        val delayNanos = framesAheadOfAnchor * 1_000_000_000L / SAMPLE_RATE_IN_HZ - anchorAgeNanos
         return delayNanos.nanoseconds.coerceAtLeast(Duration.ZERO)
     }
 
