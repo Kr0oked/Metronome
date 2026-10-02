@@ -255,7 +255,7 @@ class InstrumentedTest {
     fun navigatingToLicenseShowsGplLicenseTextAndBackReturnsToSettings() {
         openSettings()
 
-        onLicenseListItem().performClick()
+        onLicenseListItem().performScrollTo().performClick()
         composeTestRule.waitForIdle()
 
         onTopBarTitle(R.string.license_name).assertIsDisplayed()
