@@ -1,0 +1,3 @@
+- Fixed content overflowing the screen at large font and display sizes
+- Added tooltips to toolbar buttons and improved screen reader support for the back button
+- Improved contrast of the beat indicator blink

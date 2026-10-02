@@ -1,0 +1,3 @@
+- Correction du débordement du contenu avec de grandes tailles de police et d'affichage
+- Ajout d'info-bulles aux boutons de la barre d'outils et amélioration de la prise en charge des lecteurs d'écran pour le bouton Retour
+- Amélioration du contraste du clignotement de l'indicateur de temps

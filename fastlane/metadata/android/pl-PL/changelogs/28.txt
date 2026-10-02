@@ -1,0 +1,3 @@
+- Naprawiono wychodzenie treści poza ekran przy dużym rozmiarze czcionki i wyświetlania
+- Dodano podpowiedzi do przycisków paska narzędzi i ulepszono obsługę czytnika ekranu dla przycisku Wstecz
+- Poprawiono kontrast migania wskaźnika uderzeń

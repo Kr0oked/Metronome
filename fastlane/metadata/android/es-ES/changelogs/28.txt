@@ -1,0 +1,3 @@
+- Corregido el desbordamiento del contenido con tamaños de fuente y pantalla grandes
+- Añadidas descripciones emergentes a los botones de la barra de herramientas y mejorada la compatibilidad con lectores de pantalla del botón Atrás
+- Mejorado el contraste del parpadeo del indicador de pulso

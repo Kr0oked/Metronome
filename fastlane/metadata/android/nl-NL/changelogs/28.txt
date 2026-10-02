@@ -1,0 +1,3 @@
+- Inhoud loopt niet langer buiten het scherm bij grote lettergrootte en weergavegrootte
+- Tooltips toegevoegd aan knoppen in de werkbalk en schermlezerondersteuning voor de terugknop verbeterd
+- Contrast van het knipperen van de maatslagindicator verbeterd

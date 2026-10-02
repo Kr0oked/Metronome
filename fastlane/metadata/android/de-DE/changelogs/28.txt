@@ -1,0 +1,3 @@
+- Überlaufen der Inhalte bei großen Schrift- und Anzeigegrößen behoben
+- Tooltips für Schaltflächen in der Symbolleiste hinzugefügt und Screenreader-Unterstützung für die Zurück-Schaltfläche verbessert
+- Kontrast des Blinkens der Taktanzeige verbessert

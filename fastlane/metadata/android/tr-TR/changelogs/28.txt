@@ -1,0 +1,3 @@
+- Büyük yazı tipi ve ekran boyutlarında içeriğin ekrandan taşması sorunu giderildi
+- Araç çubuğu düğmelerine ipuçları eklendi ve Geri düğmesi için ekran okuyucu desteği iyileştirildi
+- Vuruş göstergesinin yanıp sönme kontrastı iyileştirildi

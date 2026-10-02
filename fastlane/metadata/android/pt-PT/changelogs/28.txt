@@ -1,0 +1,3 @@
+- Corrigido o conteúdo que ultrapassava o ecrã com tamanhos de letra e de visualização grandes
+- Adicionadas dicas aos botões da barra de ferramentas e melhorado o suporte a leitores de ecrã no botão Voltar
+- Melhorado o contraste da intermitência do indicador de batida

@@ -1,0 +1,3 @@
+- Corretto il contenuto che fuoriusciva dallo schermo con dimensioni di carattere e di visualizzazione grandi
+- Aggiunti i suggerimenti ai pulsanti della barra degli strumenti e migliorato il supporto dello screen reader per il pulsante Indietro
+- Migliorato il contrasto del lampeggio dell'indicatore del battito

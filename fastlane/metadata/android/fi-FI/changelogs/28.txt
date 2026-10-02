@@ -1,0 +1,3 @@
+- Korjattu sisällön ylivuoto suurilla fontti- ja näyttökoilla
+- Lisätty työkalupalkin painikkeisiin työkaluvihjeet ja parannettu Takaisin-painikkeen ruudunlukijatukea
+- Parannettu iskun ilmaisimen vilkkumisen kontrastia

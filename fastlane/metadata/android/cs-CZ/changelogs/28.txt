@@ -1,0 +1,3 @@
+- Opraveno přetékání obsahu při velkém písmu a velikosti zobrazení
+- Přidány popisky k tlačítkům na liště a vylepšena podpora čtečky obrazovky pro tlačítko Zpět
+- Vylepšen kontrast blikání ukazatele dob
