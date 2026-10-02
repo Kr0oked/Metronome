@@ -60,13 +60,24 @@ The app follows MVVM in a single-Activity Compose setup with a foreground servic
 
 ### Key Packages
 
-| Package     | Responsibility                                                                                       |
-|-------------|------------------------------------------------------------------------------------------------------|
-| `domain/`   | `Metronome` — core engine using `AudioTrack` API at 48kHz PCM FLOAT; tick listener pattern           |
-| `data/`     | Immutable data models: `Beats`, `Subdivisions`, `Gaps`, `Tempo`, `Sound`, `TickType`, `TempoMarking` |
-| `audio/`    | `SoundLoader` / `SoundProvider` — loads audio assets for tick types                                  |
-| `settings/` | `DataStoreSettingsRepository` — persists preferences via Jetpack DataStore; injected via Hilt        |
-| `ui/`       | Jetpack Compose screens: `metronome/`, `settings/`, `licenses/`, `theme/`                            |
+What belongs where, rather than an inventory; a class is named only when it carries a rule worth knowing.
+
+- **`domain/`**: the playback engine. `Metronome` — `AudioTrack` at 48kHz PCM FLOAT, notifies a
+  `MetronomeTickListener` per tick; the beat, tick-type, gap and period math lives as pure functions in
+  `MetronomeCalculations`, unit-testable without Android.
+- **`data/`**: immutable value models, e.g. `Beats`, `Subdivisions`, `Gaps`, `Tempo`, `Sound`, `TickType`,
+  `TempoMarking`, plus preference models `AppNightMode`, `PreferenceChoice`.
+- **`audio/`**: `SoundProvider` loads the tick sounds from `res/raw` (`SoundLoader` parses the WAV PCM FLOAT data);
+  a new `Sound` needs strong, weak and sub WAV files there.
+- **`settings/`**: the `SettingsRepository` interface and its Jetpack DataStore implementation
+  (`DataStoreSettingsRepository`, bound in `SettingsModule`); keys live in `PreferenceConstants`. A new setting also
+  needs loading and debounced persisting in `AppViewModel` or `MetronomeViewModel`, a control in `SettingsScreen` or
+  `MetronomeContent`, the `ComposeAppViewModel` / `ComposeMetronomeViewModel` preview stand-ins, and the two test
+  fakes (`AppViewModelTest`, `MetronomeViewModelTest`). One that affects playback must also go through
+  `MetronomeService` and be synced both ways in `MetronomeViewModel` (`initServiceValues`, `updateViewModel`).
+- **`licenses/`**: `LicenseRepository` reads the app and third-party license texts from `res/raw`.
+- **`ui/`**: Compose code, one subpackage per screen (`metronome/`, `settings/`, `licenses/`) plus `theme/`.
+  `MainContent` hosts navigation.
 
 ### Data Flow
 
