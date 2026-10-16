@@ -30,7 +30,7 @@ bundle exec fastlane android apk
 
 # Screenshots via Fastlane; each lane grabs a light (1.png) and dark (2.png) shot
 bundle exec fastlane android grab_screens               # creates Screenshots_* AVDs if missing, boots each in turn
-bundle exec fastlane android setup_screenshot_emulators # just (re-)create the Screenshots_* AVDs, without grabbing screenshots
+bundle exec fastlane android setup_screenshot_emulators # just create any missing Screenshots_* AVDs, without grabbing screenshots
 bundle exec fastlane android grab_screen_phone          # requires a connected/already-running device
 bundle exec fastlane android grab_screen_seven_inch
 bundle exec fastlane android grab_screen_ten_inch
