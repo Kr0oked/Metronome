@@ -56,13 +56,17 @@ private const val TAG = "Metronome"
 private const val SILENCE_CHUNK_SIZE = 8_000
 
 /**
- * Number of PCM float frames of silence written to a fresh [AudioTrack] before the first tick period (50 ms).
+ * Number of PCM float frames of silence written to a fresh [AudioTrack] before the first tick period (100 ms).
  *
  * The Android audio mixer ramps a newly started track's volume up from zero over its first few milliseconds. Without
  * a lead-in that ramp lands on the first tick sound, whose energy is concentrated in its first millisecond, making the
  * first beat noticeably quieter than the rest. Values above [SILENCE_CHUNK_SIZE] are capped to it.
+ *
+ * The lead-in also gives an audio output that went into standby after a few seconds of silence part of the time it
+ * needs to wake up and fade back in. That can take several hundred milliseconds on some devices, so the first beat may
+ * still be somewhat quieter there; the lead-in is kept short so that starting playback doesn't feel delayed.
  */
-private const val LEAD_IN_SILENCE_SIZE = SAMPLE_RATE_IN_HZ / 20
+private const val LEAD_IN_SILENCE_SIZE = SAMPLE_RATE_IN_HZ / 10
 
 /**
  * Core metronome engine.
