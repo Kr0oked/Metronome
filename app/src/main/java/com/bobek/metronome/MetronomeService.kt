@@ -27,12 +27,16 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaStyleNotificationHelper
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.Sound
@@ -69,6 +73,8 @@ interface IMetronomeService {
 class MetronomeService : LifecycleService(), IMetronomeService {
 
     private var metronome: Metronome? = null
+
+    private var mediaSession: MediaSession? = null
 
     private val tickFlow = MutableSharedFlow<Tick>(
         extraBufferCapacity = 1,
@@ -186,13 +192,27 @@ class MetronomeService : LifecycleService(), IMetronomeService {
         Log.i(TAG, "Start metronome")
         ContextCompat.startForegroundService(this, Intent(this, MetronomeService::class.java))
         metronome?.playing = true
-        startForegroundNotification()
-    }
-
-    private fun startForegroundNotification() {
         val mainActivityPendingIntent = Intent(this, MainActivity::class.java)
             .let { PendingIntent.getActivity(this, NO_REQUEST_CODE, it, PendingIntent.FLAG_IMMUTABLE) }
+        val session = mediaSession ?: startMediaSession(mainActivityPendingIntent)
+        startForegroundNotification(session, mainActivityPendingIntent)
+    }
 
+    /**
+     * The media session only exists while playing, so that the system media controls can stop the metronome without
+     * unlocking the device, while media buttons keep going to other media apps once it is stopped.
+     */
+    private fun startMediaSession(sessionActivity: PendingIntent): MediaSession {
+        val player = MetronomePlayer(mainLooper, getString(R.string.notification_playback_title)) { performStop() }
+        return MediaSession.Builder(this, player)
+            .setSessionActivity(sessionActivity)
+            .build()
+            .also { mediaSession = it }
+            .also { Log.d(TAG, "Media session started") }
+    }
+
+    @OptIn(markerClass = [UnstableApi::class])
+    private fun startForegroundNotification(session: MediaSession, mainActivityPendingIntent: PendingIntent) {
         val stopMetronomePendingIntent = Intent(this, MetronomeService::class.java)
             .apply { action = ACTION_STOP }
             .let { PendingIntent.getService(this, NO_REQUEST_CODE, it, PendingIntent.FLAG_IMMUTABLE) }
@@ -205,6 +225,7 @@ class MetronomeService : LifecycleService(), IMetronomeService {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+            .setStyle(MediaStyleNotificationHelper.MediaStyle(session).setShowActionsInCompactView(0))
             .addAction(
                 android.R.drawable.ic_media_pause,
                 getString(R.string.notification_playback_action_stop_title),
@@ -225,7 +246,17 @@ class MetronomeService : LifecycleService(), IMetronomeService {
         Log.i(TAG, "Stop metronome")
         metronome?.playing = false
         stopForegroundNotification()
+        stopMediaSession()
         stopSelf()
+    }
+
+    private fun stopMediaSession() {
+        mediaSession?.let {
+            it.player.release()
+            it.release()
+            Log.d(TAG, "Media session stopped")
+        }
+        mediaSession = null
     }
 
     private fun stopForegroundNotification() {
