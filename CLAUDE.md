@@ -56,7 +56,11 @@ The app follows MVVM in a single-Activity Compose setup with a foreground servic
 - **`AppViewModel`** — Night mode preference via `StateFlow`; reads from `SettingsRepository`
 - **`MetronomeViewModel`** — All metronome UI state via `StateFlow`; tap tempo (5-second window); communicates with
   bound service; loaded from `SettingsRepository` on init
-- **`MetronomeService`** — Foreground service managing the `Metronome` engine; local binder for IPC with Activity
+- **`MetronomeService`** — Foreground service managing the `Metronome` engine; local binder for IPC with Activity.
+  While playing, it holds a Media3 `MediaSession` and its notification uses the session's `MediaStyle`, so system
+  media controls (lock screen, quick settings, headset buttons) can stop playback without unlocking
+- **`MetronomePlayer`** — Minimal `SimpleBasePlayer` behind that session; only offers pause/stop, both of which stop
+  the metronome. The session is released on stop so media buttons return to other apps
 
 ### Key Packages
 
@@ -91,6 +95,7 @@ Settings changes are debounced 1 second before being written to DataStore.
 - **DI:** Hilt + KSP
 - **Persistence:** DataStore Preferences
 - **Audio:** Android `AudioTrack` (PCM FLOAT, 48kHz)
+- **Media controls:** AndroidX Media3 Session (`MediaSession`, `SimpleBasePlayer`)
 - **Build:** AGP 9.x, Kotlin 2.3.x, Java 11 toolchain
 - **Testing:** JUnit4, Compose UI Test, kotlinx-coroutines-test, Fastlane Screengrab
 
