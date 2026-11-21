@@ -19,7 +19,6 @@
 package com.bobek.metronome.ui
 
 object TestConstants {
-    const val LOADING_INDICATOR = "loading_indicator"
     const val CONTENT = "content"
     const val BEATS_SLIDER = "beats_slider"
     const val BEATS_EDIT = "beats_edit"

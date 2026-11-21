@@ -341,9 +341,6 @@ class InstrumentedTest {
     private fun onSettingsButton(): SemanticsNodeInteraction =
         composeTestRule.onNodeWithContentDescription(getString(R.string.settings))
 
-    private fun onLoadingIndicator(): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithTag(TestConstants.LOADING_INDICATOR)
-
     private fun onContent(): SemanticsNodeInteraction =
         composeTestRule.onNodeWithTag(TestConstants.CONTENT)
 

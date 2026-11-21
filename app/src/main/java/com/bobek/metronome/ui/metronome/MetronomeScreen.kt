@@ -85,8 +85,7 @@ fun MetronomeScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding)
-                        .consumeWindowInsets(padding)
-                        .testTag(TestConstants.LOADING_INDICATOR),
+                        .consumeWindowInsets(padding),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
