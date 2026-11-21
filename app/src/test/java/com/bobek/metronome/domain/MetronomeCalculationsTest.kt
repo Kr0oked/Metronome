@@ -30,82 +30,36 @@ class MetronomeTickTest {
 
     @Test
     fun firstTickIsFirstBeat() {
-        assertEquals(1, getCurrentBeat(tickCount = 0L, beats = 4, subdivisions = 1))
+        assertEquals(1, getCurrentBeat(TickPosition()))
     }
 
     @Test
-    fun beatWrapsAfterLastBeat() {
-        assertEquals(1, getCurrentBeat(tickCount = 4L, beats = 4, subdivisions = 1))
-    }
-
-    @Test
-    fun secondBeatWithNoSubdivisions() {
-        assertEquals(2, getCurrentBeat(tickCount = 1L, beats = 4, subdivisions = 1))
-    }
-
-    @Test
-    fun beatAdvancesEverySubdivision() {
-        // 2 beats, 3 subdivisions: ticks 0,1,2 = beat 1; ticks 3,4,5 = beat 2
-        assertEquals(1, getCurrentBeat(tickCount = 2L, beats = 2, subdivisions = 3))
-        assertEquals(2, getCurrentBeat(tickCount = 3L, beats = 2, subdivisions = 3))
-    }
-
-    @Test
-    fun beatWrapsWithSubdivisions() {
-        // 2 beats, 3 subdivisions: 6 ticks per cycle; tick 6 = back to beat 1
-        assertEquals(1, getCurrentBeat(tickCount = 6L, beats = 2, subdivisions = 3))
+    fun beatIsOneBasedBeatInBar() {
+        assertEquals(3, getCurrentBeat(TickPosition(beatInBar = 2, subdivisionIndex = 1)))
     }
 
     // getCurrentTickType
 
     @Test
     fun firstTickIsStrongWhenEmphasizeFirstBeatEnabled() {
-        assertEquals(
-            TickType.STRONG,
-            getCurrentTickType(tickCount = 0L, beats = 4, subdivisions = 1, emphasizeFirstBeat = true)
-        )
+        assertEquals(TickType.STRONG, getCurrentTickType(TickPosition(), emphasizeFirstBeat = true))
     }
 
     @Test
     fun firstTickIsWeakWhenEmphasizeFirstBeatDisabled() {
-        assertEquals(
-            TickType.WEAK,
-            getCurrentTickType(tickCount = 0L, beats = 4, subdivisions = 1, emphasizeFirstBeat = false)
-        )
+        assertEquals(TickType.WEAK, getCurrentTickType(TickPosition(), emphasizeFirstBeat = false))
     }
 
     @Test
     fun beatStartIsWeak() {
-        // tick 1 is the start of beat 2 (no subdivisions), should be WEAK
-        assertEquals(
-            TickType.WEAK,
-            getCurrentTickType(tickCount = 1L, beats = 4, subdivisions = 1, emphasizeFirstBeat = true)
-        )
+        assertEquals(TickType.WEAK, getCurrentTickType(TickPosition(beatInBar = 1), emphasizeFirstBeat = true))
     }
 
     @Test
     fun subdivisionIsSubType() {
-        // 4 beats, 2 subdivisions: tick 1 is mid-beat (not beat start), should be SUB
         assertEquals(
             TickType.SUB,
-            getCurrentTickType(tickCount = 1L, beats = 4, subdivisions = 2, emphasizeFirstBeat = true)
-        )
-    }
-
-    @Test
-    fun firstBeatAfterFullCycleIsStrongWhenEmphasized() {
-        // 4 beats, 2 subdivisions: tick 8 = start of new cycle
-        assertEquals(
-            TickType.STRONG,
-            getCurrentTickType(tickCount = 8L, beats = 4, subdivisions = 2, emphasizeFirstBeat = true)
-        )
-    }
-
-    @Test
-    fun firstBeatAfterFullCycleIsWeakWhenNotEmphasized() {
-        assertEquals(
-            TickType.WEAK,
-            getCurrentTickType(tickCount = 8L, beats = 4, subdivisions = 2, emphasizeFirstBeat = false)
+            getCurrentTickType(TickPosition(beatInBar = 0, subdivisionIndex = 1), emphasizeFirstBeat = true)
         )
     }
 
@@ -126,23 +80,292 @@ class MetronomeTickTest {
         assertFalse(isGap(beat = 1, gapIndices = emptySet()))
     }
 
-    // calculatePeriodSize
+    // calculateBeatSize
 
     @Test
-    fun periodSizeAt60BpmNoSubdivisions() {
-        // 60 BPM, 1 subdivision: 48000 samples per beat
-        assertEquals(48_000, calculatePeriodSize(tempo = 60, subdivisions = 1))
+    fun beatSizeAt60Bpm() {
+        assertEquals(48_000, calculateBeatSize(tempo = 60))
     }
 
     @Test
-    fun periodSizeAt120BpmNoSubdivisions() {
-        // 120 BPM, 1 subdivision: 24000 samples per beat
-        assertEquals(24_000, calculatePeriodSize(tempo = 120, subdivisions = 1))
+    fun beatSizeAt120Bpm() {
+        assertEquals(24_000, calculateBeatSize(tempo = 120))
+    }
+
+    // calculateSubdivisionOffset
+
+    @Test
+    fun subdivisionOffsetsSplitBeatEvenly() {
+        assertEquals(0, calculateSubdivisionOffset(subdivisionIndex = 0, beatSize = 48_000, subdivisions = 4))
+        assertEquals(12_000, calculateSubdivisionOffset(subdivisionIndex = 1, beatSize = 48_000, subdivisions = 4))
+        assertEquals(36_000, calculateSubdivisionOffset(subdivisionIndex = 3, beatSize = 48_000, subdivisions = 4))
     }
 
     @Test
-    fun periodSizeWithSubdivisions() {
-        // 60 BPM, 2 subdivisions: 24000 samples per tick
-        assertEquals(24_000, calculatePeriodSize(tempo = 60, subdivisions = 2))
+    fun lastSubdivisionOffsetIsExactlyBeatSizeEvenIfNotDivisible() {
+        assertEquals(10, calculateSubdivisionOffset(subdivisionIndex = 3, beatSize = 10, subdivisions = 3))
+    }
+
+    // getNextSubdivisionIndex
+
+    @Test
+    fun nextSubdivisionIndexFromBeatStart() {
+        assertEquals(
+            1,
+            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 2_000, beatSize = 48_000, subdivisions = 4)
+        )
+    }
+
+    @Test
+    fun nextSubdivisionIndexIsNeverCurrentTickWhenNothingWrittenYet() {
+        // Gap ticks start with nothing written
+        assertEquals(
+            2,
+            getNextSubdivisionIndex(tickStartInBeat = 12_000, framesWritten = 0, beatSize = 48_000, subdivisions = 4)
+        )
+    }
+
+    @Test
+    fun nextSubdivisionIndexSkipsPassedSubdivisions() {
+        // Subdivisions changed from 1 to 4 while 30 000 frames into the beat: next tick at index 3 (36 000)
+        assertEquals(
+            3,
+            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 30_000, beatSize = 48_000, subdivisions = 4)
+        )
+    }
+
+    @Test
+    fun nextSubdivisionIndexIsSubdivisionStartingExactlyWhereWritingEnded() {
+        assertEquals(
+            1,
+            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 12_000, beatSize = 48_000, subdivisions = 4)
+        )
+    }
+
+    @Test
+    fun nextSubdivisionIndexIsNextBeatWithoutSubdivisions() {
+        assertEquals(
+            1,
+            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 2_000, beatSize = 48_000, subdivisions = 1)
+        )
+    }
+
+    @Test
+    fun nextSubdivisionIndexIsNextBeatAfterLastSubdivision() {
+        assertEquals(
+            2,
+            getNextSubdivisionIndex(
+                tickStartInBeat = 24_000,
+                framesWritten = 2_000,
+                beatSize = 48_000,
+                subdivisions = 2
+            )
+        )
+    }
+
+    // calculateFramesUntilNextTick
+
+    @Test
+    fun framesUntilNextTickIsSubdivisionPeriod() {
+        assertEquals(
+            12_000,
+            calculateFramesUntilNextTick(TickPosition(), framesWritten = 2_000, beatSize = 48_000, subdivisions = 4)
+        )
+    }
+
+    @Test
+    fun framesUntilNextTickKeepsBeatGridWhenSubdivisionsReduced() {
+        // Tick started as 2nd of 4 subdivisions; subdivisions changed to 1: next tick is the next beat, not 48 000
+        // frames after this tick
+        val position = TickPosition(beatInBar = 0, subdivisionIndex = 1, tickStartInBeat = 12_000)
+        assertEquals(
+            36_000,
+            calculateFramesUntilNextTick(position, framesWritten = 2_000, beatSize = 48_000, subdivisions = 1)
+        )
+    }
+
+    @Test
+    fun framesUntilNextTickIsZeroWhenTempoIncreasedPastBeatEnd() {
+        val position = TickPosition(beatInBar = 0, subdivisionIndex = 1, tickStartInBeat = 30_000)
+        assertEquals(
+            0,
+            calculateFramesUntilNextTick(position, framesWritten = 2_000, beatSize = 24_000, subdivisions = 2)
+        )
+    }
+
+    // getNextTickPosition
+
+    @Test
+    fun nextTickPositionWithinBeat() {
+        assertEquals(
+            TickPosition(beatInBar = 0, subdivisionIndex = 1, tickStartInBeat = 12_000),
+            getNextTickPosition(TickPosition(), framesWritten = 12_000, beats = 4, beatSize = 48_000, subdivisions = 4)
+        )
+    }
+
+    @Test
+    fun nextTickPositionSkipsPassedSubdivisions() {
+        assertEquals(
+            TickPosition(beatInBar = 0, subdivisionIndex = 3, tickStartInBeat = 36_000),
+            getNextTickPosition(TickPosition(), framesWritten = 36_000, beats = 4, beatSize = 48_000, subdivisions = 4)
+        )
+    }
+
+    @Test
+    fun nextTickPositionStartsNextBeat() {
+        val position = TickPosition(beatInBar = 1, subdivisionIndex = 1, tickStartInBeat = 24_000)
+        assertEquals(
+            TickPosition(beatInBar = 2),
+            getNextTickPosition(position, framesWritten = 24_000, beats = 4, beatSize = 48_000, subdivisions = 2)
+        )
+    }
+
+    @Test
+    fun nextTickPositionWrapsToFirstBeat() {
+        assertEquals(
+            TickPosition(beatInBar = 0),
+            getNextTickPosition(
+                TickPosition(beatInBar = 3),
+                framesWritten = 48_000,
+                beats = 4,
+                beatSize = 48_000,
+                subdivisions = 1
+            )
+        )
+    }
+
+    // getNextBeatInBar
+
+    @Test
+    fun nextBeatInBarAdvances() {
+        assertEquals(2, getNextBeatInBar(beatInBar = 1, beats = 4))
+    }
+
+    @Test
+    fun nextBeatInBarWrapsAfterLastBeat() {
+        assertEquals(0, getNextBeatInBar(beatInBar = 3, beats = 4))
+    }
+
+    @Test
+    fun nextBeatInBarIsFirstBeatWhenBeatsReducedBelowCurrentBeat() {
+        assertEquals(0, getNextBeatInBar(beatInBar = 5, beats = 3))
+    }
+
+    // Simulated playback (regression tests for changing settings while playing)
+
+    @Test
+    fun beatGridIsKeptWhenSubdivisionsIncreasedMidBeat() {
+        val ticks = simulate(ticks = 30) { frame ->
+            Settings(beats = 4, tempo = 60, subdivisions = if (frame < 2 * 48_000 + 30_000) 1 else 4)
+        }
+
+        assertBeatsOnGrid(ticks, beatSize = 48_000)
+        // Index 3 of the changed beat is the first subdivision after 30 000 frames
+        assertTrue(ticks.any { it.frame == 2 * 48_000 + 36_000L && it.position.subdivisionIndex == 3 })
+    }
+
+    @Test
+    fun beatGridIsKeptWhenSubdivisionsReducedMidBeat() {
+        val ticks = simulate(ticks = 30) { frame ->
+            Settings(beats = 4, tempo = 60, subdivisions = if (frame < 2 * 48_000 + 13_000) 4 else 1)
+        }
+
+        assertBeatsOnGrid(ticks, beatSize = 48_000)
+    }
+
+    @Test
+    fun downbeatIsKeptWhenSubdivisionsChangedOnLastBeat() {
+        val ticks = simulate(ticks = 10) { frame ->
+            Settings(beats = 4, tempo = 60, subdivisions = if (frame < 3 * 48_000 + 1_000) 1 else 4)
+        }
+
+        val tickAfterBar = ticks.single { it.frame == 4 * 48_000L }
+        assertEquals(TickType.STRONG, getCurrentTickType(tickAfterBar.position, emphasizeFirstBeat = true))
+        assertEquals(1, getCurrentBeat(tickAfterBar.position))
+    }
+
+    @Test
+    fun subdivisionsDoNotDriftWhenBeatSizeNotDivisible() {
+        val beatSize = calculateBeatSize(tempo = 77)
+        assertTrue(beatSize % 3 != 0)
+
+        val ticks = simulate(ticks = 300) { Settings(beats = 4, tempo = 77, subdivisions = 3) }
+
+        assertBeatsOnGrid(ticks, beatSize = beatSize)
+    }
+
+    @Test
+    fun barRestartsWhenBeatsReducedBelowCurrentBeat() {
+        // Beats reduced from 4 to 3 while on beat 4: the next beat is beat 1
+        val ticks = simulate(ticks = 8) { frame ->
+            Settings(beats = if (frame < 3 * 48_000 + 1_000) 4 else 3, tempo = 60, subdivisions = 1)
+        }
+
+        assertEquals(listOf(1, 2, 3, 4, 1, 2, 3, 1), ticks.map { getCurrentBeat(it.position) })
+    }
+
+    @Test
+    fun barContinuesWhenBeatsReducedAboveCurrentBeat() {
+        // Beats reduced from 4 to 3 while on beat 2: the bar continues with beat 3
+        val ticks = simulate(ticks = 6) { frame ->
+            Settings(beats = if (frame < 48_000 + 1_000) 4 else 3, tempo = 60, subdivisions = 1)
+        }
+
+        assertEquals(listOf(1, 2, 3, 1, 2, 3), ticks.map { getCurrentBeat(it.position) })
+    }
+
+    private data class Settings(val beats: Int, val tempo: Int, val subdivisions: Int)
+
+    private data class SimulatedTick(val frame: Long, val position: TickPosition)
+
+    /**
+     * Mirrors the write loop of [Metronome]: writes a tick sound of [tickSoundSize] frames, then silence in chunks of
+     * [chunkSize] frames, re-reading the settings (as returned by [settingsAt] for the current absolute frame) before
+     * every chunk.
+     */
+    private fun simulate(
+        ticks: Int,
+        tickSoundSize: Int = 2_000,
+        chunkSize: Int = 8_000,
+        settingsAt: (Long) -> Settings
+    ): List<SimulatedTick> {
+        val result = mutableListOf<SimulatedTick>()
+        var position = TickPosition()
+        var frame = 0L
+
+        repeat(ticks) {
+            result += SimulatedTick(frame, position)
+
+            val tickSettings = settingsAt(frame)
+            val tickBeatSize = calculateBeatSize(tickSettings.tempo)
+            var written = minOf(
+                tickSoundSize,
+                calculateFramesUntilNextTick(position, 0, tickBeatSize, tickSettings.subdivisions)
+            )
+
+            while (true) {
+                val settings = settingsAt(frame + written)
+                val beatSize = calculateBeatSize(settings.tempo)
+                val framesUntilNextTick =
+                    calculateFramesUntilNextTick(position, written, beatSize, settings.subdivisions)
+                if (written >= framesUntilNextTick) {
+                    position = getNextTickPosition(position, written, settings.beats, beatSize, settings.subdivisions)
+                    break
+                }
+                written += minOf(chunkSize, framesUntilNextTick - written)
+            }
+
+            frame += written
+        }
+
+        return result
+    }
+
+    private fun assertBeatsOnGrid(ticks: List<SimulatedTick>, beatSize: Int) {
+        val beatStarts = ticks.filter { it.position.subdivisionIndex == 0 }
+        beatStarts.forEachIndexed { index, tick ->
+            assertEquals("Beat $index starts off the beat grid", index.toLong() * beatSize, tick.frame)
+            assertEquals("Beat $index has the wrong position in the bar", index % 4, tick.position.beatInBar)
+        }
     }
 }

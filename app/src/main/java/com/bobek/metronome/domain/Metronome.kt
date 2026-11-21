@@ -76,17 +76,19 @@ private const val LEAD_IN_SILENCE_SIZE = SAMPLE_RATE_IN_HZ / 10
  * time.
  *
  * ## Tick period
- * A tick period is the fixed-length block of audio belonging to a single subdivision tick. Its length in frames is:
- * ```
- * periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisions
- * ```
+ * A tick period is the block of audio belonging to a single subdivision tick. Ticks are anchored to the beat (see
+ * [TickPosition]): a beat is `60 * SAMPLE_RATE_IN_HZ / tempo` frames long and subdivision `i` starts at
+ * `i * beatSize / subdivisions` frames into it. A period runs from its tick's start to the start of the next tick.
  * For example, at 120 BPM with 2 subdivisions the period is 12 000 frames (= 250 ms).
+ *
+ * Because positions are measured from the beat start, changing the beats or subdivisions while playing never moves
+ * the beat grid; only which positions sound changes.
  *
  * Each period consists of:
  * 1. **Tick sound** — the preloaded PCM sample for the tick's type (STRONG / WEAK / SUB), written at the start of the
  *    period. Gap beats skip this part entirely.
- * 2. **Silence** — zero-valued frames that pad the rest of the period up to `periodSize` so that the next tick starts
- *    at the correct moment.
+ * 2. **Silence** — zero-valued frames that pad the rest of the period so that the next tick starts at the correct
+ *    moment.
  *
  * ## Size / frame accounting
  * All "size" variables throughout this class count **PCM float frames** (= samples for mono audio), *not* bytes. One
@@ -156,9 +158,9 @@ class Metronome(
      * Main audio loop. Runs until canceled (i.e. [stop] is called).
      *
      * Creates a single [AudioTrack] for the entire playback session and repeatedly calls [writeTickPeriod] to advance
-     * `totalFramesWritten` — the running total of PCM frames pushed into the track since playback started. This counter
-     * is needed by [scheduleTickNotification] to calculate how far ahead of the current playback position the *next*
-     * tick sound begins.
+     * the [TickPosition] and `totalFramesWritten` — the running total of PCM frames pushed into the track since
+     * playback started. This counter is needed by [scheduleTickNotification] to calculate how far ahead of the current
+     * playback position the *next* tick sound begins.
      *
      * Before the first tick period, [writeLeadInSilence] is called once; its frames are counted in `totalFramesWritten`
      * as well so that tick notifications stay in sync with the audio.
@@ -169,11 +171,12 @@ class Metronome(
         playbackStartNanos = System.nanoTime()
 
         try {
-            var tickCount = 0L
+            var position = TickPosition()
             var totalFramesWritten = writeLeadInSilence(track).toLong()
             while (true) {
-                totalFramesWritten = writeTickPeriod(track, tickCount, totalFramesWritten)
-                tickCount++
+                val period = writeTickPeriod(track, position, totalFramesWritten)
+                totalFramesWritten += period.framesWritten
+                position = period.nextPosition
             }
         } catch (_: CancellationException) {
             Log.d(TAG, "Received cancellation")
@@ -223,41 +226,42 @@ class Metronome(
         writeNextAudioData(track, silence, LEAD_IN_SILENCE_SIZE, 0)
 
     /**
-     * Writes one complete tick period to [track] and returns the updated cumulative frame count.
+     * Writes one complete tick period to [track].
      *
-     * A period has exactly `calculatePeriodSize(tempo, subdivisions)` frames. The method first writes the tick sound
-     * (unless the tick is a gap), then pads the remainder with silence via [writeSilenceUntilPeriodFinished].
+     * The method first writes the tick sound (unless the tick is a gap), capped at the start of the next tick, then
+     * pads the remainder with silence via [writeSilenceUntilNextTick].
      *
-     * @param tickCount Zero-based sequential index of this tick across the entire playback session. Used to derive
-     *   beat position and tick type.
+     * @param position Position of this tick within the bar. Used to derive beat, tick type and period length.
      * @param totalFramesWritten Cumulative PCM frames written to [track] before this period. Passed to
      *   [scheduleTickNotification] so it can calculate the presentation timestamp of this period's first frame.
-     * @return The updated cumulative frame count: `totalFramesWritten + sizeWritten`, where `sizeWritten` is the total
-     *   frames for this period (tick sound + silence). Because tempo or subdivisions may change while silence is being
-     *   filled, `periodSize` is re-evaluated on each iteration inside [writeSilenceUntilPeriodFinished], so the actual
-     *   increment equals the period size that was in effect when the tick sound was written plus the silence that was
-     *   added to reach the (possibly re-evaluated) boundary.
+     * @return The frames written for this period (tick sound + silence) and the position of the next tick. Because
+     *   beats, tempo or subdivisions may change while silence is being filled, the start of the next tick is
+     *   re-evaluated on each iteration inside [writeSilenceUntilNextTick].
      */
-    private suspend fun writeTickPeriod(track: AudioTrack, tickCount: Long, totalFramesWritten: Long): Long {
+    private suspend fun writeTickPeriod(
+        track: AudioTrack,
+        position: TickPosition,
+        totalFramesWritten: Long
+    ): TickPeriod {
         var sizeWritten = 0
 
-        val tick = getCurrentTick(tickCount)
+        val tick = getCurrentTick(position)
 
         if (tick.gap) {
             Log.v(TAG, "Skipped gap for $tick")
         } else {
             val tickSound = soundProvider.getTickSound(tick.type, sound)
-            val periodSize = calculatePeriodSize(tempo.value, subdivisions.value)
+            val framesUntilNextTick =
+                calculateFramesUntilNextTick(position, sizeWritten, calculateBeatSize(tempo.value), subdivisions.value)
 
-            sizeWritten += writeNextAudioData(track, tickSound, periodSize, sizeWritten)
+            sizeWritten += writeNextAudioData(track, tickSound, framesUntilNextTick, sizeWritten)
             Log.v(TAG, "Wrote tick sound for $tick")
         }
 
         scheduleTickNotification(track, tick, totalFramesWritten)
         yield()
 
-        sizeWritten += writeSilenceUntilPeriodFinished(track, sizeWritten)
-        return totalFramesWritten + sizeWritten
+        return writeSilenceUntilNextTick(track, position, sizeWritten)
     }
 
     /**
@@ -310,38 +314,45 @@ class Metronome(
     }
 
     /**
-     * Fills the rest of the current tick period with silence by looping until the total number of frames written for
-     * this period reaches `periodSize`.
+     * Fills the rest of the current tick period with silence by looping until the frames written for this period reach
+     * the start of the next tick.
      *
      * Silence is written in chunks of at most [SILENCE_CHUNK_SIZE] frames, with a [yield] after each chunk. This gives
-     * the coroutine dispatcher a chance to pick up tempo/subdivision changes between chunks so that the period boundary
-     * is re-evaluated with fresh values.
+     * the coroutine dispatcher a chance to pick up beats/tempo/subdivision changes between chunks so that the start of
+     * the next tick is re-evaluated with fresh values. The values that end the period are also the ones used to derive
+     * the next [TickPosition], so both always agree.
      *
      * @param previousSizeWritten Frames already written for this period before silence filling began (i.e. the tick
      *   sound size, or 0 for a gap).
-     * @return The number of silence frames written.
      */
-    private suspend fun writeSilenceUntilPeriodFinished(track: AudioTrack, previousSizeWritten: Int): Int {
-        var silenceWritten = 0
+    private suspend fun writeSilenceUntilNextTick(
+        track: AudioTrack,
+        position: TickPosition,
+        previousSizeWritten: Int
+    ): TickPeriod {
+        var sizeWritten = previousSizeWritten
 
         while (true) {
-            val periodSize = calculatePeriodSize(tempo.value, subdivisions.value)
-            val totalWritten = previousSizeWritten + silenceWritten
-            if (totalWritten >= periodSize) break
+            val beats = beats.value
+            val beatSize = calculateBeatSize(tempo.value)
+            val subdivisions = subdivisions.value
+            val framesUntilNextTick = calculateFramesUntilNextTick(position, sizeWritten, beatSize, subdivisions)
+            if (sizeWritten >= framesUntilNextTick) {
+                val nextPosition = getNextTickPosition(position, sizeWritten, beats, beatSize, subdivisions)
+                return TickPeriod(sizeWritten, nextPosition)
+            }
 
-            silenceWritten += writeNextAudioData(track, silence, periodSize, totalWritten)
+            sizeWritten += writeNextAudioData(track, silence, framesUntilNextTick, sizeWritten)
             Log.v(TAG, "Wrote silence")
             yield()
         }
-
-        return silenceWritten
     }
 
-    private fun getCurrentTick(tickCount: Long): Tick {
-        val beat = getCurrentBeat(tickCount, beats.value, subdivisions.value)
+    private fun getCurrentTick(position: TickPosition): Tick {
+        val beat = getCurrentBeat(position)
         return Tick(
             beat = beat,
-            type = getCurrentTickType(tickCount, beats.value, subdivisions.value, emphasizeFirstBeat),
+            type = getCurrentTickType(position, emphasizeFirstBeat),
             gap = isGap(beat, gaps.value)
         )
     }
@@ -351,10 +362,11 @@ class Metronome(
      * `periodSize`.
      *
      * @param sizeWritten Frames already written in this period before this call.
-     * @return The number of frames actually written (≤ `data.size` and ≤ `periodSize - sizeWritten`).
+     * @return The number of frames actually written (≤ `data.size` and ≤ `periodSize - sizeWritten`, at least 0).
      */
     private fun writeNextAudioData(track: AudioTrack, data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
-        val size = minOf(data.size, periodSize - sizeWritten)
+        val size = minOf(data.size, periodSize - sizeWritten).coerceAtLeast(0)
+        if (size == 0) return 0
         writeAudio(track, data, size)
         return size
     }
@@ -379,4 +391,7 @@ class Metronome(
         metronomeJob = null
         Log.i(TAG, "Stopped metronome job")
     }
+
+    /** Result of [writeTickPeriod]: the frames written for the period and the position of the following tick. */
+    private class TickPeriod(val framesWritten: Int, val nextPosition: TickPosition)
 }
