@@ -81,7 +81,16 @@ What belongs where, rather than an inventory; a class is named only when it carr
   `MetronomeService` and be synced both ways in `MetronomeViewModel` (`initServiceValues`, `updateViewModel`).
 - **`licenses/`**: `LicenseRepository` reads the app and third-party license texts from `res/raw`.
 - **`ui/`**: Compose code, one subpackage per screen (`metronome/`, `settings/`, `licenses/`) plus `theme/`.
-  `MainContent` hosts navigation.
+  `MainContent` hosts navigation. Follows Material 3 Expressive: secondary screens use a collapsing flexible top app
+  bar (`LargeFlexibleTopAppBar` / `MediumFlexibleTopAppBar` with `exitUntilCollapsedScrollBehavior`) and plain
+  `ListItem`s, not `SegmentedListItem`; the shared `NavigateBackButton` lives in `AppBars.kt`. Buttons pass
+  `shapes = ...Defaults.shapes()`. The metronome control buttons in `MetronomeContent` (start/stop, tap tempo,
+  +/-) keep their custom sizing and `button_corner_shape` radius, only morphing to half that radius when pressed
+  (`metronomeButtonShapes()`); `TickVisualization` keeps fixed `tween`/`snap` timing for the beat blink so it
+  stays on the beat; only its press feedback (circle squishing to a rounded square) uses the expressive
+  `motionScheme.fastSpatialSpec()`.
+  Navigation transitions in `MainContent` take their specs from `MaterialTheme.motionScheme`. The XML themes
+  (used by the View-based permission rationale dialog in `MainActivity`) inherit from `Theme.Material3Expressive.*`.
 
 ### Data Flow
 
@@ -91,7 +100,8 @@ Settings changes are debounced 1 second before being written to DataStore.
 
 ## Tech Stack
 
-- **UI:** Jetpack Compose + Material3, Navigation Compose
+- **UI:** Jetpack Compose + Material 3 Expressive (`MaterialExpressiveTheme`, `MotionScheme.expressive()`),
+  Navigation Compose
 - **DI:** Hilt + KSP
 - **Persistence:** DataStore Preferences
 - **Audio:** Android `AudioTrack` (PCM FLOAT, 48kHz)

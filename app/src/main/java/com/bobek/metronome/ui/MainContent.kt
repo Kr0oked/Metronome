@@ -21,7 +21,11 @@ package com.bobek.metronome.ui
 import android.net.Uri
 import android.view.WindowManager
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,6 +34,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -73,7 +78,27 @@ fun MainContent(
     }
 
     AppTheme(darkTheme = isDarkTheme) {
-        NavHost(navController = navController, startDestination = "metronome") {
+        val motionScheme = MaterialTheme.motionScheme
+        val slideSpec = motionScheme.defaultSpatialSpec<IntOffset>()
+        val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
+        val slideOffset = { fullOffset: Int -> fullOffset / 4 }
+
+        NavHost(
+            navController = navController,
+            startDestination = "metronome",
+            enterTransition = {
+                slideIntoContainer(SlideDirection.Start, slideSpec, slideOffset) + fadeIn(fadeSpec)
+            },
+            exitTransition = {
+                slideOutOfContainer(SlideDirection.Start, slideSpec, slideOffset) + fadeOut(fadeSpec)
+            },
+            popEnterTransition = {
+                slideIntoContainer(SlideDirection.End, slideSpec, slideOffset) + fadeIn(fadeSpec)
+            },
+            popExitTransition = {
+                slideOutOfContainer(SlideDirection.End, slideSpec, slideOffset) + fadeOut(fadeSpec)
+            }
+        ) {
             composable("metronome") {
                 MetronomeScreen(
                     viewModel = metronomeViewModel,

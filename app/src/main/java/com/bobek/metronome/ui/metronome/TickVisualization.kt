@@ -19,14 +19,19 @@
 package com.bobek.metronome.ui.metronome
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,7 +43,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -53,6 +60,9 @@ import com.bobek.metronome.data.TickType
 import kotlinx.coroutines.delay
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+
+private const val CIRCLE_CORNER_PERCENT = 50f
+private const val PRESSED_CORNER_PERCENT = 25f
 
 @Composable
 @Preview(widthDp = 40)
@@ -89,6 +99,15 @@ fun TickVisualization(
         animationSpec = if (blinking) snap() else tween(durationMillis = animationDuration.inWholeMilliseconds.toInt())
     )
 
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val cornerPercent by animateFloatAsState(
+        targetValue = if (pressed) PRESSED_CORNER_PERCENT else CIRCLE_CORNER_PERCENT,
+        animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
+    )
+    // The expressive spring overshoots, so keep the percentage within the range CornerSize accepts
+    val shape = RoundedCornerShape(CornerSize(cornerPercent.coerceIn(0f, 100f)))
+
     if (state.beatsValue <= beats.value) {
         Box(
             modifier = modifier,
@@ -100,27 +119,31 @@ fun TickVisualization(
                 modifier = Modifier
                     .aspectRatio(1f)
                     .fillMaxSize()
-                    .clip(CircleShape)
+                    .clip(shape)
                     .semantics {
                         contentDescription = description
                     }
-                    .clickable {
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = LocalIndication.current
+                    ) {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                         state.viewModel.setGaps(gaps.toggle(state.beatsValue))
                     },
                 onDraw = {
-                    val minDimension = this.size.minDimension
-
                     if (isGap) {
-                        drawCircle(
-                            color = backgroundColor,
-                            radius = (minDimension * 0.45f),
-                            style = Stroke(width = (minDimension * 0.1f))
-                        )
+                        val strokeWidth = size.minDimension * 0.1f
+                        inset(strokeWidth / 2) {
+                            drawOutline(
+                                outline = shape.createOutline(size, layoutDirection, this),
+                                color = backgroundColor,
+                                style = Stroke(width = strokeWidth)
+                            )
+                        }
                     } else {
-                        drawCircle(
-                            color = backgroundColor,
-                            radius = (minDimension / 2.0f),
+                        drawOutline(
+                            outline = shape.createOutline(size, layoutDirection, this),
+                            color = backgroundColor
                         )
                     }
                 }

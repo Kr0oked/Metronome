@@ -41,6 +41,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
@@ -486,7 +487,7 @@ private fun StartStopButton(
     FilledIconButton(
         onClick = { viewModel.startStop() },
         modifier = modifier,
-        shape = metronomeButtonShape()
+        shapes = metronomeButtonShapes()
     ) {
         val painter = if (playing) {
             painterResource(R.drawable.ic_pause)
@@ -516,7 +517,7 @@ private fun TapTempoButton(
             viewModel.tapTempo()
         },
         modifier = modifier,
-        shape = metronomeButtonShape()
+        shapes = metronomeButtonShapes()
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_drum),
@@ -600,7 +601,7 @@ private fun TempoActionButton(
     FilledTonalIconButton(
         onClick = {},
         modifier = modifier,
-        shape = metronomeButtonShape(),
+        shapes = metronomeButtonShapes(),
         interactionSource = interactionSource
     ) {
         Icon(
@@ -612,8 +613,13 @@ private fun TempoActionButton(
 }
 
 @Composable
-private fun metronomeButtonShape(): RoundedCornerShape =
-    RoundedCornerShape(dimensionResource(R.dimen.button_corner_shape))
+private fun metronomeButtonShapes(): IconButtonShapes {
+    val cornerSize = dimensionResource(R.dimen.button_corner_shape)
+    return IconButtonShapes(
+        shape = RoundedCornerShape(cornerSize),
+        pressedShape = RoundedCornerShape(cornerSize / 2)
+    )
+}
 
 @Composable
 private fun Modifier.metronomeButtonSize(): Modifier = this
