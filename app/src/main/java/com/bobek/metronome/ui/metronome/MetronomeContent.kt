@@ -45,6 +45,7 @@ import androidx.compose.material3.IconButtonShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -75,6 +76,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.bobek.metronome.R
 import com.bobek.metronome.data.Beats
@@ -85,6 +87,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.milliseconds
+
+// Material 3 Expressive "medium" slider size
+private val SLIDER_TRACK_HEIGHT = 40.dp
+private val SLIDER_TRACK_CORNER_SIZE = 12.dp
+private val SLIDER_THUMB_SIZE = DpSize(width = 4.dp, height = 52.dp)
 
 @Composable
 @PreviewScreenSizes
@@ -427,7 +434,7 @@ private fun ControlSection(
                 Text(label, style = MaterialTheme.typography.labelLarge)
                 Text(
                     marking,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelLargeEmphasized,
                     textAlign = TextAlign.End,
                     maxLines = 2,
                     modifier = Modifier
@@ -443,10 +450,26 @@ private fun ControlSection(
                 )
             }
             sliderState.value = value.toFloat()
+            val sliderInteractionSource = remember { MutableInteractionSource() }
             Slider(
                 state = sliderState,
                 onValueChange = { onValueChange(it.toInt()) },
-                modifier = Modifier.testTag(sliderTestTag)
+                modifier = Modifier.testTag(sliderTestTag),
+                interactionSource = sliderInteractionSource,
+                thumb = {
+                    SliderDefaults.Thumb(
+                        interactionSource = sliderInteractionSource,
+                        isVertical = false,
+                        thumbSize = SLIDER_THUMB_SIZE
+                    )
+                },
+                track = { state ->
+                    SliderDefaults.Track(
+                        sliderState = state,
+                        trackCornerSize = SLIDER_TRACK_CORNER_SIZE,
+                        modifier = Modifier.height(SLIDER_TRACK_HEIGHT)
+                    )
+                }
             )
         }
         OutlinedTextField(

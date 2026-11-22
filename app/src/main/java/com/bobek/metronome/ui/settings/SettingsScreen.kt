@@ -211,7 +211,7 @@ private fun SettingsSection(
         ListItem {
             Text(
                 text = title,
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelLargeEmphasized,
                 color = MaterialTheme.colorScheme.primary,
             )
         }

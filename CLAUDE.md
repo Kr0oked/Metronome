@@ -91,6 +91,11 @@ What belongs where, rather than an inventory; a class is named only when it carr
   `motionScheme.fastSpatialSpec()`.
   Navigation transitions in `MainContent` take their specs from `MaterialTheme.motionScheme`. The XML themes
   (used by the View-based permission rationale dialog in `MainActivity`) inherit from `Theme.Material3Expressive.*`.
+  Sliders use the Expressive "medium" size (custom `SliderDefaults.Track` / `Thumb`, see `MetronomeContent`).
+  Single-choice options use `ListItem(selected, onClick)` with a leading `RadioButton(onClick = null)`, not
+  hand-rolled `selectable` rows; switch rows keep `Modifier.toggleable(role = Role.Switch)`. `*Emphasized` type
+  styles mark focal text only: settings section headers, the selected option in `SingleChoiceDialog` and the tempo
+  marking in `MetronomeContent`.
 
 ### Data Flow
 
