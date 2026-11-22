@@ -1,0 +1,4 @@
+- Überarbeitetes Design auf Basis von Material 3 Expressive
+- Die Wiedergabe kann jetzt über den Sperrbildschirm, die Schnelleinstellungen und Kopfhörertasten ohne Entsperren gestoppt werden
+- Zu leisen ersten Schlag nach dem Starten der Wiedergabe behoben
+- Die Taktposition bleibt jetzt erhalten, wenn Schläge oder Unterteilungen während der Wiedergabe geändert werden

@@ -1,0 +1,4 @@
+- Refreshed design based on Material 3 Expressive
+- Playback can now be stopped from the lock screen, quick settings and headset buttons without unlocking
+- Fixed a quiet first beat after starting playback
+- The beat position is now kept when changing beats or subdivisions while playing

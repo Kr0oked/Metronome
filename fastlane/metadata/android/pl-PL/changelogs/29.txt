@@ -1,0 +1,4 @@
+- Odświeżony wygląd oparty na Material 3 Expressive
+- Odtwarzanie można teraz zatrzymać z ekranu blokady, szybkich ustawień i przycisków słuchawek bez odblokowywania
+- Naprawiono zbyt cichy pierwszy takt po rozpoczęciu odtwarzania
+- Pozycja taktu jest teraz zachowywana przy zmianie liczby uderzeń lub podziałów podczas odtwarzania

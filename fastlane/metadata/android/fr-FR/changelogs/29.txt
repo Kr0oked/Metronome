@@ -1,0 +1,4 @@
+- Nouveau design basé sur Material 3 Expressive
+- La lecture peut désormais être arrêtée depuis l'écran de verrouillage, les réglages rapides et les boutons du casque sans déverrouiller l'appareil
+- Correction d'un premier temps trop faible au démarrage de la lecture
+- La position du temps est désormais conservée lors de la modification des temps ou des subdivisions pendant la lecture

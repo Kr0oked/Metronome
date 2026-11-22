@@ -1,0 +1,4 @@
+- Diseño renovado basado en Material 3 Expressive
+- Ahora se puede detener la reproducción desde la pantalla de bloqueo, los ajustes rápidos y los botones de los auriculares sin desbloquear
+- Corregido un primer pulso demasiado bajo al iniciar la reproducción
+- Ahora se mantiene la posición del pulso al cambiar los pulsos o las subdivisiones durante la reproducción

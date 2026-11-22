@@ -1,0 +1,4 @@
+- Vernieuwd ontwerp gebaseerd op Material 3 Expressive
+- Het afspelen kan nu zonder ontgrendelen worden gestopt via het vergrendelscherm, de snelle instellingen en de knoppen van de headset
+- Te zachte eerste tel na het starten van het afspelen opgelost
+- De positie van de tel blijft nu behouden bij het wijzigen van tellen of onderverdelingen tijdens het afspelen

@@ -1,0 +1,4 @@
+- Design renovado com base no Material 3 Expressive
+- Agora é possível parar a reprodução pela tela de bloqueio, pelas configurações rápidas e pelos botões do fone de ouvido sem desbloquear
+- Corrigido o primeiro tempo baixo demais ao iniciar a reprodução
+- A posição do tempo agora é mantida ao alterar os tempos ou as subdivisões durante a reprodução

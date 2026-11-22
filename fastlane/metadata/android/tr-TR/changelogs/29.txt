@@ -1,0 +1,4 @@
+- Material 3 Expressive tabanlı yenilenmiş tasarım
+- Çalma artık kilit ekranından, hızlı ayarlardan ve kulaklık düğmelerinden kilit açmadan durdurulabilir
+- Çalmayı başlattıktan sonra ilk vuruşun sessiz çıkması düzeltildi
+- Çalma sırasında vuruşlar veya alt bölümler değiştirildiğinde vuruş konumu artık korunuyor

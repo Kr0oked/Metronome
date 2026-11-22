@@ -1,0 +1,4 @@
+- Přepracovaný vzhled založený na Material 3 Expressive
+- Přehrávání lze nyní zastavit z obrazovky uzamčení, rychlého nastavení a tlačítky sluchátek bez odemknutí
+- Opraven tichý první úder po spuštění přehrávání
+- Pozice úderu se nyní zachová při změně počtu úderů nebo dělení během přehrávání

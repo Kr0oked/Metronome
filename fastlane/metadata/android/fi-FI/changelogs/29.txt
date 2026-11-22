@@ -1,0 +1,4 @@
+- Uudistettu ulkoasu, joka perustuu Material 3 Expressiveen
+- Toiston voi nyt pysäyttää lukitusnäytöltä, pika-asetuksista ja kuulokkeiden painikkeilla avaamatta lukitusta
+- Korjattu hiljainen ensimmäinen isku toiston aloittamisen jälkeen
+- Iskun sijainti säilyy nyt, kun iskuja tai jakoja muutetaan toiston aikana

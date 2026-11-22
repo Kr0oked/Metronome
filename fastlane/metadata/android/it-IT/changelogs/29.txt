@@ -1,0 +1,4 @@
+- Design rinnovato basato su Material 3 Expressive
+- Ora la riproduzione può essere interrotta dalla schermata di blocco, dalle impostazioni rapide e dai tasti delle cuffie senza sbloccare il dispositivo
+- Corretto il primo battito troppo debole all'avvio della riproduzione
+- La posizione del battito viene ora mantenuta quando si modificano i battiti o le suddivisioni durante la riproduzione
