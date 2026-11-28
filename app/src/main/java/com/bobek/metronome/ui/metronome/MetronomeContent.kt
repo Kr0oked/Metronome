@@ -83,10 +83,10 @@ import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.ui.TestConstants
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 // Material 3 Expressive "medium" slider size
 private val SLIDER_TRACK_HEIGHT = 40.dp
@@ -101,7 +101,6 @@ fun MetronomeContent(viewModel: IMetronomeViewModel = ComposeMetronomeViewModel(
     } else {
         PortraitContent(viewModel)
     }
-
 }
 
 @Composable
@@ -109,78 +108,68 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
     Row(modifier = Modifier.fillMaxSize()) {
         AdaptiveControlSections(
             viewModel = viewModel,
-            modifier = Modifier
-                .weight(2f)
-                .fillMaxSize()
-                .padding(dimensionResource(R.dimen.root_layout_padding))
+            modifier = Modifier.weight(2f).fillMaxSize().padding(dimensionResource(R.dimen.root_layout_padding)),
         )
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxSize()
-                .padding(dimensionResource(R.dimen.root_layout_padding)),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.weight(1f).fillMaxSize().padding(dimensionResource(R.dimen.root_layout_padding)),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
             TickVisualizationArea(
                 viewModel = viewModel,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.general_spacing)),
-                rows = 2
+                rows = 2,
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.general_spacing))) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                    modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.general_spacing)),
-                    verticalAlignment = Alignment.Bottom
+                    verticalAlignment = Alignment.Bottom,
                 ) {
                     Box(
                         modifier = Modifier.weight(1f),
-                        contentAlignment = Alignment.CenterEnd
+                        contentAlignment = Alignment.CenterEnd,
                     ) {
                         DecrementTempoButton(
                             viewModel = viewModel,
                             modifier = Modifier.metronomeButtonSize(),
-                            iconSize = dimensionResource(R.dimen.button_icon_size)
+                            iconSize = dimensionResource(R.dimen.button_icon_size),
                         )
                     }
                     Box(
                         modifier = Modifier.weight(1f),
-                        contentAlignment = Alignment.CenterStart
+                        contentAlignment = Alignment.CenterStart,
                     ) {
                         IncrementTempoButton(
                             viewModel = viewModel,
                             modifier = Modifier.metronomeButtonSize(),
-                            iconSize = dimensionResource(R.dimen.button_icon_size)
+                            iconSize = dimensionResource(R.dimen.button_icon_size),
                         )
                     }
                 }
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                    modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.general_spacing)),
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.Top,
                 ) {
                     Box(
                         modifier = Modifier.weight(1f),
-                        contentAlignment = Alignment.CenterEnd
+                        contentAlignment = Alignment.CenterEnd,
                     ) {
                         TapTempoButton(
                             viewModel = viewModel,
                             modifier = Modifier.metronomeButtonSize(),
-                            iconSize = dimensionResource(R.dimen.button_icon_size)
+                            iconSize = dimensionResource(R.dimen.button_icon_size),
                         )
                     }
                     Box(
                         modifier = Modifier.weight(1f),
-                        contentAlignment = Alignment.CenterStart
+                        contentAlignment = Alignment.CenterStart,
                     ) {
                         StartStopButton(
                             viewModel = viewModel,
                             modifier = Modifier.metronomeButtonSize(),
-                            iconSize = dimensionResource(R.dimen.button_icon_size)
+                            iconSize = dimensionResource(R.dimen.button_icon_size),
                         )
                     }
                 }
@@ -192,79 +181,75 @@ private fun LandscapeContent(viewModel: IMetronomeViewModel) {
 @Composable
 private fun PortraitContent(viewModel: IMetronomeViewModel) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(dimensionResource(R.dimen.root_layout_padding))
+        modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.root_layout_padding)),
     ) {
         TickVisualizationArea(
             viewModel = viewModel,
             modifier = Modifier.padding(bottom = dimensionResource(R.dimen.general_spacing)),
-            rows = 1
+            rows = 1,
         )
 
         AdaptiveControlSections(
             viewModel = viewModel,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimensionResource(R.dimen.general_spacing)),
-            horizontalArrangement = Arrangement.spacedBy(
-                dimensionResource(R.dimen.general_spacing),
-                Alignment.CenterHorizontally
-            )
+            modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.general_spacing)),
+            horizontalArrangement =
+                Arrangement.spacedBy(
+                    dimensionResource(R.dimen.general_spacing),
+                    Alignment.CenterHorizontally,
+                ),
         ) {
             Box(
                 modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 DecrementTempoButton(
                     viewModel = viewModel,
                     modifier = Modifier.metronomeButtonSize(),
-                    iconSize = dimensionResource(R.dimen.button_icon_size)
+                    iconSize = dimensionResource(R.dimen.button_icon_size),
                 )
             }
             Box(
                 modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 TapTempoButton(
                     viewModel = viewModel,
                     modifier = Modifier.metronomeButtonSize(),
-                    iconSize = dimensionResource(R.dimen.button_icon_size)
+                    iconSize = dimensionResource(R.dimen.button_icon_size),
                 )
             }
             Box(
                 modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 IncrementTempoButton(
                     viewModel = viewModel,
                     modifier = Modifier.metronomeButtonSize(),
-                    iconSize = dimensionResource(R.dimen.button_icon_size)
+                    iconSize = dimensionResource(R.dimen.button_icon_size),
                 )
             }
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimensionResource(R.dimen.general_spacing)),
-            horizontalArrangement = Arrangement.spacedBy(
-                dimensionResource(R.dimen.general_spacing),
-                Alignment.CenterHorizontally
-            )
+            modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.general_spacing)),
+            horizontalArrangement =
+                Arrangement.spacedBy(
+                    dimensionResource(R.dimen.general_spacing),
+                    Alignment.CenterHorizontally,
+                ),
         ) {
             Box(
                 modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 StartStopButton(
                     viewModel = viewModel,
                     modifier = Modifier.metronomeButtonSize(),
-                    iconSize = dimensionResource(R.dimen.button_icon_size)
+                    iconSize = dimensionResource(R.dimen.button_icon_size),
                 )
             }
         }
@@ -272,11 +257,10 @@ private fun PortraitContent(viewModel: IMetronomeViewModel) {
 }
 
 /**
- * Lays out the beats/subdivisions/tempo control sections spread evenly across the available
- * height, like a plain [Column] with [Arrangement.SpaceEvenly] would. If the sections don't fit
- * in the available height at the current font/display scale, falls back to a scrollable column
- * with fixed spacing instead of clipping content, by first measuring the sections' natural height
- * against the incoming constraints before deciding which layout to commit to.
+ * Lays out the beats/subdivisions/tempo control sections spread evenly across the available height, like a plain
+ * [Column] with [Arrangement.SpaceEvenly] would. If the sections don't fit in the available height at the current
+ * font/display scale, falls back to a scrollable column with fixed spacing instead of clipping content, by first
+ * measuring the sections' natural height against the incoming constraints before deciding which layout to commit to.
  */
 @Composable
 private fun AdaptiveControlSections(viewModel: IMetronomeViewModel, modifier: Modifier = Modifier) {
@@ -289,36 +273,38 @@ private fun AdaptiveControlSections(viewModel: IMetronomeViewModel, modifier: Mo
     }
 
     SubcomposeLayout(modifier = modifier) { constraints ->
-        val naturalHeight = subcompose(AdaptiveControlSectionsSlot.Measurement) {
-            Column(
-                modifier = Modifier.clearAndSetSemantics {},
-                verticalArrangement = Arrangement.spacedBy(spacing),
-                content = sections
-            )
-        }
-            .first()
-            .measure(constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity))
-            .height
+        val naturalHeight =
+            subcompose(AdaptiveControlSectionsSlot.Measurement) {
+                    Column(
+                        modifier = Modifier.clearAndSetSemantics {},
+                        verticalArrangement = Arrangement.spacedBy(spacing),
+                        content = sections,
+                    )
+                }
+                .first()
+                .measure(constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity))
+                .height
 
         val fitsWithoutScrolling = naturalHeight <= constraints.maxHeight
 
-        val placeable = subcompose(AdaptiveControlSectionsSlot.Content) {
-            if (fitsWithoutScrolling) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    content = sections
-                )
-            } else {
-                Column(
-                    modifier = Modifier.verticalScroll(scrollState),
-                    verticalArrangement = Arrangement.spacedBy(spacing),
-                    content = sections
-                )
-            }
-        }
-            .first()
-            .measure(constraints)
+        val placeable =
+            subcompose(AdaptiveControlSectionsSlot.Content) {
+                    if (fitsWithoutScrolling) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.SpaceEvenly,
+                            content = sections,
+                        )
+                    } else {
+                        Column(
+                            modifier = Modifier.verticalScroll(scrollState),
+                            verticalArrangement = Arrangement.spacedBy(spacing),
+                            content = sections,
+                        )
+                    }
+                }
+                .first()
+                .measure(constraints)
 
         layout(placeable.width, placeable.height) {
             placeable.placeRelative(0, 0)
@@ -326,34 +312,36 @@ private fun AdaptiveControlSections(viewModel: IMetronomeViewModel, modifier: Mo
     }
 }
 
-private enum class AdaptiveControlSectionsSlot { Measurement, Content }
+private enum class AdaptiveControlSectionsSlot {
+    Measurement,
+    Content,
+}
 
 @Composable
 private fun TickVisualizationArea(
     viewModel: IMetronomeViewModel,
     modifier: Modifier,
-    rows: Int = 1
+    rows: Int = 1,
 ) {
     val maxItemsInEachRow = ceil(Beats.MAX_VALUE.toFloat() / rows).toInt()
 
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.general_spacing))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.general_spacing)),
     ) {
         for (rowIndex in 0 until rows) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(dimensionResource(R.dimen.tick_visualization_size)),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier.fillMaxWidth().height(dimensionResource(R.dimen.tick_visualization_size)),
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 for (position in 1..maxItemsInEachRow) {
                     TickVisualization(
-                        state = TickVisualizationState(
-                            viewModel = viewModel,
-                            beatsValue = position + rowIndex * maxItemsInEachRow
-                        ),
-                        modifier = Modifier.weight(1f)
+                        state =
+                            TickVisualizationState(
+                                viewModel = viewModel,
+                                beatsValue = position + rowIndex * maxItemsInEachRow,
+                            ),
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
@@ -371,7 +359,7 @@ private fun BeatsControlSection(viewModel: IMetronomeViewModel) {
         onValueChange = { viewModel.setBeats(Beats(it)) },
         valueRange = Beats.valueRange,
         sliderTestTag = TestConstants.BEATS_SLIDER,
-        editTestTag = TestConstants.BEATS_EDIT
+        editTestTag = TestConstants.BEATS_EDIT,
     )
 }
 
@@ -385,7 +373,7 @@ private fun SubdivisionsControlSection(viewModel: IMetronomeViewModel) {
         onValueChange = { viewModel.setSubdivisions(Subdivisions(it)) },
         valueRange = Subdivisions.valueRange,
         sliderTestTag = TestConstants.SUBDIVISIONS_SLIDER,
-        editTestTag = TestConstants.SUBDIVISIONS_EDIT
+        editTestTag = TestConstants.SUBDIVISIONS_EDIT,
     )
 }
 
@@ -401,7 +389,7 @@ private fun TempoControlSection(viewModel: IMetronomeViewModel) {
         valueRange = Tempo.valueRange,
         sliderTestTag = TestConstants.TEMPO_SLIDER,
         editTestTag = TestConstants.TEMPO_EDIT,
-        markingTestTag = TestConstants.TEMPO_MARKING_TEXT
+        markingTestTag = TestConstants.TEMPO_MARKING_TEXT,
     )
 }
 
@@ -414,7 +402,7 @@ private fun ControlSection(
     valueRange: IntRange = IntRange.EMPTY,
     sliderTestTag: String = "",
     editTestTag: String = "",
-    markingTestTag: String = ""
+    markingTestTag: String = "",
 ) {
     val fontScale = LocalDensity.current.fontScale
     var text by rememberSaveable { mutableStateOf(value.toString()) }
@@ -429,7 +417,7 @@ private fun ControlSection(
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.general_spacing))
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.general_spacing)),
             ) {
                 Text(label, style = MaterialTheme.typography.labelLarge)
                 Text(
@@ -437,18 +425,17 @@ private fun ControlSection(
                     style = MaterialTheme.typography.labelLargeEmphasized,
                     textAlign = TextAlign.End,
                     maxLines = 2,
-                    modifier = Modifier
-                        .weight(1f)
-                        .testTag(markingTestTag)
+                    modifier = Modifier.weight(1f).testTag(markingTestTag),
                 )
             }
-            val sliderState = remember(valueRange) {
-                SliderState(
-                    value = value.toFloat(),
-                    steps = valueRange.last - valueRange.first - 1,
-                    trackRange = valueRange.first.toFloat()..valueRange.last.toFloat()
-                )
-            }
+            val sliderState =
+                remember(valueRange) {
+                    SliderState(
+                        value = value.toFloat(),
+                        steps = valueRange.last - valueRange.first - 1,
+                        trackRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
+                    )
+                }
             sliderState.value = value.toFloat()
             val sliderInteractionSource = remember { MutableInteractionSource() }
             Slider(
@@ -460,68 +447,64 @@ private fun ControlSection(
                     SliderDefaults.Thumb(
                         interactionSource = sliderInteractionSource,
                         isVertical = false,
-                        thumbSize = SLIDER_THUMB_SIZE
+                        thumbSize = SLIDER_THUMB_SIZE,
                     )
                 },
                 track = { state ->
                     SliderDefaults.Track(
                         sliderState = state,
                         trackCornerSize = SLIDER_TRACK_CORNER_SIZE,
-                        modifier = Modifier.height(SLIDER_TRACK_HEIGHT)
+                        modifier = Modifier.height(SLIDER_TRACK_HEIGHT),
                     )
-                }
+                },
             )
         }
         OutlinedTextField(
             value = text,
             onValueChange = { value ->
-                text = value
-                    .dropWhile { it == '0' }
-                    .take(3)
+                text = value.dropWhile { it == '0' }.take(3)
                 if (isValidNumber(text, valueRange)) {
                     onValueChange(text.toInt())
                 }
             },
-            modifier = Modifier
-                .width((72 * fontScale.coerceAtLeast(1f)).dp)
-                .padding(start = dimensionResource(R.dimen.general_spacing))
-                .testTag(editTestTag),
+            modifier =
+                Modifier.width((72 * fontScale.coerceAtLeast(1f)).dp)
+                    .padding(start = dimensionResource(R.dimen.general_spacing))
+                    .testTag(editTestTag),
             textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             singleLine = true,
-            isError = !isValidNumber(text, valueRange)
+            isError = !isValidNumber(text, valueRange),
         )
     }
 }
 
-private fun isValidNumber(text: String, range: IntRange): Boolean =
-    text.toIntOrNull()
-        ?.let { it in range }
-        ?: false
+private fun isValidNumber(text: String, range: IntRange): Boolean = text.toIntOrNull()?.let { it in range } ?: false
 
 @Composable
 private fun StartStopButton(
     viewModel: IMetronomeViewModel,
     modifier: Modifier = Modifier,
-    iconSize: Dp = Dp.Unspecified
+    iconSize: Dp = Dp.Unspecified,
 ) {
     val playing by viewModel.getPlayingFlow().collectAsState()
 
     FilledIconButton(
         onClick = { viewModel.startStop() },
         modifier = modifier,
-        shapes = metronomeButtonShapes()
+        shapes = metronomeButtonShapes(),
     ) {
-        val painter = if (playing) {
-            painterResource(R.drawable.ic_pause)
-        } else {
-            painterResource(R.drawable.ic_play_arrow)
-        }
+        val painter =
+            if (playing) {
+                painterResource(R.drawable.ic_pause)
+            } else {
+                painterResource(R.drawable.ic_play_arrow)
+            }
 
         Icon(
             painter = painter,
             contentDescription = stringResource(R.string.start_stop_button_description),
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier.size(iconSize),
         )
     }
 }
@@ -530,7 +513,7 @@ private fun StartStopButton(
 private fun TapTempoButton(
     viewModel: IMetronomeViewModel,
     modifier: Modifier = Modifier,
-    iconSize: Dp = Dp.Unspecified
+    iconSize: Dp = Dp.Unspecified,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
 
@@ -540,12 +523,12 @@ private fun TapTempoButton(
             viewModel.tapTempo()
         },
         modifier = modifier,
-        shapes = metronomeButtonShapes()
+        shapes = metronomeButtonShapes(),
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_drum),
             contentDescription = stringResource(R.string.tap_tempo_button_description),
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier.size(iconSize),
         )
     }
 }
@@ -554,7 +537,7 @@ private fun TapTempoButton(
 private fun IncrementTempoButton(
     viewModel: IMetronomeViewModel,
     modifier: Modifier = Modifier,
-    iconSize: Dp = Dp.Unspecified
+    iconSize: Dp = Dp.Unspecified,
 ) {
     TempoActionButton(
         painter = painterResource(R.drawable.ic_add),
@@ -562,7 +545,7 @@ private fun IncrementTempoButton(
         contentDescription = stringResource(R.string.increment_tempo_button_description),
         modifier = modifier,
         onClick = { viewModel.changeTempo(1) },
-        onLongClick = { viewModel.changeTempo(10) }
+        onLongClick = { viewModel.changeTempo(10) },
     )
 }
 
@@ -570,7 +553,7 @@ private fun IncrementTempoButton(
 private fun DecrementTempoButton(
     viewModel: IMetronomeViewModel,
     modifier: Modifier = Modifier,
-    iconSize: Dp = Dp.Unspecified
+    iconSize: Dp = Dp.Unspecified,
 ) {
     TempoActionButton(
         painter = painterResource(R.drawable.ic_remove),
@@ -578,7 +561,7 @@ private fun DecrementTempoButton(
         contentDescription = stringResource(R.string.decrement_tempo_button_description),
         modifier = modifier,
         onClick = { viewModel.changeTempo(-1) },
-        onLongClick = { viewModel.changeTempo(-10) }
+        onLongClick = { viewModel.changeTempo(-10) },
     )
 }
 
@@ -625,12 +608,12 @@ private fun TempoActionButton(
         onClick = {},
         modifier = modifier,
         shapes = metronomeButtonShapes(),
-        interactionSource = interactionSource
+        interactionSource = interactionSource,
     ) {
         Icon(
             painter = painter,
             contentDescription = contentDescription,
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier.size(iconSize),
         )
     }
 }
@@ -640,12 +623,12 @@ private fun metronomeButtonShapes(): IconButtonShapes {
     val cornerSize = dimensionResource(R.dimen.button_corner_shape)
     return IconButtonShapes(
         shape = RoundedCornerShape(cornerSize),
-        pressedShape = RoundedCornerShape(cornerSize / 2)
+        pressedShape = RoundedCornerShape(cornerSize / 2),
     )
 }
 
 @Composable
-private fun Modifier.metronomeButtonSize(): Modifier = this
-    .widthIn(Dp.Unspecified, dimensionResource(R.dimen.button_width))
-    .heightIn(Dp.Unspecified, dimensionResource(R.dimen.button_height))
-    .fillMaxSize()
+private fun Modifier.metronomeButtonSize(): Modifier =
+    this.widthIn(Dp.Unspecified, dimensionResource(R.dimen.button_width))
+        .heightIn(Dp.Unspecified, dimensionResource(R.dimen.button_height))
+        .fillMaxSize()

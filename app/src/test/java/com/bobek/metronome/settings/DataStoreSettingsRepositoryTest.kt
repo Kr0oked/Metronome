@@ -40,17 +40,17 @@ import org.junit.rules.TemporaryFolder
 @OptIn(ExperimentalCoroutinesApi::class)
 class DataStoreSettingsRepositoryTest {
 
-    @get:Rule
-    val tempFolder = TemporaryFolder()
+    @get:Rule val tempFolder = TemporaryFolder()
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testScope = TestScope(testDispatcher)
 
     private fun createRepository(): DataStoreSettingsRepository {
-        val dataStore = PreferenceDataStoreFactory.create(
-            scope = testScope,
-            produceFile = { tempFolder.newFile("test_preferences.preferences_pb") }
-        )
+        val dataStore =
+            PreferenceDataStoreFactory.create(
+                scope = testScope,
+                produceFile = { tempFolder.newFile("test_preferences.preferences_pb") },
+            )
         return DataStoreSettingsRepository(dataStore)
     }
 

@@ -21,5 +21,4 @@ package com.bobek.metronome
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
-@HiltAndroidApp
-class MetronomeApplication : Application()
+@HiltAndroidApp class MetronomeApplication : Application()

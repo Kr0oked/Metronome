@@ -25,19 +25,20 @@ import com.bobek.metronome.data.TickType
 
 class SoundProvider(private val context: Context) {
 
-    private val loadedSounds = Sound.entries
-        .flatMap { listOf(it.strongSoundResourceId, it.weakSoundResourceId, it.subSoundResourceId) }
-        .associateWith { loadSound(it) }
+    private val loadedSounds =
+        Sound.entries
+            .flatMap { listOf(it.strongSoundResourceId, it.weakSoundResourceId, it.subSoundResourceId) }
+            .associateWith { loadSound(it) }
 
-    private fun loadSound(@RawRes id: Int): FloatArray = context.resources
-        .openRawResource(id)
-        .use(SoundLoader::readDataFromWavPcmFloat)
+    private fun loadSound(@RawRes id: Int): FloatArray =
+        context.resources.openRawResource(id).use(SoundLoader::readDataFromWavPcmFloat)
 
-    fun getTickSound(tickType: TickType, sound: Sound): FloatArray = when (tickType) {
-        TickType.STRONG -> getLoadedSound(sound.strongSoundResourceId)
-        TickType.WEAK -> getLoadedSound(sound.weakSoundResourceId)
-        TickType.SUB -> getLoadedSound(sound.subSoundResourceId)
-    }
+    fun getTickSound(tickType: TickType, sound: Sound): FloatArray =
+        when (tickType) {
+            TickType.STRONG -> getLoadedSound(sound.strongSoundResourceId)
+            TickType.WEAK -> getLoadedSound(sound.weakSoundResourceId)
+            TickType.SUB -> getLoadedSound(sound.subSoundResourceId)
+        }
 
     private fun getLoadedSound(@RawRes id: Int): FloatArray = loadedSounds[id] ?: throw SoundNotLoadedException(id)
 }

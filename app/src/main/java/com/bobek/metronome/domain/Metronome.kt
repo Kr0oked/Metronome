@@ -35,14 +35,14 @@ import com.bobek.metronome.data.Sound
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.nanoseconds
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.nanoseconds
 
 private const val TAG = "Metronome"
 
@@ -58,8 +58,8 @@ private const val SILENCE_CHUNK_SIZE = 8_000
 /**
  * Number of PCM float frames of silence written to a fresh [AudioTrack] before the first tick period (100 ms).
  *
- * The Android audio mixer ramps a newly started track's volume up from zero over its first few milliseconds. Without
- * a lead-in that ramp lands on the first tick sound, whose energy is concentrated in its first millisecond, making the
+ * The Android audio mixer ramps a newly started track's volume up from zero over its first few milliseconds. Without a
+ * lead-in that ramp lands on the first tick sound, whose energy is concentrated in its first millisecond, making the
  * first beat noticeably quieter than the rest. Values above [SILENCE_CHUNK_SIZE] are capped to it.
  *
  * The lead-in also gives an audio output that went into standby after a few seconds of silence part of the time it
@@ -77,12 +77,12 @@ private const val LEAD_IN_SILENCE_SIZE = SAMPLE_RATE_IN_HZ / 10
  *
  * ## Tick period
  * A tick period is the block of audio belonging to a single subdivision tick. Ticks are anchored to the beat (see
- * [TickPosition]): a beat is `60 * SAMPLE_RATE_IN_HZ / tempo` frames long and subdivision `i` starts at
- * `i * beatSize / subdivisions` frames into it. A period runs from its tick's start to the start of the next tick.
- * For example, at 120 BPM with 2 subdivisions the period is 12 000 frames (= 250 ms).
+ * [TickPosition]): a beat is `60 * SAMPLE_RATE_IN_HZ / tempo` frames long and subdivision `i` starts at `i * beatSize /
+ * subdivisions` frames into it. A period runs from its tick's start to the start of the next tick. For example, at 120
+ * BPM with 2 subdivisions the period is 12 000 frames (= 250 ms).
  *
- * Because positions are measured from the beat start, changing the beats or subdivisions while playing never moves
- * the beat grid; only which positions sound changes.
+ * Because positions are measured from the beat start, changing the beats or subdivisions while playing never moves the
+ * beat grid; only which positions sound changes.
  *
  * Each period consists of:
  * 1. **Tick sound** — the preloaded PCM sample for the tick's type (STRONG / WEAK / SUB), written at the start of the
@@ -103,13 +103,12 @@ private const val LEAD_IN_SILENCE_SIZE = SAMPLE_RATE_IN_HZ / 10
  * @param context Used to load audio assets via [SoundProvider].
  * @param lifecycle Scopes the internal coroutines; the engine is automatically cleaned up when the lifecycle is
  *   destroyed.
- * @param tickListener Callback fired (on the main dispatcher) once per tick, timed to coincide with the audible
- *   click.
+ * @param tickListener Callback fired (on the main dispatcher) once per tick, timed to coincide with the audible click.
  */
 class Metronome(
     context: Context,
     override val lifecycle: Lifecycle,
-    private val tickListener: MetronomeTickListener
+    private val tickListener: MetronomeTickListener,
 ) : LifecycleOwner {
 
     private val soundProvider = SoundProvider(context)
@@ -122,23 +121,17 @@ class Metronome(
     /** [System.nanoTime] at which [AudioTrack.play] was called for the current playback session. */
     private var playbackStartNanos = 0L
 
-    @Volatile
-    var beats: Beats = Beats()
+    @Volatile var beats: Beats = Beats()
 
-    @Volatile
-    var subdivisions: Subdivisions = Subdivisions()
+    @Volatile var subdivisions: Subdivisions = Subdivisions()
 
-    @Volatile
-    var gaps: Gaps = Gaps()
+    @Volatile var gaps: Gaps = Gaps()
 
-    @Volatile
-    var tempo: Tempo = Tempo()
+    @Volatile var tempo: Tempo = Tempo()
 
-    @Volatile
-    var emphasizeFirstBeat = true
+    @Volatile var emphasizeFirstBeat = true
 
-    @Volatile
-    var sound = Sound.SQUARE_WAVE
+    @Volatile var sound = Sound.SQUARE_WAVE
 
     var playing: Boolean = false
         set(playing) {
@@ -195,23 +188,25 @@ class Metronome(
      * [AudioTrack.write] rather than loading a fixed clip up front.
      */
     private fun getNewAudioTrack(): AudioTrack {
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_MEDIA)
-            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-            .build()
+        val audioAttributes =
+            AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
 
-        val audioFormat = AudioFormat.Builder()
-            .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
-            .setSampleRate(SAMPLE_RATE_IN_HZ)
-            .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-            .build()
+        val audioFormat =
+            AudioFormat.Builder()
+                .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
+                .setSampleRate(SAMPLE_RATE_IN_HZ)
+                .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                .build()
 
         return AudioTrack(
             audioAttributes,
             audioFormat,
             AudioTrack.getMinBufferSize(audioFormat.sampleRate, audioFormat.channelMask, audioFormat.encoding),
             AudioTrack.MODE_STREAM,
-            AudioManager.AUDIO_SESSION_ID_GENERATE
+            AudioManager.AUDIO_SESSION_ID_GENERATE,
         )
     }
 
@@ -222,8 +217,7 @@ class Metronome(
      * The mixer ramps a newly started track's volume up from zero; the lead-in makes that ramp land on silence instead
      * of on the first tick sound.
      */
-    private fun writeLeadInSilence(track: AudioTrack): Int =
-        writeNextAudioData(track, silence, LEAD_IN_SILENCE_SIZE, 0)
+    private fun writeLeadInSilence(track: AudioTrack): Int = writeNextAudioData(track, silence, LEAD_IN_SILENCE_SIZE, 0)
 
     /**
      * Writes one complete tick period to [track].
@@ -241,7 +235,7 @@ class Metronome(
     private suspend fun writeTickPeriod(
         track: AudioTrack,
         position: TickPosition,
-        totalFramesWritten: Long
+        totalFramesWritten: Long,
     ): TickPeriod {
         var sizeWritten = 0
 
@@ -265,8 +259,8 @@ class Metronome(
     }
 
     /**
-     * Schedules a [MetronomeTickListener.onTick] call to fire at the moment this tick's audio will actually be heard
-     * by the user.
+     * Schedules a [MetronomeTickListener.onTick] call to fire at the moment this tick's audio will actually be heard by
+     * the user.
      *
      * The presentation delay is calculated via [calculatePresentationDelay]. If it is zero (the tick is already due)
      * the notification is fired immediately; otherwise a coroutine delay is used.
@@ -292,14 +286,15 @@ class Metronome(
      * Returns the [Duration] from now until the first frame at `totalFramesWritten` will be presented by the audio
      * hardware.
      *
-     * Uses [AudioTrack.getTimestamp] to anchor the calculation to a known frame/time pair, then extrapolates forward
-     * to `totalFramesWritten`:
+     * Uses [AudioTrack.getTimestamp] to anchor the calculation to a known frame/time pair, then extrapolates forward to
+     * `totalFramesWritten`:
      * ```
      * delayNanos = (totalFramesWritten - anchorFrame) * 1e9 / SAMPLE_RATE_IN_HZ - (now - anchorNanos)
      * ```
-     * If the timestamp is not yet available (common at the very start of playback), frame 0 at [playbackStartNanos]
-     * is used as the anchor instead. This ignores output latency but keeps the first tick from being notified before
-     * the lead-in silence written by [writeLeadInSilence] has played.
+     *
+     * If the timestamp is not yet available (common at the very start of playback), frame 0 at [playbackStartNanos] is
+     * used as the anchor instead. This ignores output latency but keeps the first tick from being notified before the
+     * lead-in silence written by [writeLeadInSilence] has played.
      */
     private fun calculatePresentationDelay(track: AudioTrack, totalFramesWritten: Long): Duration {
         val audioTimestamp = AudioTimestamp()
@@ -328,7 +323,7 @@ class Metronome(
     private suspend fun writeSilenceUntilNextTick(
         track: AudioTrack,
         position: TickPosition,
-        previousSizeWritten: Int
+        previousSizeWritten: Int,
     ): TickPeriod {
         var sizeWritten = previousSizeWritten
 
@@ -353,7 +348,7 @@ class Metronome(
         return Tick(
             beat = beat,
             type = getCurrentTickType(position, emphasizeFirstBeat),
-            gap = isGap(beat, gaps.value)
+            gap = isGap(beat, gaps.value),
         )
     }
 

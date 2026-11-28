@@ -58,7 +58,7 @@ import com.bobek.metronome.ui.TestConstants
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 fun MetronomeScreen(
     @PreviewParameter(MetronomeScreenViewModelProvider::class) viewModel: IMetronomeViewModel,
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
 ) {
     val connected by viewModel.getConnectedFlow().collectAsState()
     val settingsLabel = stringResource(R.string.settings)
@@ -71,53 +71,51 @@ fun MetronomeScreen(
                     TooltipBox(
                         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
                         tooltip = { PlainTooltip { Text(settingsLabel) } },
-                        state = rememberTooltipState()
+                        state = rememberTooltipState(),
                     ) {
                         IconButton(
                             onClick = onSettingsClick,
-                            shapes = IconButtonDefaults.shapes()
+                            shapes = IconButtonDefaults.shapes(),
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_settings),
-                                contentDescription = settingsLabel
+                                contentDescription = settingsLabel,
                             )
                         }
                     }
-                }
+                },
             )
         },
         content = { padding ->
             if (!connected) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .consumeWindowInsets(padding),
+                    modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     LoadingIndicator(modifier = Modifier.size(48.dp))
                 }
             } else {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .consumeWindowInsets(padding)
-                        .testTag(TestConstants.CONTENT),
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .padding(padding)
+                            .consumeWindowInsets(padding)
+                            .testTag(TestConstants.CONTENT),
                 ) {
                     MetronomeContent(viewModel = viewModel)
                 }
             }
-        }
+        },
     )
 }
 
 private class MetronomeScreenViewModelProvider : PreviewParameterProvider<IMetronomeViewModel> {
-    override val values: Sequence<IMetronomeViewModel> = sequenceOf(
-        ComposeMetronomeViewModel(connected = true),
-        ComposeMetronomeViewModel(connected = false)
-    )
+    override val values: Sequence<IMetronomeViewModel> =
+        sequenceOf(
+            ComposeMetronomeViewModel(connected = true),
+            ComposeMetronomeViewModel(connected = false),
+        )
 
     override fun getDisplayName(index: Int): String? =
         when (index) {

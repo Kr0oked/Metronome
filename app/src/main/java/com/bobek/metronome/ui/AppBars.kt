@@ -30,11 +30,11 @@ import com.bobek.metronome.R
 fun NavigateBackButton(onClick: () -> Unit) {
     IconButton(
         onClick = onClick,
-        shapes = IconButtonDefaults.shapes()
+        shapes = IconButtonDefaults.shapes(),
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_arrow_back),
-            contentDescription = stringResource(R.string.navigate_back)
+            contentDescription = stringResource(R.string.navigate_back),
         )
     }
 }

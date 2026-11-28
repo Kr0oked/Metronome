@@ -43,32 +43,32 @@ private const val MEDIA_ITEM_UID = "metronome"
 class MetronomePlayer(
     looper: Looper,
     private val title: String,
-    private val onStop: () -> Unit
+    private val onStop: () -> Unit,
 ) : SimpleBasePlayer(looper) {
 
     private val handler = Handler(looper)
 
     private var playing = true
 
-    override fun getState(): State = State.Builder()
-        .setAvailableCommands(
-            Player.Commands.Builder()
-                .addAll(
-                    COMMAND_PLAY_PAUSE,
-                    COMMAND_STOP,
-                    COMMAND_GET_CURRENT_MEDIA_ITEM,
-                    COMMAND_GET_METADATA
-                )
-                .build()
-        )
-        .setPlaylist(listOf(buildMediaItemData()))
-        .setPlayWhenReady(playing, PLAY_WHEN_READY_CHANGE_REASON_USER_REQUEST)
-        .setPlaybackState(if (playing) STATE_READY else STATE_IDLE)
-        .build()
+    override fun getState(): State =
+        State.Builder()
+            .setAvailableCommands(
+                Player.Commands.Builder()
+                    .addAll(
+                        COMMAND_PLAY_PAUSE,
+                        COMMAND_STOP,
+                        COMMAND_GET_CURRENT_MEDIA_ITEM,
+                        COMMAND_GET_METADATA,
+                    )
+                    .build(),
+            )
+            .setPlaylist(listOf(buildMediaItemData()))
+            .setPlayWhenReady(playing, PLAY_WHEN_READY_CHANGE_REASON_USER_REQUEST)
+            .setPlaybackState(if (playing) STATE_READY else STATE_IDLE)
+            .build()
 
-    private fun buildMediaItemData() = MediaItemData.Builder(MEDIA_ITEM_UID)
-        .setMediaMetadata(MediaMetadata.Builder().setTitle(title).build())
-        .build()
+    private fun buildMediaItemData() =
+        MediaItemData.Builder(MEDIA_ITEM_UID).setMediaMetadata(MediaMetadata.Builder().setTitle(title).build()).build()
 
     override fun handleSetPlayWhenReady(playWhenReady: Boolean): ListenableFuture<*> {
         if (!playWhenReady) {

@@ -28,7 +28,7 @@ class AppNightModeTest {
     fun followSystemPreferenceValue() {
         assertEquals(
             AppNightMode.FOLLOW_SYSTEM,
-            AppNightMode.forPreferenceValue(PreferenceConstants.NIGHT_MODE_VALUE_FOLLOW_SYSTEM)
+            AppNightMode.forPreferenceValue(PreferenceConstants.NIGHT_MODE_VALUE_FOLLOW_SYSTEM),
         )
     }
 
@@ -36,7 +36,7 @@ class AppNightModeTest {
     fun noPreferenceValue() {
         assertEquals(
             AppNightMode.NO,
-            AppNightMode.forPreferenceValue(PreferenceConstants.NIGHT_MODE_VALUE_NO)
+            AppNightMode.forPreferenceValue(PreferenceConstants.NIGHT_MODE_VALUE_NO),
         )
     }
 
@@ -44,7 +44,7 @@ class AppNightModeTest {
     fun yesPreferenceValue() {
         assertEquals(
             AppNightMode.YES,
-            AppNightMode.forPreferenceValue(PreferenceConstants.NIGHT_MODE_VALUE_YES)
+            AppNightMode.forPreferenceValue(PreferenceConstants.NIGHT_MODE_VALUE_YES),
         )
     }
 
@@ -52,7 +52,7 @@ class AppNightModeTest {
     fun unknownPreferenceValueFallsBackToFollowSystem() {
         assertEquals(
             AppNightMode.FOLLOW_SYSTEM,
-            AppNightMode.forPreferenceValue("unknown")
+            AppNightMode.forPreferenceValue("unknown"),
         )
     }
 }

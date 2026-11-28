@@ -43,7 +43,7 @@ import com.bobek.metronome.ui.NavigateBackButton
 fun ThirdPartyLicensesScreen(
     @PreviewParameter(ThirdPartyLicensesScreenStateProvider::class) libraryNames: List<String>,
     onBackClick: () -> Unit = {},
-    onLibraryClick: (String) -> Unit = {}
+    onLibraryClick: (String) -> Unit = {},
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -53,18 +53,16 @@ fun ThirdPartyLicensesScreen(
             LargeFlexibleTopAppBar(
                 title = { Text(stringResource(R.string.third_party_licenses)) },
                 navigationIcon = { NavigateBackButton(onClick = onBackClick) },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
-        }
+        },
     ) { padding ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+            modifier = Modifier.fillMaxSize().padding(padding),
         ) {
             items(libraryNames) { libraryName ->
                 ListItem(
-                    modifier = Modifier.clickable { onLibraryClick(libraryName) }
+                    modifier = Modifier.clickable { onLibraryClick(libraryName) },
                 ) {
                     Text(libraryName)
                 }
@@ -74,7 +72,8 @@ fun ThirdPartyLicensesScreen(
 }
 
 private class ThirdPartyLicensesScreenStateProvider : PreviewParameterProvider<List<String>> {
-    override val values: Sequence<List<String>> = sequenceOf(
-        listOf("Library A", "Library B", "Library C")
-    )
+    override val values: Sequence<List<String>> =
+        sequenceOf(
+            listOf("Library A", "Library B", "Library C"),
+        )
 }

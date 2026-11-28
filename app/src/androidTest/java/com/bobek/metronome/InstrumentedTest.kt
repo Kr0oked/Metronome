@@ -55,8 +55,7 @@ import org.junit.runner.RunWith
 @LargeTest
 class InstrumentedTest {
 
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule
     var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
@@ -335,20 +334,16 @@ class InstrumentedTest {
     private fun onTopBarTitle(@StringRes titleResId: Int = R.string.metronome): SemanticsNodeInteraction =
         onTopBarTitle(getString(titleResId))
 
-    private fun onTopBarTitle(title: String): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithText(title)
+    private fun onTopBarTitle(title: String): SemanticsNodeInteraction = composeTestRule.onNodeWithText(title)
 
     private fun onSettingsButton(): SemanticsNodeInteraction =
         composeTestRule.onNodeWithContentDescription(getString(R.string.settings))
 
-    private fun onContent(): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithTag(TestConstants.CONTENT)
+    private fun onContent(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag(TestConstants.CONTENT)
 
-    private fun onBeatsSlider(): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithTag(TestConstants.BEATS_SLIDER)
+    private fun onBeatsSlider(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag(TestConstants.BEATS_SLIDER)
 
-    private fun onBeatsEdit(): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithTag(TestConstants.BEATS_EDIT)
+    private fun onBeatsEdit(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag(TestConstants.BEATS_EDIT)
 
     private fun onSubdivisionsSlider(): SemanticsNodeInteraction =
         composeTestRule.onNodeWithTag(TestConstants.SUBDIVISIONS_SLIDER)
@@ -356,11 +351,9 @@ class InstrumentedTest {
     private fun onSubdivisionsEdit(): SemanticsNodeInteraction =
         composeTestRule.onNodeWithTag(TestConstants.SUBDIVISIONS_EDIT)
 
-    private fun onTempoSlider(): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithTag(TestConstants.TEMPO_SLIDER)
+    private fun onTempoSlider(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag(TestConstants.TEMPO_SLIDER)
 
-    private fun onTempoEdit(): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithTag(TestConstants.TEMPO_EDIT)
+    private fun onTempoEdit(): SemanticsNodeInteraction = composeTestRule.onNodeWithTag(TestConstants.TEMPO_EDIT)
 
     private fun onTempoMarkingText(): SemanticsNodeInteraction =
         composeTestRule.onNodeWithTag(TestConstants.TEMPO_MARKING_TEXT)
@@ -377,8 +370,7 @@ class InstrumentedTest {
     private fun onNightModeOption(@StringRes labelResId: Int): SemanticsNodeInteraction =
         composeTestRule.onNodeWithText(getString(labelResId))
 
-    private fun onListItem(text: String): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithText(text)
+    private fun onListItem(text: String): SemanticsNodeInteraction = composeTestRule.onNodeWithText(text)
 
     private fun scrollToListItem(text: String) {
         composeTestRule.onNode(hasScrollToNodeAction()).performScrollToNode(hasText(text))

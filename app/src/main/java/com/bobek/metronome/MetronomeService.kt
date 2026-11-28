@@ -76,15 +76,17 @@ class MetronomeService : LifecycleService(), IMetronomeService {
 
     private var mediaSession: MediaSession? = null
 
-    private val tickFlow = MutableSharedFlow<Tick>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val tickFlow =
+        MutableSharedFlow<Tick>(
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
 
-    private val refreshFlow = MutableSharedFlow<Unit>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val refreshFlow =
+        MutableSharedFlow<Unit>(
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
 
     override var beats = Beats()
         get() = metronome?.beats ?: field
@@ -139,8 +141,7 @@ class MetronomeService : LifecycleService(), IMetronomeService {
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "Lifecycle: onCreate")
-        NotificationManagerCompat.from(this)
-            .createNotificationChannel(buildPlaybackNotificationChannel())
+        NotificationManagerCompat.from(this).createNotificationChannel(buildPlaybackNotificationChannel())
 
         metronome = Metronome(this, lifecycle) { tickFlow.tryEmit(it) }
         metronome?.beats = beats
@@ -151,11 +152,11 @@ class MetronomeService : LifecycleService(), IMetronomeService {
         metronome?.sound = sound
     }
 
-    private fun buildPlaybackNotificationChannel() = NotificationChannelCompat
-        .Builder(NOTIFICATION_CHANNEL_PLAYBACK_ID, NotificationManagerCompat.IMPORTANCE_LOW)
-        .setName(getString(R.string.notification_channel_playback_name))
-        .setDescription(getString(R.string.notification_channel_playback_description))
-        .build()
+    private fun buildPlaybackNotificationChannel() =
+        NotificationChannelCompat.Builder(NOTIFICATION_CHANNEL_PLAYBACK_ID, NotificationManagerCompat.IMPORTANCE_LOW)
+            .setName(getString(R.string.notification_channel_playback_name))
+            .setDescription(getString(R.string.notification_channel_playback_description))
+            .build()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -192,8 +193,10 @@ class MetronomeService : LifecycleService(), IMetronomeService {
         Log.i(TAG, "Start metronome")
         ContextCompat.startForegroundService(this, Intent(this, MetronomeService::class.java))
         metronome?.playing = true
-        val mainActivityPendingIntent = Intent(this, MainActivity::class.java)
-            .let { PendingIntent.getActivity(this, NO_REQUEST_CODE, it, PendingIntent.FLAG_IMMUTABLE) }
+        val mainActivityPendingIntent =
+            Intent(this, MainActivity::class.java).let {
+                PendingIntent.getActivity(this, NO_REQUEST_CODE, it, PendingIntent.FLAG_IMMUTABLE)
+            }
         val session = mediaSession ?: startMediaSession(mainActivityPendingIntent)
         startForegroundNotification(session, mainActivityPendingIntent)
     }
@@ -213,26 +216,28 @@ class MetronomeService : LifecycleService(), IMetronomeService {
 
     @OptIn(markerClass = [UnstableApi::class])
     private fun startForegroundNotification(session: MediaSession, mainActivityPendingIntent: PendingIntent) {
-        val stopMetronomePendingIntent = Intent(this, MetronomeService::class.java)
-            .apply { action = ACTION_STOP }
-            .let { PendingIntent.getService(this, NO_REQUEST_CODE, it, PendingIntent.FLAG_IMMUTABLE) }
+        val stopMetronomePendingIntent =
+            Intent(this, MetronomeService::class.java)
+                .apply { action = ACTION_STOP }
+                .let { PendingIntent.getService(this, NO_REQUEST_CODE, it, PendingIntent.FLAG_IMMUTABLE) }
 
-        val notification: Notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_PLAYBACK_ID)
-            .setContentTitle(getString(R.string.notification_playback_title))
-            .setSmallIcon(R.drawable.ic_metronome)
-            .setSilent(true)
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-            .setStyle(MediaStyleNotificationHelper.MediaStyle(session).setShowActionsInCompactView(0))
-            .addAction(
-                android.R.drawable.ic_media_pause,
-                getString(R.string.notification_playback_action_stop_title),
-                stopMetronomePendingIntent
-            )
-            .setContentIntent(mainActivityPendingIntent)
-            .build()
+        val notification: Notification =
+            NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_PLAYBACK_ID)
+                .setContentTitle(getString(R.string.notification_playback_title))
+                .setSmallIcon(R.drawable.ic_metronome)
+                .setSilent(true)
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+                .setStyle(MediaStyleNotificationHelper.MediaStyle(session).setShowActionsInCompactView(0))
+                .addAction(
+                    android.R.drawable.ic_media_pause,
+                    getString(R.string.notification_playback_action_stop_title),
+                    stopMetronomePendingIntent,
+                )
+                .setContentIntent(mainActivityPendingIntent)
+                .build()
 
         if (VERSION.SDK_INT >= VERSION_CODES.Q) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
@@ -269,7 +274,6 @@ class MetronomeService : LifecycleService(), IMetronomeService {
         playing = false
         refreshFlow.tryEmit(Unit)
     }
-
 
     inner class LocalBinder : Binder() {
         fun getService(): IMetronomeService = this@MetronomeService

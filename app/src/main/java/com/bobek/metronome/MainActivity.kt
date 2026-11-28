@@ -56,8 +56,7 @@ class MainActivity : ComponentActivity() {
     private val postNotificationsPermissionRequest = registerPostNotificationsPermissionRequest()
     private val metronomeServiceConnection = MetronomeServiceConnection()
 
-    @Inject
-    lateinit var settingsRepository: SettingsRepository
+    @Inject lateinit var settingsRepository: SettingsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +71,7 @@ class MainActivity : ComponentActivity() {
         bindService(
             Intent(this, MetronomeService::class.java),
             metronomeServiceConnection,
-            BIND_AUTO_CREATE or BIND_ABOVE_CLIENT
+            BIND_AUTO_CREATE or BIND_ABOVE_CLIENT,
         )
     }
 

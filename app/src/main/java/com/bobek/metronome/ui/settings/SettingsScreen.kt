@@ -59,14 +59,14 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.bobek.metronome.BuildConfig
-import com.bobek.metronome.ui.metronome.ComposeMetronomeViewModel
-import com.bobek.metronome.ui.metronome.IMetronomeViewModel
 import com.bobek.metronome.R
 import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Sound
 import com.bobek.metronome.ui.ComposeAppViewModel
 import com.bobek.metronome.ui.IAppViewModel
 import com.bobek.metronome.ui.NavigateBackButton
+import com.bobek.metronome.ui.metronome.ComposeMetronomeViewModel
+import com.bobek.metronome.ui.metronome.IMetronomeViewModel
 
 private const val TAG = "SettingsScreen"
 
@@ -77,7 +77,7 @@ fun SettingsScreen(
     metronomeViewModel: IMetronomeViewModel = ComposeMetronomeViewModel(),
     onBackClick: () -> Unit = {},
     onLicenseClick: () -> Unit = {},
-    onThirdPartyLicensesClick: () -> Unit = {}
+    onThirdPartyLicensesClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val emphasizeFirstBeat by metronomeViewModel.getEmphasizeFirstBeatFlow().collectAsState()
@@ -95,49 +95,46 @@ fun SettingsScreen(
             LargeFlexibleTopAppBar(
                 title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = { NavigateBackButton(onClick = onBackClick) },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
-        }
+        },
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
         ) {
             SettingsSection(
                 title = stringResource(R.string.metronome),
-                iconResourceId = R.drawable.ic_metronome
+                iconResourceId = R.drawable.ic_metronome,
             ) {
                 SwitchSettingItem(
                     title = stringResource(R.string.emphasize_first_beat),
                     checked = emphasizeFirstBeat,
-                    onCheckedChange = metronomeViewModel::setEmphasizeFirstBeat
+                    onCheckedChange = metronomeViewModel::setEmphasizeFirstBeat,
                 )
 
                 ClickableSettingItem(
                     title = stringResource(R.string.sound),
                     summary = stringResource(sound.labelResourceId),
-                    onClick = { showSoundDialog = true }
+                    onClick = { showSoundDialog = true },
                 )
             }
 
             HorizontalDivider()
             SettingsSection(
                 title = stringResource(R.string.display),
-                iconResourceId = R.drawable.ic_display_settings
+                iconResourceId = R.drawable.ic_display_settings,
             ) {
                 ClickableSettingItem(
                     title = stringResource(R.string.night_mode),
                     summary = stringResource(nightMode.labelResourceId),
-                    onClick = { showNightModeDialog = true }
+                    onClick = { showNightModeDialog = true },
                 )
             }
 
             HorizontalDivider()
             SettingsSection(
                 title = stringResource(R.string.about),
-                iconResourceId = R.drawable.ic_help
+                iconResourceId = R.drawable.ic_help,
             ) {
                 ClickableSettingItem(
                     title = stringResource(R.string.author),
@@ -145,19 +142,19 @@ fun SettingsScreen(
                     onClick = {
                         val intent = Intent(Intent.ACTION_VIEW, "mailto:philipp.bobek@mailbox.org".toUri())
                         context.startActivitySafely(intent)
-                    }
+                    },
                 )
 
                 ClickableSettingItem(
                     title = stringResource(R.string.license),
                     summary = stringResource(R.string.license_name),
-                    onClick = onLicenseClick
+                    onClick = onLicenseClick,
                 )
 
                 ClickableSettingItem(
                     title = stringResource(R.string.third_party_licenses),
                     summary = stringResource(R.string.third_party_licenses_summary),
-                    onClick = onThirdPartyLicensesClick
+                    onClick = onThirdPartyLicensesClick,
                 )
 
                 ClickableSettingItem(
@@ -166,11 +163,11 @@ fun SettingsScreen(
                     onClick = {
                         val intent = Intent(Intent.ACTION_VIEW, "https://github.com/Kr0oked/Metronome".toUri())
                         context.startActivitySafely(intent)
-                    }
+                    },
                 )
 
                 ListItem(
-                    supportingContent = { Text(BuildConfig.VERSION_NAME) }
+                    supportingContent = { Text(BuildConfig.VERSION_NAME) },
                 ) {
                     Text(stringResource(R.string.version))
                 }
@@ -183,7 +180,7 @@ fun SettingsScreen(
             viewModel = metronomeViewModel,
             onDismiss = {
                 showSoundDialog = false
-            }
+            },
         )
     }
 
@@ -192,7 +189,7 @@ fun SettingsScreen(
             viewModel = appViewModel,
             onDismiss = {
                 showNightModeDialog = false
-            }
+            },
         )
     }
 }
@@ -201,11 +198,11 @@ fun SettingsScreen(
 private fun SettingsSection(
     title: String,
     iconResourceId: Int,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Row(
         modifier = Modifier.padding(start = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(painter = painterResource(iconResourceId), contentDescription = null)
         ListItem {
@@ -226,7 +223,7 @@ private fun SwitchSettingItem(
     title: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    summary: String? = null
+    summary: String? = null,
 ) {
     ListItem(
         supportingContent = summary?.let { { Text(it) } },
@@ -234,24 +231,26 @@ private fun SwitchSettingItem(
             Switch(
                 checked = checked,
                 onCheckedChange = null,
-                thumbContent = if (checked) {
-                    {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_check),
-                            contentDescription = null,
-                            modifier = Modifier.size(SwitchDefaults.IconSize)
-                        )
-                    }
-                } else {
-                    null
-                }
+                thumbContent =
+                    if (checked) {
+                        {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_check),
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
+                        }
+                    } else {
+                        null
+                    },
             )
         },
-        modifier = Modifier.toggleable(
-            value = checked,
-            role = Role.Switch,
-            onValueChange = onCheckedChange
-        )
+        modifier =
+            Modifier.toggleable(
+                value = checked,
+                role = Role.Switch,
+                onValueChange = onCheckedChange,
+            ),
     ) {
         Text(title)
     }
@@ -261,11 +260,11 @@ private fun SwitchSettingItem(
 private fun ClickableSettingItem(
     title: String,
     summary: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     ListItem(
         supportingContent = { Text(summary) },
-        modifier = Modifier.clickable(onClick = onClick)
+        modifier = Modifier.clickable(onClick = onClick),
     ) {
         Text(title)
     }
@@ -283,7 +282,7 @@ private fun SoundDialog(
         SingleChoiceDialogState(
             title = stringResource(R.string.sound),
             entries = Sound.entries,
-            currentValue = sound.preferenceValue
+            currentValue = sound.preferenceValue,
         ),
         onValueSelected = { newValue ->
             viewModel.setSound(newValue)
@@ -291,7 +290,7 @@ private fun SoundDialog(
         },
         onDismiss = {
             onDismiss()
-        }
+        },
     )
 }
 
@@ -307,7 +306,7 @@ private fun NightModeDialog(
         SingleChoiceDialogState(
             title = stringResource(R.string.night_mode),
             entries = AppNightMode.entries,
-            currentValue = nightMode.preferenceValue
+            currentValue = nightMode.preferenceValue,
         ),
         onValueSelected = { newValue ->
             viewModel.setNightMode(newValue)
@@ -315,7 +314,7 @@ private fun NightModeDialog(
         },
         onDismiss = {
             onDismiss()
-        }
+        },
     )
 }
 

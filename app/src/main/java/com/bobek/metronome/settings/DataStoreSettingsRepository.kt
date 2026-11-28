@@ -32,14 +32,16 @@ import com.bobek.metronome.data.Sound
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import jakarta.inject.Inject
-import kotlinx.coroutines.flow.map
 import java.util.SortedSet
+import kotlinx.coroutines.flow.map
 
 private const val TAG = "DataStoreSettingsRepository"
 private const val NUMBERS_DELIMITER = ","
 
-class DataStoreSettingsRepository @Inject constructor(
-    private val preferencesDataStore: DataStore<Preferences>
+class DataStoreSettingsRepository
+@Inject
+constructor(
+    private val preferencesDataStore: DataStore<Preferences>,
 ) : SettingsRepository {
 
     companion object {
@@ -54,34 +56,26 @@ class DataStoreSettingsRepository @Inject constructor(
             booleanPreferencesKey(PreferenceConstants.POST_NOTIFICATIONS_PERMISSION_REQUESTED)
     }
 
-    override fun getBeats() = preferencesDataStore.data
-        .map { it[BEATS_KEY] ?: Beats.DEFAULT_VALUE }
-        .map { Beats(it) }
+    override fun getBeats() = preferencesDataStore.data.map { it[BEATS_KEY] ?: Beats.DEFAULT_VALUE }.map { Beats(it) }
 
     override suspend fun setBeats(beats: Beats) {
         preferencesDataStore.edit { it[BEATS_KEY] = beats.value }
         Log.d(TAG, "Persisted beats: ${beats.value}")
     }
 
-    override fun getSubdivisions() = preferencesDataStore.data
-        .map { it[SUBDIVISIONS_KEY] ?: Subdivisions.DEFAULT_VALUE }
-        .map { Subdivisions(it) }
+    override fun getSubdivisions() =
+        preferencesDataStore.data.map { it[SUBDIVISIONS_KEY] ?: Subdivisions.DEFAULT_VALUE }.map { Subdivisions(it) }
 
     override suspend fun setSubdivisions(subdivisions: Subdivisions) {
         preferencesDataStore.edit { it[SUBDIVISIONS_KEY] = subdivisions.value }
         Log.d(TAG, "Persisted subdivisions: ${subdivisions.value}")
     }
 
-    override fun getGaps() = preferencesDataStore.data
-        .map { it[GAPS_KEY] ?: "" }
-        .map { restoreGapsValue(it) }
-        .map { Gaps(it) }
+    override fun getGaps() =
+        preferencesDataStore.data.map { it[GAPS_KEY] ?: "" }.map { restoreGapsValue(it) }.map { Gaps(it) }
 
-    private fun restoreGapsValue(value: String?): SortedSet<Int> = (value ?: "")
-        .split(NUMBERS_DELIMITER)
-        .filter(String::isNotEmpty)
-        .map(String::toInt)
-        .toSortedSet()
+    private fun restoreGapsValue(value: String?): SortedSet<Int> =
+        (value ?: "").split(NUMBERS_DELIMITER).filter(String::isNotEmpty).map(String::toInt).toSortedSet()
 
     override suspend fun setGaps(gaps: Gaps) {
         val gapsString = gaps.value.joinToString(NUMBERS_DELIMITER)
@@ -89,43 +83,42 @@ class DataStoreSettingsRepository @Inject constructor(
         Log.d(TAG, "Persisted gaps: $gapsString")
     }
 
-    override fun getTempo() = preferencesDataStore.data
-        .map { it[TEMPO_KEY] ?: Tempo.DEFAULT_VALUE }
-        .map { Tempo(it) }
+    override fun getTempo() = preferencesDataStore.data.map { it[TEMPO_KEY] ?: Tempo.DEFAULT_VALUE }.map { Tempo(it) }
 
     override suspend fun setTempo(tempo: Tempo) {
         preferencesDataStore.edit { it[TEMPO_KEY] = tempo.value }
         Log.d(TAG, "Persisted tempo: ${tempo.value}")
     }
 
-    override fun getEmphasizeFirstBeat() = preferencesDataStore.data
-        .map { it[EMPHASIZE_FIRST_BEAT_KEY] ?: true }
+    override fun getEmphasizeFirstBeat() = preferencesDataStore.data.map { it[EMPHASIZE_FIRST_BEAT_KEY] ?: true }
 
     override suspend fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) {
         preferencesDataStore.edit { it[EMPHASIZE_FIRST_BEAT_KEY] = emphasizeFirstBeat }
         Log.d(TAG, "Persisted emphasizeFirstBeat: $emphasizeFirstBeat")
     }
 
-    override fun getSound() = preferencesDataStore.data
-        .map { it[SOUND_KEY] ?: Sound.SQUARE_WAVE.preferenceValue }
-        .map { Sound.forPreferenceValue(it) }
+    override fun getSound() =
+        preferencesDataStore.data
+            .map { it[SOUND_KEY] ?: Sound.SQUARE_WAVE.preferenceValue }
+            .map { Sound.forPreferenceValue(it) }
 
     override suspend fun setSound(sound: Sound) {
         preferencesDataStore.edit { it[SOUND_KEY] = sound.preferenceValue }
         Log.d(TAG, "Persisted sound: ${sound.preferenceValue}")
     }
 
-    override fun getNightMode() = preferencesDataStore.data
-        .map { it[NIGHT_MODE_KEY] ?: AppNightMode.FOLLOW_SYSTEM.preferenceValue }
-        .map { AppNightMode.forPreferenceValue(it) }
+    override fun getNightMode() =
+        preferencesDataStore.data
+            .map { it[NIGHT_MODE_KEY] ?: AppNightMode.FOLLOW_SYSTEM.preferenceValue }
+            .map { AppNightMode.forPreferenceValue(it) }
 
     override suspend fun setNightMode(nightMode: AppNightMode) {
         preferencesDataStore.edit { it[NIGHT_MODE_KEY] = nightMode.preferenceValue }
         Log.d(TAG, "Persisted nightMode: ${nightMode.preferenceValue}")
     }
 
-    override fun getPostNotificationsPermissionRequested() = preferencesDataStore.data
-        .map { it[POST_NOTIFICATION_PERMISSION_REQUESTED_KEY] ?: false }
+    override fun getPostNotificationsPermissionRequested() =
+        preferencesDataStore.data.map { it[POST_NOTIFICATION_PERMISSION_REQUESTED_KEY] ?: false }
 
     override suspend fun setPostNotificationsPermissionRequested(postNotificationsPermissionRequested: Boolean) {
         preferencesDataStore.edit {

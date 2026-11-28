@@ -21,5 +21,5 @@ package com.bobek.metronome.data
 enum class TickType {
     STRONG,
     WEAK,
-    SUB
+    SUB,
 }

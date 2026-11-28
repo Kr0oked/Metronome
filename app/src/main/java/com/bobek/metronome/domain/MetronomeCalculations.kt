@@ -25,9 +25,9 @@ internal const val SAMPLE_RATE_IN_HZ = 48_000
 /**
  * Position of a tick within the bar.
  *
- * Ticks are anchored to the beat rather than counted globally, so that changing the beats or subdivisions while
- * playing never moves the beat grid: subdivision ticks are positions inside the current beat, and changing the
- * subdivisions only changes which of those positions sound.
+ * Ticks are anchored to the beat rather than counted globally, so that changing the beats or subdivisions while playing
+ * never moves the beat grid: subdivision ticks are positions inside the current beat, and changing the subdivisions
+ * only changes which of those positions sound.
  *
  * @param beatInBar Zero-based index of the beat within the bar.
  * @param subdivisionIndex Zero-based index of the subdivision within the beat; 0 is the beat itself.
@@ -36,16 +36,17 @@ internal const val SAMPLE_RATE_IN_HZ = 48_000
 internal data class TickPosition(
     val beatInBar: Int = 0,
     val subdivisionIndex: Int = 0,
-    val tickStartInBeat: Int = 0
+    val tickStartInBeat: Int = 0,
 )
 
 internal fun getCurrentBeat(position: TickPosition): Int = position.beatInBar + 1
 
-internal fun getCurrentTickType(position: TickPosition, emphasizeFirstBeat: Boolean): TickType = when {
-    position.subdivisionIndex != 0 -> TickType.SUB
-    emphasizeFirstBeat && position.beatInBar == 0 -> TickType.STRONG
-    else -> TickType.WEAK
-}
+internal fun getCurrentTickType(position: TickPosition, emphasizeFirstBeat: Boolean): TickType =
+    when {
+        position.subdivisionIndex != 0 -> TickType.SUB
+        emphasizeFirstBeat && position.beatInBar == 0 -> TickType.STRONG
+        else -> TickType.WEAK
+    }
 
 internal fun isGap(beat: Int, gapIndices: Set<Int>): Boolean = gapIndices.contains(beat)
 
@@ -70,14 +71,14 @@ internal fun calculateSubdivisionOffset(subdivisionIndex: Int, beatSize: Int, su
  */
 internal fun getNextSubdivisionIndex(tickStartInBeat: Int, framesWritten: Int, beatSize: Int, subdivisions: Int): Int {
     val earliestNextTickStart = tickStartInBeat + framesWritten.coerceAtLeast(1)
-    return (1 until subdivisions)
-        .firstOrNull { calculateSubdivisionOffset(it, beatSize, subdivisions) >= earliestNextTickStart }
-        ?: subdivisions
+    return (1 until subdivisions).firstOrNull {
+        calculateSubdivisionOffset(it, beatSize, subdivisions) >= earliestNextTickStart
+    } ?: subdivisions
 }
 
 /**
- * Number of frames from the start of the tick at [position] to the start of the next tick, given the current
- * [beatSize] and [subdivisions] and the [framesWritten] for the current tick so far.
+ * Number of frames from the start of the tick at [position] to the start of the next tick, given the current [beatSize]
+ * and [subdivisions] and the [framesWritten] for the current tick so far.
  *
  * Not more than [framesWritten] only when the beat has already ended, which can happen after the tempo was increased;
  * the next beat is then due immediately.
@@ -86,7 +87,7 @@ internal fun calculateFramesUntilNextTick(
     position: TickPosition,
     framesWritten: Int,
     beatSize: Int,
-    subdivisions: Int
+    subdivisions: Int,
 ): Int {
     val nextIndex = getNextSubdivisionIndex(position.tickStartInBeat, framesWritten, beatSize, subdivisions)
     val nextOffset = calculateSubdivisionOffset(nextIndex, beatSize, subdivisions)
@@ -105,7 +106,7 @@ internal fun getNextTickPosition(
     framesWritten: Int,
     beats: Int,
     beatSize: Int,
-    subdivisions: Int
+    subdivisions: Int,
 ): TickPosition {
     val nextIndex = getNextSubdivisionIndex(position.tickStartInBeat, framesWritten, beatSize, subdivisions)
     return if (nextIndex < subdivisions) {
@@ -115,5 +116,4 @@ internal fun getNextTickPosition(
     }
 }
 
-internal fun getNextBeatInBar(beatInBar: Int, beats: Int): Int =
-    if (beatInBar + 1 >= beats) 0 else beatInBar + 1
+internal fun getNextBeatInBar(beatInBar: Int, beats: Int): Int = if (beatInBar + 1 >= beats) 0 else beatInBar + 1

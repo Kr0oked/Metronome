@@ -41,15 +41,14 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- * Regression coverage for a bug where maxing out the Android accessibility "Font size" and
- * "Display size" settings pushed the metronome's action buttons off-screen and squeezed the
- * tempo marking text instead of the content adapting, making the app unusable.
+ * Regression coverage for a bug where maxing out the Android accessibility "Font size" and "Display size" settings
+ * pushed the metronome's action buttons off-screen and squeezed the tempo marking text instead of the content adapting,
+ * making the app unusable.
  */
 @LargeTest
 class MetronomeContentScalingTest {
 
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
     fun actionButtonsRemainVisibleInPortraitAtMaxAccessibilityScale() {
@@ -89,7 +88,7 @@ class MetronomeContentScalingTest {
         composeTestRule.setContent {
             DeviceConfigurationOverride(
                 DeviceConfigurationOverride.WindowSize(windowSize) then
-                        DeviceConfigurationOverride.FontScale(MAX_FONT_SCALE)
+                    DeviceConfigurationOverride.FontScale(MAX_FONT_SCALE),
             ) {
                 MetronomeContent(viewModel = ComposeMetronomeViewModel(connected = true))
             }
@@ -102,15 +101,13 @@ class MetronomeContentScalingTest {
 
         assertFalse(
             "Expected tempo label bounds $labelBounds to not overlap tempo marking bounds $markingBounds",
-            labelBounds.overlaps(markingBounds)
+            labelBounds.overlaps(markingBounds),
         )
     }
 
-    private fun onNodeWithText(text: String): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithText(text)
+    private fun onNodeWithText(text: String): SemanticsNodeInteraction = composeTestRule.onNodeWithText(text)
 
-    private fun onNodeWithTag(testTag: String): SemanticsNodeInteraction =
-        composeTestRule.onNodeWithTag(testTag)
+    private fun onNodeWithTag(testTag: String): SemanticsNodeInteraction = composeTestRule.onNodeWithTag(testTag)
 
     private fun onDecrementTempoButton(): SemanticsNodeInteraction =
         composeTestRule.onNodeWithContentDescription(getString(R.string.decrement_tempo_button_description))
@@ -133,9 +130,8 @@ class MetronomeContentScalingTest {
         private const val MAX_FONT_SCALE = 2.0f
 
         /**
-         * Apparent window sizes approximating a phone with the "Display size" accessibility
-         * setting maxed out, which shrinks the effective dp budget available to the UI on top of
-         * [MAX_FONT_SCALE].
+         * Apparent window sizes approximating a phone with the "Display size" accessibility setting maxed out, which
+         * shrinks the effective dp budget available to the UI on top of [MAX_FONT_SCALE].
          */
         private val PORTRAIT_WINDOW_SIZE = DpSize(280.dp, 600.dp)
         private val LANDSCAPE_WINDOW_SIZE = DpSize(600.dp, 280.dp)

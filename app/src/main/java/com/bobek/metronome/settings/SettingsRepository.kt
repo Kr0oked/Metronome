@@ -28,19 +28,34 @@ import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
     fun getBeats(): Flow<Beats>
+
     suspend fun setBeats(beats: Beats)
+
     fun getSubdivisions(): Flow<Subdivisions>
+
     suspend fun setSubdivisions(subdivisions: Subdivisions)
+
     fun getGaps(): Flow<Gaps>
+
     suspend fun setGaps(gaps: Gaps)
+
     fun getTempo(): Flow<Tempo>
+
     suspend fun setTempo(tempo: Tempo)
+
     fun getEmphasizeFirstBeat(): Flow<Boolean>
+
     suspend fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean)
+
     fun getSound(): Flow<Sound>
+
     suspend fun setSound(sound: Sound)
+
     fun getNightMode(): Flow<AppNightMode>
+
     suspend fun setNightMode(nightMode: AppNightMode)
+
     fun getPostNotificationsPermissionRequested(): Flow<Boolean>
+
     suspend fun setPostNotificationsPermissionRequested(postNotificationsPermissionRequested: Boolean)
 }

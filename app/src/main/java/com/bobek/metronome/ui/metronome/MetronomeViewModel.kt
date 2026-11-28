@@ -30,6 +30,10 @@ import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
@@ -41,42 +45,59 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.TimeSource
 
 private val TAP_WINDOW = 5.seconds
 private val SETTINGS_DEBOUNCE = 1.seconds
 
 interface IMetronomeViewModel {
     fun getBeatsFlow(): StateFlow<Beats>
+
     fun setBeats(beats: Beats)
+
     fun getSubdivisionsFlow(): StateFlow<Subdivisions>
+
     fun setSubdivisions(subdivisions: Subdivisions)
+
     fun getGapsFlow(): StateFlow<Gaps>
+
     fun setGaps(gaps: Gaps)
+
     fun getTempoFlow(): StateFlow<Tempo>
+
     fun setTempo(tempo: Tempo)
+
     fun changeTempo(delta: Int)
+
     fun tapTempo()
+
     fun getEmphasizeFirstBeatFlow(): StateFlow<Boolean>
+
     fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean)
+
     fun getSoundFlow(): StateFlow<Sound>
+
     fun setSound(sound: Sound)
+
     fun getPlayingFlow(): StateFlow<Boolean>
+
     fun setPlaying(playing: Boolean)
+
     fun startStop()
+
     fun getConnectedFlow(): StateFlow<Boolean>
+
     fun getTickFlow(): SharedFlow<Tick>
+
     fun setMetronomeService(metronomeService: IMetronomeService?)
 }
 
 @HiltViewModel
 @OptIn(FlowPreview::class)
-class MetronomeViewModel @Inject constructor(
+class MetronomeViewModel
+@Inject
+constructor(
     private val settingsRepository: SettingsRepository,
-    timeSource: TimeSource
+    timeSource: TimeSource,
 ) : ViewModel(), IMetronomeViewModel {
 
     private val beatsFlow = MutableStateFlow(Beats())
@@ -95,10 +116,11 @@ class MetronomeViewModel @Inject constructor(
 
     private val connectedFlow = MutableStateFlow(false)
 
-    private val tickFlow = MutableSharedFlow<Tick>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val tickFlow =
+        MutableSharedFlow<Tick>(
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
 
     private val startMark = timeSource.markNow()
 
@@ -152,28 +174,24 @@ class MetronomeViewModel @Inject constructor(
 
     private fun setupFlowsToSettings() {
         viewModelScope.launch {
-            beatsFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
-                .collect { settingsRepository.setBeats(it) }
+            beatsFlow.drop(1).debounce(SETTINGS_DEBOUNCE).collect { settingsRepository.setBeats(it) }
         }
         viewModelScope.launch {
-            subdivisionsFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
-                .collect { settingsRepository.setSubdivisions(it) }
+            subdivisionsFlow.drop(1).debounce(SETTINGS_DEBOUNCE).collect { settingsRepository.setSubdivisions(it) }
         }
         viewModelScope.launch {
-            gapsFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
-                .collect { settingsRepository.setGaps(it) }
+            gapsFlow.drop(1).debounce(SETTINGS_DEBOUNCE).collect { settingsRepository.setGaps(it) }
         }
         viewModelScope.launch {
-            tempoFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
-                .collect { settingsRepository.setTempo(it) }
+            tempoFlow.drop(1).debounce(SETTINGS_DEBOUNCE).collect { settingsRepository.setTempo(it) }
         }
         viewModelScope.launch {
-            emphasizeFirstBeatFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
-                .collect { settingsRepository.setEmphasizeFirstBeat(it) }
+            emphasizeFirstBeatFlow.drop(1).debounce(SETTINGS_DEBOUNCE).collect {
+                settingsRepository.setEmphasizeFirstBeat(it)
+            }
         }
         viewModelScope.launch {
-            soundFlow.drop(1).debounce(SETTINGS_DEBOUNCE)
-                .collect { settingsRepository.setSound(it) }
+            soundFlow.drop(1).debounce(SETTINGS_DEBOUNCE).collect { settingsRepository.setSound(it) }
         }
     }
 
@@ -204,11 +222,12 @@ class MetronomeViewModel @Inject constructor(
     override fun changeTempo(delta: Int) {
         val tempoValue = tempoFlow.value.value + delta
 
-        tempoFlow.value = when {
-            tempoValue < Tempo.MIN_VALUE -> Tempo(Tempo.MIN_VALUE)
-            tempoValue > Tempo.MAX_VALUE -> Tempo(Tempo.MAX_VALUE)
-            else -> Tempo(tempoValue)
-        }
+        tempoFlow.value =
+            when {
+                tempoValue < Tempo.MIN_VALUE -> Tempo(Tempo.MIN_VALUE)
+                tempoValue > Tempo.MAX_VALUE -> Tempo(Tempo.MAX_VALUE)
+                else -> Tempo(tempoValue)
+            }
     }
 
     override fun tapTempo() {
@@ -219,11 +238,12 @@ class MetronomeViewModel @Inject constructor(
         val averageInterval = averageTapInterval() ?: return
         val tempoValue = (1.minutes / averageInterval).toInt()
 
-        tempoFlow.value = when {
-            tempoValue > Tempo.MAX_VALUE -> Tempo(Tempo.MAX_VALUE)
-            tempoValue < Tempo.MIN_VALUE -> Tempo(Tempo.MIN_VALUE)
-            else -> Tempo(tempoValue)
-        }
+        tempoFlow.value =
+            when {
+                tempoValue > Tempo.MAX_VALUE -> Tempo(Tempo.MAX_VALUE)
+                tempoValue < Tempo.MIN_VALUE -> Tempo(Tempo.MIN_VALUE)
+                else -> Tempo(tempoValue)
+            }
     }
 
     private fun pruneOldTaps(elapsed: Duration) {
@@ -232,9 +252,7 @@ class MetronomeViewModel @Inject constructor(
 
     private fun averageTapInterval(): Duration? {
         val intervals = taps.zipWithNext { a, b -> b - a }
-        return intervals
-            .reduceOrNull { acc, d -> acc + d }
-            ?.div(intervals.size)
+        return intervals.reduceOrNull { acc, d -> acc + d }?.div(intervals.size)
     }
 
     override fun getEmphasizeFirstBeatFlow() = emphasizeFirstBeatFlow
@@ -282,14 +300,15 @@ class MetronomeViewModel @Inject constructor(
     }
 
     private fun setupFlowsFromMetronomeService(metronomeService: IMetronomeService) {
-        serviceFlowJobs = listOf(
-            viewModelScope.launch {
-                metronomeService.getTickFlow().collect { tickFlow.tryEmit(it) }
-            },
-            viewModelScope.launch {
-                metronomeService.getRefreshFlow().collect { updateViewModel(metronomeService) }
-            }
-        )
+        serviceFlowJobs =
+            listOf(
+                viewModelScope.launch {
+                    metronomeService.getTickFlow().collect { tickFlow.tryEmit(it) }
+                },
+                viewModelScope.launch {
+                    metronomeService.getRefreshFlow().collect { updateViewModel(metronomeService) }
+                },
+            )
     }
 
     private fun updateViewModel(metronomeService: IMetronomeService) {
@@ -321,26 +340,45 @@ class ComposeMetronomeViewModel(
     val emphasizeFirstBeat: Boolean = true,
     val sound: Sound = Sound.SQUARE_WAVE,
     val playing: Boolean = true,
-    val connected: Boolean = true
+    val connected: Boolean = true,
 ) : IMetronomeViewModel {
     override fun getBeatsFlow() = MutableStateFlow(beats)
+
     override fun setBeats(beats: Beats) = Unit
+
     override fun getSubdivisionsFlow() = MutableStateFlow(subdivisions)
+
     override fun setSubdivisions(subdivisions: Subdivisions) = Unit
+
     override fun getGapsFlow() = MutableStateFlow(gaps)
+
     override fun setGaps(gaps: Gaps) = Unit
+
     override fun getTempoFlow() = MutableStateFlow(tempo)
+
     override fun setTempo(tempo: Tempo) = Unit
+
     override fun changeTempo(delta: Int) = Unit
+
     override fun tapTempo() = Unit
+
     override fun getEmphasizeFirstBeatFlow() = MutableStateFlow(emphasizeFirstBeat)
+
     override fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) = Unit
+
     override fun getSoundFlow() = MutableStateFlow(sound)
+
     override fun setSound(sound: Sound) = Unit
+
     override fun getPlayingFlow() = MutableStateFlow(playing)
+
     override fun setPlaying(playing: Boolean) = Unit
+
     override fun startStop() = Unit
+
     override fun getConnectedFlow() = MutableStateFlow(connected)
+
     override fun getTickFlow() = MutableSharedFlow<Tick>()
+
     override fun setMetronomeService(metronomeService: IMetronomeService?) = Unit
 }

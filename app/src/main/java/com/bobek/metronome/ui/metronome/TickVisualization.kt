@@ -57,9 +57,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.bobek.metronome.R
 import com.bobek.metronome.data.Gaps
 import com.bobek.metronome.data.TickType
-import kotlinx.coroutines.delay
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
 
 private const val CIRCLE_CORNER_PERCENT = 50f
 private const val PRESSED_CORNER_PERCENT = 25f
@@ -69,7 +69,7 @@ private const val PRESSED_CORNER_PERCENT = 25f
 fun TickVisualization(
     @PreviewParameter(TickVisualizationStateProvider::class) state: TickVisualizationState,
     modifier: Modifier = Modifier,
-    animationDuration: Duration = 200.milliseconds
+    animationDuration: Duration = 200.milliseconds,
 ) {
     val beats by state.viewModel.getBeatsFlow().collectAsState()
     val gaps by state.viewModel.getGapsFlow().collectAsState()
@@ -89,47 +89,51 @@ fun TickVisualization(
 
     val isGap = gaps.value.contains(state.beatsValue)
 
-    val backgroundColor by animateColorAsState(
-        targetValue = when {
-            blinking && isGap -> MaterialTheme.colorScheme.onSurfaceVariant
-            blinking -> MaterialTheme.colorScheme.onTertiaryContainer
-            isGap -> MaterialTheme.colorScheme.surfaceVariant
-            else -> MaterialTheme.colorScheme.tertiaryContainer
-        },
-        animationSpec = if (blinking) snap() else tween(durationMillis = animationDuration.inWholeMilliseconds.toInt())
-    )
+    val backgroundColor by
+        animateColorAsState(
+            targetValue =
+                when {
+                    blinking && isGap -> MaterialTheme.colorScheme.onSurfaceVariant
+                    blinking -> MaterialTheme.colorScheme.onTertiaryContainer
+                    isGap -> MaterialTheme.colorScheme.surfaceVariant
+                    else -> MaterialTheme.colorScheme.tertiaryContainer
+                },
+            animationSpec =
+                if (blinking) snap() else tween(durationMillis = animationDuration.inWholeMilliseconds.toInt()),
+        )
 
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
-    val cornerPercent by animateFloatAsState(
-        targetValue = if (pressed) PRESSED_CORNER_PERCENT else CIRCLE_CORNER_PERCENT,
-        animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-    )
+    val cornerPercent by
+        animateFloatAsState(
+            targetValue = if (pressed) PRESSED_CORNER_PERCENT else CIRCLE_CORNER_PERCENT,
+            animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
+        )
     // The expressive spring overshoots, so keep the percentage within the range CornerSize accepts
     val shape = RoundedCornerShape(CornerSize(cornerPercent.coerceIn(0f, 100f)))
 
     if (state.beatsValue <= beats.value) {
         Box(
             modifier = modifier,
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             val description = stringResource(R.string.tick_visualization_image_description)
 
             Canvas(
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .fillMaxSize()
-                    .clip(shape)
-                    .semantics {
-                        contentDescription = description
-                    }
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = LocalIndication.current
-                    ) {
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                        state.viewModel.setGaps(gaps.toggle(state.beatsValue))
-                    },
+                modifier =
+                    Modifier.aspectRatio(1f)
+                        .fillMaxSize()
+                        .clip(shape)
+                        .semantics {
+                            contentDescription = description
+                        }
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = LocalIndication.current,
+                        ) {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                            state.viewModel.setGaps(gaps.toggle(state.beatsValue))
+                        },
                 onDraw = {
                     if (isGap) {
                         val strokeWidth = size.minDimension * 0.1f
@@ -137,16 +141,16 @@ fun TickVisualization(
                             drawOutline(
                                 outline = shape.createOutline(size, layoutDirection, this),
                                 color = backgroundColor,
-                                style = Stroke(width = strokeWidth)
+                                style = Stroke(width = strokeWidth),
                             )
                         }
                     } else {
                         drawOutline(
                             outline = shape.createOutline(size, layoutDirection, this),
-                            color = backgroundColor
+                            color = backgroundColor,
                         )
                     }
-                }
+                },
             )
         }
     }
@@ -155,32 +159,33 @@ fun TickVisualization(
 data class TickVisualizationState(
     val viewModel: IMetronomeViewModel,
     val beatsValue: Int,
-    val initiallyBlinking: Boolean = false
+    val initiallyBlinking: Boolean = false,
 )
 
 private class TickVisualizationStateProvider : PreviewParameterProvider<TickVisualizationState> {
-    override val values: Sequence<TickVisualizationState> = sequenceOf(
-        TickVisualizationState(
-            viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf())),
-            beatsValue = 1,
-            initiallyBlinking = false
-        ),
-        TickVisualizationState(
-            viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf(1))),
-            beatsValue = 1,
-            initiallyBlinking = false
-        ),
-        TickVisualizationState(
-            viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf())),
-            beatsValue = 1,
-            initiallyBlinking = true
-        ),
-        TickVisualizationState(
-            viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf(1))),
-            beatsValue = 1,
-            initiallyBlinking = true
+    override val values: Sequence<TickVisualizationState> =
+        sequenceOf(
+            TickVisualizationState(
+                viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf())),
+                beatsValue = 1,
+                initiallyBlinking = false,
+            ),
+            TickVisualizationState(
+                viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf(1))),
+                beatsValue = 1,
+                initiallyBlinking = false,
+            ),
+            TickVisualizationState(
+                viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf())),
+                beatsValue = 1,
+                initiallyBlinking = true,
+            ),
+            TickVisualizationState(
+                viewModel = ComposeMetronomeViewModel(gaps = Gaps(sortedSetOf(1))),
+                beatsValue = 1,
+                initiallyBlinking = true,
+            ),
         )
-    )
 
     override fun getDisplayName(index: Int): String? =
         when (index) {

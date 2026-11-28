@@ -59,7 +59,7 @@ class MetronomeTickTest {
     fun subdivisionIsSubType() {
         assertEquals(
             TickType.SUB,
-            getCurrentTickType(TickPosition(beatInBar = 0, subdivisionIndex = 1), emphasizeFirstBeat = true)
+            getCurrentTickType(TickPosition(beatInBar = 0, subdivisionIndex = 1), emphasizeFirstBeat = true),
         )
     }
 
@@ -112,7 +112,7 @@ class MetronomeTickTest {
     fun nextSubdivisionIndexFromBeatStart() {
         assertEquals(
             1,
-            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 2_000, beatSize = 48_000, subdivisions = 4)
+            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 2_000, beatSize = 48_000, subdivisions = 4),
         )
     }
 
@@ -121,7 +121,7 @@ class MetronomeTickTest {
         // Gap ticks start with nothing written
         assertEquals(
             2,
-            getNextSubdivisionIndex(tickStartInBeat = 12_000, framesWritten = 0, beatSize = 48_000, subdivisions = 4)
+            getNextSubdivisionIndex(tickStartInBeat = 12_000, framesWritten = 0, beatSize = 48_000, subdivisions = 4),
         )
     }
 
@@ -130,7 +130,7 @@ class MetronomeTickTest {
         // Subdivisions changed from 1 to 4 while 30 000 frames into the beat: next tick at index 3 (36 000)
         assertEquals(
             3,
-            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 30_000, beatSize = 48_000, subdivisions = 4)
+            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 30_000, beatSize = 48_000, subdivisions = 4),
         )
     }
 
@@ -138,7 +138,7 @@ class MetronomeTickTest {
     fun nextSubdivisionIndexIsSubdivisionStartingExactlyWhereWritingEnded() {
         assertEquals(
             1,
-            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 12_000, beatSize = 48_000, subdivisions = 4)
+            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 12_000, beatSize = 48_000, subdivisions = 4),
         )
     }
 
@@ -146,7 +146,7 @@ class MetronomeTickTest {
     fun nextSubdivisionIndexIsNextBeatWithoutSubdivisions() {
         assertEquals(
             1,
-            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 2_000, beatSize = 48_000, subdivisions = 1)
+            getNextSubdivisionIndex(tickStartInBeat = 0, framesWritten = 2_000, beatSize = 48_000, subdivisions = 1),
         )
     }
 
@@ -158,8 +158,8 @@ class MetronomeTickTest {
                 tickStartInBeat = 24_000,
                 framesWritten = 2_000,
                 beatSize = 48_000,
-                subdivisions = 2
-            )
+                subdivisions = 2,
+            ),
         )
     }
 
@@ -169,7 +169,7 @@ class MetronomeTickTest {
     fun framesUntilNextTickIsSubdivisionPeriod() {
         assertEquals(
             12_000,
-            calculateFramesUntilNextTick(TickPosition(), framesWritten = 2_000, beatSize = 48_000, subdivisions = 4)
+            calculateFramesUntilNextTick(TickPosition(), framesWritten = 2_000, beatSize = 48_000, subdivisions = 4),
         )
     }
 
@@ -180,7 +180,7 @@ class MetronomeTickTest {
         val position = TickPosition(beatInBar = 0, subdivisionIndex = 1, tickStartInBeat = 12_000)
         assertEquals(
             36_000,
-            calculateFramesUntilNextTick(position, framesWritten = 2_000, beatSize = 48_000, subdivisions = 1)
+            calculateFramesUntilNextTick(position, framesWritten = 2_000, beatSize = 48_000, subdivisions = 1),
         )
     }
 
@@ -189,7 +189,7 @@ class MetronomeTickTest {
         val position = TickPosition(beatInBar = 0, subdivisionIndex = 1, tickStartInBeat = 30_000)
         assertEquals(
             0,
-            calculateFramesUntilNextTick(position, framesWritten = 2_000, beatSize = 24_000, subdivisions = 2)
+            calculateFramesUntilNextTick(position, framesWritten = 2_000, beatSize = 24_000, subdivisions = 2),
         )
     }
 
@@ -199,7 +199,7 @@ class MetronomeTickTest {
     fun nextTickPositionWithinBeat() {
         assertEquals(
             TickPosition(beatInBar = 0, subdivisionIndex = 1, tickStartInBeat = 12_000),
-            getNextTickPosition(TickPosition(), framesWritten = 12_000, beats = 4, beatSize = 48_000, subdivisions = 4)
+            getNextTickPosition(TickPosition(), framesWritten = 12_000, beats = 4, beatSize = 48_000, subdivisions = 4),
         )
     }
 
@@ -207,7 +207,7 @@ class MetronomeTickTest {
     fun nextTickPositionSkipsPassedSubdivisions() {
         assertEquals(
             TickPosition(beatInBar = 0, subdivisionIndex = 3, tickStartInBeat = 36_000),
-            getNextTickPosition(TickPosition(), framesWritten = 36_000, beats = 4, beatSize = 48_000, subdivisions = 4)
+            getNextTickPosition(TickPosition(), framesWritten = 36_000, beats = 4, beatSize = 48_000, subdivisions = 4),
         )
     }
 
@@ -216,7 +216,7 @@ class MetronomeTickTest {
         val position = TickPosition(beatInBar = 1, subdivisionIndex = 1, tickStartInBeat = 24_000)
         assertEquals(
             TickPosition(beatInBar = 2),
-            getNextTickPosition(position, framesWritten = 24_000, beats = 4, beatSize = 48_000, subdivisions = 2)
+            getNextTickPosition(position, framesWritten = 24_000, beats = 4, beatSize = 48_000, subdivisions = 2),
         )
     }
 
@@ -229,8 +229,8 @@ class MetronomeTickTest {
                 framesWritten = 48_000,
                 beats = 4,
                 beatSize = 48_000,
-                subdivisions = 1
-            )
+                subdivisions = 1,
+            ),
         )
     }
 
@@ -255,9 +255,10 @@ class MetronomeTickTest {
 
     @Test
     fun beatGridIsKeptWhenSubdivisionsIncreasedMidBeat() {
-        val ticks = simulate(ticks = 30) { frame ->
-            Settings(beats = 4, tempo = 60, subdivisions = if (frame < 2 * 48_000 + 30_000) 1 else 4)
-        }
+        val ticks =
+            simulate(ticks = 30) { frame ->
+                Settings(beats = 4, tempo = 60, subdivisions = if (frame < 2 * 48_000 + 30_000) 1 else 4)
+            }
 
         assertBeatsOnGrid(ticks, beatSize = 48_000)
         // Index 3 of the changed beat is the first subdivision after 30 000 frames
@@ -266,18 +267,20 @@ class MetronomeTickTest {
 
     @Test
     fun beatGridIsKeptWhenSubdivisionsReducedMidBeat() {
-        val ticks = simulate(ticks = 30) { frame ->
-            Settings(beats = 4, tempo = 60, subdivisions = if (frame < 2 * 48_000 + 13_000) 4 else 1)
-        }
+        val ticks =
+            simulate(ticks = 30) { frame ->
+                Settings(beats = 4, tempo = 60, subdivisions = if (frame < 2 * 48_000 + 13_000) 4 else 1)
+            }
 
         assertBeatsOnGrid(ticks, beatSize = 48_000)
     }
 
     @Test
     fun downbeatIsKeptWhenSubdivisionsChangedOnLastBeat() {
-        val ticks = simulate(ticks = 10) { frame ->
-            Settings(beats = 4, tempo = 60, subdivisions = if (frame < 3 * 48_000 + 1_000) 1 else 4)
-        }
+        val ticks =
+            simulate(ticks = 10) { frame ->
+                Settings(beats = 4, tempo = 60, subdivisions = if (frame < 3 * 48_000 + 1_000) 1 else 4)
+            }
 
         val tickAfterBar = ticks.single { it.frame == 4 * 48_000L }
         assertEquals(TickType.STRONG, getCurrentTickType(tickAfterBar.position, emphasizeFirstBeat = true))
@@ -297,9 +300,10 @@ class MetronomeTickTest {
     @Test
     fun barRestartsWhenBeatsReducedBelowCurrentBeat() {
         // Beats reduced from 4 to 3 while on beat 4: the next beat is beat 1
-        val ticks = simulate(ticks = 8) { frame ->
-            Settings(beats = if (frame < 3 * 48_000 + 1_000) 4 else 3, tempo = 60, subdivisions = 1)
-        }
+        val ticks =
+            simulate(ticks = 8) { frame ->
+                Settings(beats = if (frame < 3 * 48_000 + 1_000) 4 else 3, tempo = 60, subdivisions = 1)
+            }
 
         assertEquals(listOf(1, 2, 3, 4, 1, 2, 3, 1), ticks.map { getCurrentBeat(it.position) })
     }
@@ -307,9 +311,10 @@ class MetronomeTickTest {
     @Test
     fun barContinuesWhenBeatsReducedAboveCurrentBeat() {
         // Beats reduced from 4 to 3 while on beat 2: the bar continues with beat 3
-        val ticks = simulate(ticks = 6) { frame ->
-            Settings(beats = if (frame < 48_000 + 1_000) 4 else 3, tempo = 60, subdivisions = 1)
-        }
+        val ticks =
+            simulate(ticks = 6) { frame ->
+                Settings(beats = if (frame < 48_000 + 1_000) 4 else 3, tempo = 60, subdivisions = 1)
+            }
 
         assertEquals(listOf(1, 2, 3, 1, 2, 3), ticks.map { getCurrentBeat(it.position) })
     }
@@ -327,7 +332,7 @@ class MetronomeTickTest {
         ticks: Int,
         tickSoundSize: Int = 2_000,
         chunkSize: Int = 8_000,
-        settingsAt: (Long) -> Settings
+        settingsAt: (Long) -> Settings,
     ): List<SimulatedTick> {
         val result = mutableListOf<SimulatedTick>()
         var position = TickPosition()
@@ -338,10 +343,11 @@ class MetronomeTickTest {
 
             val tickSettings = settingsAt(frame)
             val tickBeatSize = calculateBeatSize(tickSettings.tempo)
-            var written = minOf(
-                tickSoundSize,
-                calculateFramesUntilNextTick(position, 0, tickBeatSize, tickSettings.subdivisions)
-            )
+            var written =
+                minOf(
+                    tickSoundSize,
+                    calculateFramesUntilNextTick(position, 0, tickBeatSize, tickSettings.subdivisions),
+                )
 
             while (true) {
                 val settings = settingsAt(frame + written)

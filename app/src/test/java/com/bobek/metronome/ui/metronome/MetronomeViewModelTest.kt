@@ -27,6 +27,11 @@ import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.settings.SettingsRepository
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,11 +48,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.TimeMark
-import kotlin.time.TimeSource
 
 private val DEBOUNCE = 1.seconds
 
@@ -69,35 +69,38 @@ class MetronomeViewModelTest {
 
     private fun createViewModel(
         settingsRepository: SettingsRepository = FakeSettingsRepository(),
-        timeSource: TimeSource = FakeTimeSource()
+        timeSource: TimeSource = FakeTimeSource(),
     ): MetronomeViewModel = MetronomeViewModel(settingsRepository, timeSource)
 
     // --- Initial state ---
 
     @Test
-    fun initialStateLoadsFromSettings() = runTest(testDispatcher) {
-        val settings = FakeSettingsRepository(
-            beats = Beats(6),
-            subdivisions = Subdivisions(3),
-            tempo = Tempo(120),
-            emphasizeFirstBeat = false,
-            sound = Sound.SINE_WAVE
-        )
-        val viewModel = createViewModel(settings)
+    fun initialStateLoadsFromSettings() =
+        runTest(testDispatcher) {
+            val settings =
+                FakeSettingsRepository(
+                    beats = Beats(6),
+                    subdivisions = Subdivisions(3),
+                    tempo = Tempo(120),
+                    emphasizeFirstBeat = false,
+                    sound = Sound.SINE_WAVE,
+                )
+            val viewModel = createViewModel(settings)
 
-        assertEquals(Beats(6), viewModel.getBeatsFlow().value)
-        assertEquals(Subdivisions(3), viewModel.getSubdivisionsFlow().value)
-        assertEquals(Tempo(120), viewModel.getTempoFlow().value)
-        assertFalse(viewModel.getEmphasizeFirstBeatFlow().value)
-        assertEquals(Sound.SINE_WAVE, viewModel.getSoundFlow().value)
-    }
+            assertEquals(Beats(6), viewModel.getBeatsFlow().value)
+            assertEquals(Subdivisions(3), viewModel.getSubdivisionsFlow().value)
+            assertEquals(Tempo(120), viewModel.getTempoFlow().value)
+            assertFalse(viewModel.getEmphasizeFirstBeatFlow().value)
+            assertEquals(Sound.SINE_WAVE, viewModel.getSoundFlow().value)
+        }
 
     @Test
-    fun initialGapsLoadedFromSettings() = runTest(testDispatcher) {
-        val gaps = Gaps(sortedSetOf(2, 4))
-        val viewModel = createViewModel(FakeSettingsRepository(gaps = gaps))
-        assertEquals(gaps, viewModel.getGapsFlow().value)
-    }
+    fun initialGapsLoadedFromSettings() =
+        runTest(testDispatcher) {
+            val gaps = Gaps(sortedSetOf(2, 4))
+            val viewModel = createViewModel(FakeSettingsRepository(gaps = gaps))
+            assertEquals(gaps, viewModel.getGapsFlow().value)
+        }
 
     @Test
     fun initialPlayingIsFalse() {
@@ -303,12 +306,13 @@ class MetronomeViewModelTest {
     @Test
     fun connectingPlayingServicePullsServiceValuesToViewModel() {
         val viewModel = createViewModel()
-        val service = FakeMetronomeService(
-            playing = true,
-            beats = Beats(7),
-            tempo = Tempo(150),
-            sound = Sound.RISSET_DRUM
-        )
+        val service =
+            FakeMetronomeService(
+                playing = true,
+                beats = Beats(7),
+                tempo = Tempo(150),
+                sound = Sound.RISSET_DRUM,
+            )
         viewModel.setMetronomeService(service)
 
         assertEquals(Beats(7), viewModel.getBeatsFlow().value)
@@ -318,67 +322,72 @@ class MetronomeViewModelTest {
     }
 
     @Test
-    fun reconnectingServiceDoesNotLeakJobs() = runTest(testDispatcher) {
-        val viewModel = createViewModel()
-        val service1 = FakeMetronomeService()
-        val service2 = FakeMetronomeService()
+    fun reconnectingServiceDoesNotLeakJobs() =
+        runTest(testDispatcher) {
+            val viewModel = createViewModel()
+            val service1 = FakeMetronomeService()
+            val service2 = FakeMetronomeService()
 
-        viewModel.setMetronomeService(service1)
-        viewModel.setMetronomeService(service2)
+            viewModel.setMetronomeService(service1)
+            viewModel.setMetronomeService(service2)
 
-        // Emitting from the old service should not affect the viewModel (jobs were cancelled)
-        service1.beats = Beats(8)
-        service1.getRefreshFlow().emit(Unit)
+            // Emitting from the old service should not affect the viewModel (jobs were cancelled)
+            service1.beats = Beats(8)
+            service1.getRefreshFlow().emit(Unit)
 
-        // viewModel should still reflect service2's values, not service1's
-        assertEquals(service2.beats, viewModel.getBeatsFlow().value)
-    }
+            // viewModel should still reflect service2's values, not service1's
+            assertEquals(service2.beats, viewModel.getBeatsFlow().value)
+        }
 
     @Test
-    fun servicePropertyUpdatedWhenFlowChanges() = runTest(testDispatcher) {
-        val viewModel = createViewModel()
-        val service = FakeMetronomeService()
-        viewModel.setMetronomeService(service)
+    fun servicePropertyUpdatedWhenFlowChanges() =
+        runTest(testDispatcher) {
+            val viewModel = createViewModel()
+            val service = FakeMetronomeService()
+            viewModel.setMetronomeService(service)
 
-        viewModel.setBeats(Beats(7))
+            viewModel.setBeats(Beats(7))
 
-        assertEquals(Beats(7), service.beats)
-    }
+            assertEquals(Beats(7), service.beats)
+        }
 
     // --- Settings persistence (debounced) ---
 
     @Test
-    fun beatsPersistedToSettingsAfterDebounce() = runTest(testDispatcher) {
-        val settings = FakeSettingsRepository()
-        val viewModel = createViewModel(settings)
+    fun beatsPersistedToSettingsAfterDebounce() =
+        runTest(testDispatcher) {
+            val settings = FakeSettingsRepository()
+            val viewModel = createViewModel(settings)
 
-        viewModel.setBeats(Beats(7))
-        advanceTimeBy(DEBOUNCE + 1.milliseconds)
+            viewModel.setBeats(Beats(7))
+            advanceTimeBy(DEBOUNCE + 1.milliseconds)
 
-        assertEquals(Beats(7), settings.writtenBeats)
-    }
-
-    @Test
-    fun tempoPersistedToSettingsAfterDebounce() = runTest(testDispatcher) {
-        val settings = FakeSettingsRepository()
-        val viewModel = createViewModel(settings)
-
-        viewModel.setTempo(Tempo(160))
-        advanceTimeBy(DEBOUNCE + 1.milliseconds)
-
-        assertEquals(Tempo(160), settings.writtenTempo)
-    }
+            assertEquals(Beats(7), settings.writtenBeats)
+        }
 
     @Test
-    fun initialValueNotPersistedToSettings() = runTest(testDispatcher) {
-        val settings = FakeSettingsRepository()
-        createViewModel(settings)
+    fun tempoPersistedToSettingsAfterDebounce() =
+        runTest(testDispatcher) {
+            val settings = FakeSettingsRepository()
+            val viewModel = createViewModel(settings)
 
-        advanceTimeBy(DEBOUNCE + 1.milliseconds)
+            viewModel.setTempo(Tempo(160))
+            advanceTimeBy(DEBOUNCE + 1.milliseconds)
 
-        // drop(1) means the initial StateFlow emission must not trigger a write
-        assertFalse(settings.beatsWritten)
-    }
+            assertEquals(Tempo(160), settings.writtenTempo)
+        }
+
+    @Test
+    fun initialValueNotPersistedToSettings() =
+        runTest(testDispatcher) {
+            val settings = FakeSettingsRepository()
+            createViewModel(settings)
+
+            advanceTimeBy(DEBOUNCE + 1.milliseconds)
+
+            // drop(1) means the initial StateFlow emission must not trigger a write
+            assertFalse(settings.beatsWritten)
+        }
 }
 
 // --- Fakes ---
@@ -389,7 +398,7 @@ private class FakeSettingsRepository(
     gaps: Gaps = Gaps(),
     tempo: Tempo = Tempo(),
     emphasizeFirstBeat: Boolean = true,
-    sound: Sound = Sound.SQUARE_WAVE
+    sound: Sound = Sound.SQUARE_WAVE,
 ) : SettingsRepository {
 
     private val beatsFlow = MutableStateFlow(beats)
@@ -402,38 +411,48 @@ private class FakeSettingsRepository(
 
     var beatsWritten = false
         private set
+
     var writtenBeats: Beats? = null
         private set
+
     var writtenTempo: Tempo? = null
         private set
 
     override fun getBeats() = beatsFlow
+
     override suspend fun setBeats(beats: Beats) {
         beatsWritten = true
         writtenBeats = beats
     }
 
     override fun getSubdivisions() = subdivisionsFlow
+
     override suspend fun setSubdivisions(subdivisions: Subdivisions) {}
 
     override fun getGaps() = gapsFlow
+
     override suspend fun setGaps(gaps: Gaps) {}
 
     override fun getTempo() = tempoFlow
+
     override suspend fun setTempo(tempo: Tempo) {
         writtenTempo = tempo
     }
 
     override fun getEmphasizeFirstBeat() = emphasizeFirstBeatFlow
+
     override suspend fun setEmphasizeFirstBeat(emphasizeFirstBeat: Boolean) {}
 
     override fun getSound() = soundFlow
+
     override suspend fun setSound(sound: Sound) {}
 
     override fun getNightMode() = MutableStateFlow(AppNightMode.FOLLOW_SYSTEM)
+
     override suspend fun setNightMode(nightMode: AppNightMode) {}
 
     override fun getPostNotificationsPermissionRequested() = postNotificationsFlow
+
     override suspend fun setPostNotificationsPermissionRequested(postNotificationsPermissionRequested: Boolean) {}
 }
 
@@ -455,12 +474,13 @@ private class FakeMetronomeService(
     override var tempo: Tempo = Tempo(),
     override var emphasizeFirstBeat: Boolean = true,
     override var sound: Sound = Sound.SQUARE_WAVE,
-    override var playing: Boolean = false
+    override var playing: Boolean = false,
 ) : IMetronomeService {
 
     private val tickFlow = MutableSharedFlow<Tick>()
     private val refreshFlow = MutableSharedFlow<Unit>()
 
     override fun getTickFlow() = tickFlow
+
     override fun getRefreshFlow() = refreshFlow
 }

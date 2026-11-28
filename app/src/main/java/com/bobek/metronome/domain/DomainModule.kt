@@ -29,7 +29,5 @@ import kotlin.time.TimeSource
 @InstallIn(SingletonComponent::class)
 object DomainModule {
 
-    @Provides
-    @Singleton
-    fun provideTimeSource(): TimeSource = TimeSource.Monotonic
+    @Provides @Singleton fun provideTimeSource(): TimeSource = TimeSource.Monotonic
 }

@@ -41,12 +41,9 @@ import tools.fastlane.screengrab.locale.LocaleTestRule
 @LargeTest
 class ScreengrabTest {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule()
 
-    @Rule
-    @JvmField
-    val localeTestRule = LocaleTestRule()
+    @Rule @JvmField val localeTestRule = LocaleTestRule()
 
     @Test
     fun grabScreenshot() {
@@ -57,15 +54,16 @@ class ScreengrabTest {
         composeTestRule.setContent {
             MainContent(
                 appViewModel = appViewModel,
-                metronomeViewModel = ComposeMetronomeViewModel(
-                    beats = Beats(),
-                    subdivisions = Subdivisions(),
-                    gaps = Gaps(),
-                    tempo = Tempo(),
-                    emphasizeFirstBeat = true,
-                    playing = false,
-                    connected = true
-                )
+                metronomeViewModel =
+                    ComposeMetronomeViewModel(
+                        beats = Beats(),
+                        subdivisions = Subdivisions(),
+                        gaps = Gaps(),
+                        tempo = Tempo(),
+                        emphasizeFirstBeat = true,
+                        playing = false,
+                        connected = true,
+                    ),
             )
         }
         composeTestRule.waitForIdle()
@@ -93,14 +91,12 @@ class ScreengrabTest {
         }
 
         /**
-         * The mobile network icon doesn't reliably respect the app's light/dark status bar
-         * appearance on all system images, sometimes rendering white regardless of theme.
-         * Hiding it avoids that inconsistency instead of chasing it.
+         * The mobile network icon doesn't reliably respect the app's light/dark status bar appearance on all system
+         * images, sometimes rendering white regardless of theme. Hiding it avoids that inconsistency instead of chasing
+         * it.
          */
         private fun enableCleanStatusBar() {
-            CleanStatusBar()
-                .setMobileNetworkVisibility(IconVisibility.HIDE)
-                .enable()
+            CleanStatusBar().setMobileNetworkVisibility(IconVisibility.HIDE).enable()
         }
     }
 }

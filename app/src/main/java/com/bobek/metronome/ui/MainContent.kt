@@ -56,17 +56,18 @@ import kotlinx.coroutines.withContext
 @PreviewScreenSizes
 fun MainContent(
     appViewModel: IAppViewModel = ComposeAppViewModel(),
-    metronomeViewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = true)
+    metronomeViewModel: IMetronomeViewModel = ComposeMetronomeViewModel(connected = true),
 ) {
     val navController = rememberNavController()
     val nightMode by appViewModel.getNightModeFlow().collectAsState()
     val playing by metronomeViewModel.getPlayingFlow().collectAsState()
 
-    val isDarkTheme = when (nightMode) {
-        AppNightMode.NO -> false
-        AppNightMode.YES -> true
-        AppNightMode.FOLLOW_SYSTEM -> isSystemInDarkTheme()
-    }
+    val isDarkTheme =
+        when (nightMode) {
+            AppNightMode.NO -> false
+            AppNightMode.YES -> true
+            AppNightMode.FOLLOW_SYSTEM -> isSystemInDarkTheme()
+        }
 
     val activity = LocalActivity.current
     LaunchedEffect(playing) {
@@ -97,12 +98,12 @@ fun MainContent(
             },
             popExitTransition = {
                 slideOutOfContainer(SlideDirection.End, slideSpec, slideOffset) + fadeOut(fadeSpec)
-            }
+            },
         ) {
             composable("metronome") {
                 MetronomeScreen(
                     viewModel = metronomeViewModel,
-                    onSettingsClick = { navController.navigate("settings") }
+                    onSettingsClick = { navController.navigate("settings") },
                 )
             }
             composable("settings") {
@@ -111,56 +112,64 @@ fun MainContent(
                     metronomeViewModel = metronomeViewModel,
                     onBackClick = { navController.popBackStack() },
                     onLicenseClick = { navController.navigate("license") },
-                    onThirdPartyLicensesClick = { navController.navigate("licenses") }
+                    onThirdPartyLicensesClick = { navController.navigate("licenses") },
                 )
             }
             composable("license") {
                 val resources = LocalResources.current
-                val licenseContent by produceState(initialValue = "") {
-                    value = withContext(Dispatchers.IO) {
-                        LicenseRepository.getAppLicenseContent(resources)
+                val licenseContent by
+                    produceState(initialValue = "") {
+                        value =
+                            withContext(Dispatchers.IO) {
+                                LicenseRepository.getAppLicenseContent(resources)
+                            }
                     }
-                }
 
                 LicenseScreen(
-                    state = LicenseScreenState(
-                        title = stringResource(R.string.license_name),
-                        licenseContent = licenseContent,
-                    ),
-                    onBackClick = { navController.popBackStack() }
+                    state =
+                        LicenseScreenState(
+                            title = stringResource(R.string.license_name),
+                            licenseContent = licenseContent,
+                        ),
+                    onBackClick = { navController.popBackStack() },
                 )
             }
             composable("licenses") {
                 val resources = LocalResources.current
-                val libraryNames by produceState(initialValue = emptyList()) {
-                    value = withContext(Dispatchers.IO) {
-                        LicenseRepository.getThirdPartyLibraryNames(resources)
+                val libraryNames by
+                    produceState(initialValue = emptyList()) {
+                        value =
+                            withContext(Dispatchers.IO) {
+                                LicenseRepository.getThirdPartyLibraryNames(resources)
+                            }
                     }
-                }
 
                 ThirdPartyLicensesScreen(
                     libraryNames = libraryNames,
                     onBackClick = { navController.popBackStack() },
                     onLibraryClick = { libraryName ->
                         navController.navigate("license/${Uri.encode(libraryName)}")
-                    }
+                    },
                 )
             }
             composable("license/{libraryName}") { backStackEntry ->
                 val libraryName = Uri.decode(backStackEntry.arguments?.getString("libraryName") ?: "")
                 val resources = LocalResources.current
-                val licenseContent by produceState(initialValue = "", key1 = libraryName) {
-                    value = withContext(Dispatchers.IO) {
-                        LicenseRepository.getThirdPartyLicenseContent(resources, libraryName)
+                val licenseContent by
+                    produceState(initialValue = "", key1 = libraryName) {
+                        value =
+                            withContext(Dispatchers.IO) {
+                                LicenseRepository.getThirdPartyLicenseContent(resources, libraryName)
+                            }
                     }
-                }
 
                 LicenseScreen(
-                    state = LicenseScreenState(
-                        title = libraryName,
-                        licenseContent = licenseContent,
-                    ),
-                    onBackClick = { navController.popBackStack() }
+                    state =
+                        LicenseScreenState(
+                            title = libraryName,
+                            licenseContent = licenseContent,
+                        ),
+                    onBackClick = { navController.popBackStack() },
                 )
             }
         }

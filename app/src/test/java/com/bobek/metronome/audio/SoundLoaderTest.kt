@@ -26,31 +26,27 @@ class SoundLoaderTest {
 
     @Test
     fun singleFrame() {
-        val data = ClassLoader.getSystemResourceAsStream("singleFrame.wav")
-            .use(SoundLoader::readDataFromWavPcmFloat)
+        val data = ClassLoader.getSystemResourceAsStream("singleFrame.wav").use(SoundLoader::readDataFromWavPcmFloat)
         assertArrayEquals(floatArrayOf(1.0f), data, 0.0f)
     }
 
     @Test
     fun noContent() {
-        val data = ClassLoader.getSystemResourceAsStream("no_payload.wav")
-            .use(SoundLoader::readDataFromWavPcmFloat)
+        val data = ClassLoader.getSystemResourceAsStream("no_payload.wav").use(SoundLoader::readDataFromWavPcmFloat)
         assertArrayEquals(FloatArray(0), data, 0.0f)
     }
 
     @Test
     fun invalidData() {
         assertThrows(IllegalStateException::class.java) {
-            ClassLoader.getSystemResourceAsStream("invalid_data.wav")
-                .use(SoundLoader::readDataFromWavPcmFloat)
+            ClassLoader.getSystemResourceAsStream("invalid_data.wav").use(SoundLoader::readDataFromWavPcmFloat)
         }
     }
 
     @Test
     fun noDataMarker() {
         assertThrows(IllegalStateException::class.java) {
-            ClassLoader.getSystemResourceAsStream("no_data_marker.wav")
-                .use(SoundLoader::readDataFromWavPcmFloat)
+            ClassLoader.getSystemResourceAsStream("no_data_marker.wav").use(SoundLoader::readDataFromWavPcmFloat)
         }
     }
 }
